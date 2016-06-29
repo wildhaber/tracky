@@ -6,7 +6,7 @@ class TrackyEvent {
    * @param tracky
    * @param options
    * @param globalOptions
-     */
+   */
   constructor(eventKey, tracky = null, options = {}, globalOptions = {}) {
 
     this._key = eventKey;
@@ -24,7 +24,7 @@ class TrackyEvent {
   /**
    * getNodes
    * @returns {Array}
-     */
+   */
   getNodes() {
     return (this._tracky && this._tracky instanceof Tracky) ? this._tracky._nodes : [];
   }
@@ -44,12 +44,28 @@ class TrackyEvent {
   }
 
   /**
+   * add
+   * @param nodes
+   */
+  add(nodes) {
+    this.onAdd(nodes);
+  }
+
+  /**
+   * remove
+   * @param nodes
+   */
+  remove(nodes) {
+    this.onRemove(nodes);
+  }
+
+  /**
    * _buildClassName
    * @param value
    * @param modifier
    * @returns {string}
-     * @private
-     */
+   * @private
+   */
   _buildClassName(value, modifier) {
     let o = this._globalOptions;
     return o.classPrefix + this._key + '-' + modifier + value + o.classSuffix;
@@ -60,7 +76,7 @@ class TrackyEvent {
    * @param value
    * @returns {*}
    * @private
-     */
+   */
   _transformValue(value) {
 
     let t = null;
@@ -81,7 +97,7 @@ class TrackyEvent {
    * @param bp
    * @returns {Array|*}
    * @private
-     */
+   */
   _transformBreakpoints(bp) {
 
     return bp.map(
@@ -156,7 +172,7 @@ class TrackyEvent {
    * _extractClasses
    * @returns {Array}
    * @private
-     */
+   */
   _extractClasses() {
     let bps = this._options.breakpoints;
     let classArray = [];
@@ -178,7 +194,7 @@ class TrackyEvent {
    * classify
    * @param domNode
    * @param value
-     */
+   */
   classify(domNode, value = {absolute: 0, percent: 0}) {
 
     let bp = this._options.breakpoints;
@@ -249,7 +265,7 @@ class TrackyEvent {
    * attachClasses
    * @param domNode
    * @param classNames
-     */
+   */
   attachClasses(domNode, classNames) {
 
     let available = this._classNames;
@@ -288,24 +304,23 @@ class TrackyEvent {
         }
       }
 
-    } else {
+    }
 
-      // Old Browser Fallback
+  }
 
-      let newClassNames = current
-        .replace(/\s+/g, ' ')
-        .split(' ')
-        .filter(
-          (c) => {
-            return (available.indexOf(c) === -1);
-          }
-        )
-        .concat(classNames)
-        .join(' ');
+  /**
+   * cleanupClasses
+   * @param domNode
+     */
+  cleanupClasses(domNode) {
 
+    let available = this._classNames;
 
-      if (current !== newClassNames) {
-        domNode.className = newClassNames;
+    if (domNode.classList) {
+      if (available.length) {
+        for (let l = available.length; l; l--) {
+          domNode.classList.remove(available[l - 1]);
+        }
       }
 
     }
