@@ -68,5 +68,8 @@
     "jasmine-reporters": "^2.2.0",
     "jshint-stylish": "~2.0.0",
     "webpack": "^1.13.1"
+  },
+  "dependencies": {
+    "deep-assign": "^2.0.0"
   }
 }
