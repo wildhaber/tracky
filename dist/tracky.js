@@ -226,6 +226,14 @@
 	        return typeof s === 'string' && !!s && s.charAt(0) !== '-';
 	      });
 	    }
+	
+	    /**
+	     * _getEvensOptions
+	     * @param evt
+	     * @returns {Object}
+	     * @private
+	       */
+	
 	  }, {
 	    key: '_getEventsOptions',
 	    value: function _getEventsOptions() {
@@ -239,17 +247,20 @@
 	        return {};
 	      }
 	    }
+	
+	    /**
+	     * _bindListeners
+	     * @private
+	       */
+	
 	  }, {
 	    key: '_bindListeners',
 	    value: function _bindListeners() {
 	      var _this2 = this;
 	
-	      console.log(this._listeners);
-	      console.log(this._options);
 	      this._listeners.forEach(function (l) {
 	        var options = _this2._getEventsOptions(l.key);
-	        console.log(options);
-	        if (typeof options.enabled !== 'undefined' && options.enabled === true) {
+	        if (typeof options.enable !== 'undefined' && options.enable === true) {
 	          l.instance = new l.class(l.key, _this2, options, _this2._options);
 	        }
 	      });
@@ -279,7 +290,7 @@
 	  classBtPrefix: 'bt-',
 	  events: {
 	    scroll: {
-	      enabled: true,
+	      enable: true,
 	      breakpoints: []
 	    }
 	  }
@@ -320,6 +331,13 @@
 	
 	  _createClass(TrackyScroll, [{
 	    key: '_listener',
+	
+	
+	    /**
+	     * _listener
+	     * @param domNode
+	     * @private
+	       */
 	    value: function _listener(domNode) {
 	
 	      var position = this._getScrollPosition(domNode);
@@ -329,16 +347,38 @@
 	        percent: position.percent.top
 	      });
 	    }
+	
+	    /**
+	     * bindEvent
+	     * @param domNode
+	       */
+	
 	  }, {
 	    key: 'bindEvent',
 	    value: function bindEvent(domNode) {
 	      domNode.addEventListener('scroll', this._bindListener);
 	    }
+	
+	    /**
+	     * _percentRound
+	     * @param value
+	     * @returns {number}
+	     * @private
+	       */
+	
 	  }, {
 	    key: '_percentRound',
 	    value: function _percentRound(value) {
-	      return parseFloat(value.toFixed(2)) * 100;
+	      return parseInt(parseFloat(value.toFixed(2)) * 100, 10);
 	    }
+	
+	    /**
+	     * _getScrollPosition
+	     * @param domNode
+	     * @returns {*}
+	     * @private
+	       */
+	
 	  }, {
 	    key: '_getScrollPosition',
 	    value: function _getScrollPosition(domNode) {
@@ -370,27 +410,56 @@
 	        };
 	      }
 	    }
+	
+	    /**
+	     * bindBodyEvent
+	     */
+	
 	  }, {
 	    key: 'bindBodyEvent',
 	    value: function bindBodyEvent() {
 	
 	      window.addEventListener('scroll', this._bindBodyListener);
 	    }
+	
+	    /**
+	     * unbindBodyEvent
+	     */
+	
 	  }, {
 	    key: 'unbindBodyEvent',
 	    value: function unbindBodyEvent() {
 	      window.removeEventListener('scroll', this._bindBodyListener);
 	    }
+	
+	    /**
+	     * unbindEvent
+	     * @param domNode
+	       */
+	
 	  }, {
 	    key: 'unbindEvent',
 	    value: function unbindEvent(domNode) {
 	      domNode.removeEventListener('scroll', this._bindListener);
 	    }
+	
+	    /**
+	     * _isBody
+	     * @param domNode
+	     * @returns {boolean}
+	     * @private
+	       */
+	
 	  }, {
 	    key: '_isBody',
 	    value: function _isBody(domNode) {
 	      return domNode.nodeName === 'BODY';
 	    }
+	
+	    /**
+	     * bindEvents
+	     */
+	
 	  }, {
 	    key: 'bindEvents',
 	    value: function bindEvents() {
@@ -408,6 +477,11 @@
 	        }
 	      });
 	    }
+	
+	    /**
+	     * unbindEvents
+	     */
+	
 	  }, {
 	    key: 'unbindEvents',
 	    value: function unbindEvents() {
@@ -425,6 +499,11 @@
 	        }
 	      });
 	    }
+	
+	    /**
+	     * onStart
+	     */
+	
 	  }, {
 	    key: 'onStart',
 	    value: function onStart() {
@@ -456,6 +535,11 @@
 	
 	      this.bindEvents();
 	    }
+	
+	    /**
+	     * onStop
+	     */
+	
 	  }, {
 	    key: 'onStop',
 	    value: function onStop() {
@@ -483,6 +567,15 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var TrackyEvent = function () {
+	
+	  /**
+	   * constructor
+	   * @param eventKey
+	   * @param tracky
+	   * @param options
+	   * @param globalOptions
+	     */
+	
 	  function TrackyEvent(eventKey) {
 	    var tracky = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
 	    var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
@@ -501,27 +594,60 @@
 	    this.start();
 	  }
 	
+	  /**
+	   * getNodes
+	   * @returns {Array}
+	     */
+	
+	
 	  _createClass(TrackyEvent, [{
 	    key: 'getNodes',
 	    value: function getNodes() {
 	      return this._tracky && this._tracky instanceof Tracky ? this._tracky._nodes : [];
 	    }
+	
+	    /**
+	     * start
+	     */
+	
 	  }, {
 	    key: 'start',
 	    value: function start() {
 	      this.onStart();
 	    }
+	
+	    /**
+	     * stop
+	     */
+	
 	  }, {
 	    key: 'stop',
 	    value: function stop() {
 	      this.onStop();
 	    }
+	
+	    /**
+	     * _buildClassName
+	     * @param value
+	     * @param modifier
+	     * @returns {string}
+	       * @private
+	       */
+	
 	  }, {
 	    key: '_buildClassName',
 	    value: function _buildClassName(value, modifier) {
 	      var o = this._globalOptions;
 	      return o.classPrefix + this._key + '-' + modifier + value + o.classSuffix;
 	    }
+	
+	    /**
+	     * _transformValue
+	     * @param value
+	     * @returns {*}
+	     * @private
+	       */
+	
 	  }, {
 	    key: '_transformValue',
 	    value: function _transformValue(value) {
@@ -538,6 +664,14 @@
 	
 	      return t;
 	    }
+	
+	    /**
+	     * _transformBreakpoints
+	     * @param bp
+	     * @returns {Array|*}
+	     * @private
+	       */
+	
 	  }, {
 	    key: '_transformBreakpoints',
 	    value: function _transformBreakpoints(bp) {
@@ -588,11 +722,19 @@
 	        };
 	      });
 	    }
+	
+	    /**
+	     * _extractClasses
+	     * @returns {Array}
+	     * @private
+	       */
+	
 	  }, {
 	    key: '_extractClasses',
 	    value: function _extractClasses() {
 	      var bps = this._options.breakpoints;
 	      var classArray = [];
+	
 	      bps.forEach(function (bp) {
 	        for (var c in bp.css) {
 	          if (bp.css[c]) {
@@ -600,8 +742,16 @@
 	          }
 	        }
 	      });
+	
 	      return classArray;
 	    }
+	
+	    /**
+	     * classify
+	     * @param domNode
+	     * @param value
+	       */
+	
 	  }, {
 	    key: 'classify',
 	    value: function classify(domNode) {
@@ -639,6 +789,13 @@
 	
 	      this.attachClasses(domNode, classes);
 	    }
+	
+	    /**
+	     * attachClasses
+	     * @param domNode
+	     * @param classNames
+	       */
+	
 	  }, {
 	    key: 'attachClasses',
 	    value: function attachClasses(domNode, classNames) {
