@@ -1,5 +1,12 @@
 class TrackyEvent {
 
+  /**
+   * constructor
+   * @param eventKey
+   * @param tracky
+   * @param options
+   * @param globalOptions
+     */
   constructor(eventKey, tracky = null, options = {}, globalOptions = {}) {
 
     this._key = eventKey;
@@ -14,23 +21,46 @@ class TrackyEvent {
 
   }
 
+  /**
+   * getNodes
+   * @returns {Array}
+     */
   getNodes() {
     return (this._tracky && this._tracky instanceof Tracky) ? this._tracky._nodes : [];
   }
 
+  /**
+   * start
+   */
   start() {
     this.onStart();
   }
 
+  /**
+   * stop
+   */
   stop() {
     this.onStop();
   }
 
+  /**
+   * _buildClassName
+   * @param value
+   * @param modifier
+   * @returns {string}
+     * @private
+     */
   _buildClassName(value, modifier) {
     let o = this._globalOptions;
     return o.classPrefix + this._key + '-' + modifier + value + o.classSuffix;
   }
 
+  /**
+   * _transformValue
+   * @param value
+   * @returns {*}
+   * @private
+     */
   _transformValue(value) {
 
     let t = null;
@@ -46,6 +76,12 @@ class TrackyEvent {
     return t;
   }
 
+  /**
+   * _transformBreakpoints
+   * @param bp
+   * @returns {Array|*}
+   * @private
+     */
   _transformBreakpoints(bp) {
 
     return bp.map(
@@ -116,9 +152,15 @@ class TrackyEvent {
     )
   }
 
+  /**
+   * _extractClasses
+   * @returns {Array}
+   * @private
+     */
   _extractClasses() {
     let bps = this._options.breakpoints;
     let classArray = [];
+
     bps.forEach(
       (bp) => {
         for (let c in bp.css) {
@@ -127,10 +169,16 @@ class TrackyEvent {
           }
         }
       }
-    )
+    );
+
     return classArray;
   }
 
+  /**
+   * classify
+   * @param domNode
+   * @param value
+     */
   classify(domNode, value = {absolute: 0, percent: 0}) {
 
     let bp = this._options.breakpoints;
@@ -197,6 +245,11 @@ class TrackyEvent {
 
   }
 
+  /**
+   * attachClasses
+   * @param domNode
+   * @param classNames
+     */
   attachClasses(domNode, classNames) {
 
     let available = this._classNames;

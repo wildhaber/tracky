@@ -2,6 +2,11 @@ import TrackyEvent from './tracky.event';
 
 class TrackyScroll extends TrackyEvent {
 
+  /**
+   * _listener
+   * @param domNode
+   * @private
+     */
   _listener(domNode) {
 
     let position = this._getScrollPosition(domNode);
@@ -15,6 +20,10 @@ class TrackyScroll extends TrackyEvent {
 
   }
 
+  /**
+   * bindEvent
+   * @param domNode
+     */
   bindEvent(domNode) {
     domNode.addEventListener(
       'scroll',
@@ -22,10 +31,22 @@ class TrackyScroll extends TrackyEvent {
     );
   }
 
+  /**
+   * _percentRound
+   * @param value
+   * @returns {number}
+   * @private
+     */
   _percentRound(value) {
-    return (parseFloat(value.toFixed(2)) * 100);
+    return parseInt((parseFloat(value.toFixed(2)) * 100), 10);
   }
 
+  /**
+   * _getScrollPosition
+   * @param domNode
+   * @returns {*}
+   * @private
+     */
   _getScrollPosition(domNode) {
     if (this._isBody(domNode)) {
 
@@ -63,6 +84,9 @@ class TrackyScroll extends TrackyEvent {
     }
   }
 
+  /**
+   * bindBodyEvent
+   */
   bindBodyEvent() {
 
     window.addEventListener(
@@ -70,6 +94,9 @@ class TrackyScroll extends TrackyEvent {
     );
   }
 
+  /**
+   * unbindBodyEvent
+   */
   unbindBodyEvent() {
     window.removeEventListener(
       'scroll',
@@ -78,16 +105,29 @@ class TrackyScroll extends TrackyEvent {
 
   }
 
+  /**
+   * unbindEvent
+   * @param domNode
+     */
   unbindEvent(domNode) {
     domNode.removeEventListener(
       'scroll', this._bindListener
     );
   }
 
+  /**
+   * _isBody
+   * @param domNode
+   * @returns {boolean}
+   * @private
+     */
   _isBody(domNode) {
     return (domNode.nodeName === 'BODY');
   }
 
+  /**
+   * bindEvents
+   */
   bindEvents() {
 
     this.getNodes().forEach(
@@ -107,6 +147,9 @@ class TrackyScroll extends TrackyEvent {
     );
   }
 
+  /**
+   * unbindEvents
+   */
   unbindEvents() {
 
     this.getNodes().forEach(
@@ -127,6 +170,9 @@ class TrackyScroll extends TrackyEvent {
   }
 
 
+  /**
+   * onStart
+   */
   onStart() {
 
     // Ugly but necessary to keep this-context combined with eventListener add/remove
@@ -160,6 +206,9 @@ class TrackyScroll extends TrackyEvent {
 
   }
 
+  /**
+   * onStop
+   */
   onStop() {
     this.unbindEvents();
   }

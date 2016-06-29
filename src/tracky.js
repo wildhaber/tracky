@@ -130,6 +130,12 @@ class Tracky {
     );
   }
 
+  /**
+   * _getEvensOptions
+   * @param evt
+   * @returns {Object}
+   * @private
+     */
   _getEventsOptions(evt = null) {
     if (evt) {
       if (typeof this._options.events[evt] !== 'undefined') {
@@ -140,14 +146,15 @@ class Tracky {
     }
   }
 
+  /**
+   * _bindListeners
+   * @private
+     */
   _bindListeners() {
-    console.log(this._listeners);
-    console.log(this._options);
     this._listeners.forEach(
       (l) => {
         let options = this._getEventsOptions(l.key);
-        console.log(options);
-        if (typeof options.enabled !== 'undefined' && options.enabled === true) {
+        if (typeof options.enable !== 'undefined' && options.enable === true) {
           l.instance = new l.class(l.key, this, options, this._options);
         }
       }
