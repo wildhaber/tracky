@@ -362,6 +362,12 @@
 	        }
 	      }
 	    }
+	
+	    /**
+	     * _startGlobalWatcher
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_startGlobalWatcher',
 	    value: function _startGlobalWatcher() {
@@ -382,6 +388,48 @@
 	
 	      var targetNode = document.body;
 	      observer.observe(targetNode, observerConfig);
+	    }
+	
+	    /**
+	     * disable
+	     * @param feature
+	     */
+	
+	  }, {
+	    key: 'disable',
+	    value: function disable() {
+	      var feature = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+	
+	      var _features = typeof feature === 'string' ? [feature] : feature;
+	
+	      if (typeof this._listeners !== 'undefined' && this._listeners.length) {
+	        this._listeners.forEach(function (listener) {
+	          if ((_features && _features.indexOf(listener.key) > -1 || !_features) && typeof listener.instance !== 'undefined') {
+	            listener.instance.disable();
+	          }
+	        });
+	      }
+	    }
+	
+	    /**
+	     * enable
+	     * @param feature
+	     */
+	
+	  }, {
+	    key: 'enable',
+	    value: function enable() {
+	      var feature = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+	
+	      var _features = typeof feature === 'string' ? [feature] : feature;
+	
+	      if (typeof this._listeners !== 'undefined' && this._listeners.length) {
+	        this._listeners.forEach(function (listener) {
+	          if ((_features && _features.indexOf(listener.key) > -1 || !_features) && typeof listener.instance !== 'undefined') {
+	            listener.instance.enable();
+	          }
+	        });
+	      }
 	    }
 	  }]);
 	
@@ -615,8 +663,10 @@
 	          n.forEach(function (_n) {
 	            if (_this3._isBody(_n)) {
 	              _this3.unbindBodyEvent();
+	              _this3.cleanupClasses(document.body);
 	            } else {
 	              _this3.unbindEvent(_n);
+	              _this3.cleanupClasses(_n);
 	            }
 	          });
 	        }
@@ -701,10 +751,8 @@
 	      nodes.forEach(function (_n) {
 	        if (_this6._isBody(_n)) {
 	          _this6.unbindBodyEvent();
-	          _this6.cleanupClasses(document.body);
 	        } else {
 	          _this6.unbindEvent(_n);
-	          _this6.cleanupClasses(_n);
 	        }
 	      });
 	    }
@@ -914,6 +962,7 @@
 	    this._tracky = tracky;
 	    this._options = options;
 	    this._globalOptions = globalOptions;
+	    this._enabled = options.enable;
 	
 	    this._options.breakpoints = this._transformBreakpoints(options.breakpoints);
 	    this._classNames = this._extractClasses();
@@ -940,7 +989,9 @@
 	  }, {
 	    key: 'start',
 	    value: function start() {
-	      this.onStart();
+	      if (this._enabled) {
+	        this.onStart();
+	      }
 	    }
 	
 	    /**
@@ -950,7 +1001,9 @@
 	  }, {
 	    key: 'stop',
 	    value: function stop() {
-	      this.onStop();
+	      if (this._enabled) {
+	        this.onStop();
+	      }
 	    }
 	
 	    /**
@@ -961,7 +1014,9 @@
 	  }, {
 	    key: 'add',
 	    value: function add(nodes) {
-	      this.onAdd(nodes);
+	      if (this._enabled) {
+	        this.onAdd(nodes);
+	      }
 	    }
 	
 	    /**
@@ -972,7 +1027,21 @@
 	  }, {
 	    key: 'remove',
 	    value: function remove(nodes) {
-	      this.onRemove(nodes);
+	      if (this._enabled) {
+	        this.onRemove(nodes);
+	      }
+	    }
+	  }, {
+	    key: 'enable',
+	    value: function enable() {
+	      this._enabled = true;
+	      this.start();
+	    }
+	  }, {
+	    key: 'disable',
+	    value: function disable() {
+	      this.stop();
+	      this._enabled = false;
 	    }
 	
 	    /**
