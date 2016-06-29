@@ -132,6 +132,21 @@
 
     window.setTimeout(
       function () {
+        console.log('Disable - features (all).');
+        t.disable();
+      }, 4000
+    );
+
+
+    window.setTimeout(
+      function () {
+        console.log('Re-Enable-Features - only scroll');
+        t.enable('scroll');
+      }, 15000
+    );
+
+    window.setTimeout(
+      function () {
         console.log(' remove selector -> p');
         t.removeSelector('p')
       }, 7000
