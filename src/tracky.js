@@ -188,7 +188,7 @@ class Tracky {
       (n) => {
         n.forEach(
           (_n) => {
-            if(flatten.indexOf(_n) === -1) {
+            if (flatten.indexOf(_n) === -1) {
               flatten.push(_n);
             }
           }
@@ -263,7 +263,10 @@ class Tracky {
 
   }
 
-
+  /**
+   * _startGlobalWatcher
+   * @private
+   */
   _startGlobalWatcher() {
 
     var observer = new MutationObserver(
@@ -289,6 +292,64 @@ class Tracky {
 
     var targetNode = document.body;
     observer.observe(targetNode, observerConfig);
+
+  }
+
+
+  /**
+   * disable
+   * @param feature
+   */
+  disable(feature = null) {
+    let _features = (typeof feature === 'string') ? [feature] : feature;
+
+    if (typeof this._listeners !== 'undefined' && this._listeners.length) {
+      this._listeners.forEach(
+        (listener) => {
+          if ((
+              (
+                _features &&
+                _features.indexOf(listener.key) > -1
+              ) ||
+              !_features
+            )
+            &&
+            typeof listener.instance !== 'undefined'
+          ) {
+            listener.instance.disable();
+          }
+        }
+      );
+    }
+
+  }
+
+
+  /**
+   * enable
+   * @param feature
+   */
+  enable(feature = null) {
+    let _features = (typeof feature === 'string') ? [feature] : feature;
+
+    if (typeof this._listeners !== 'undefined' && this._listeners.length) {
+      this._listeners.forEach(
+        (listener) => {
+          if ((
+              (
+                _features &&
+                _features.indexOf(listener.key) > -1
+              ) ||
+              !_features
+            )
+            &&
+            typeof listener.instance !== 'undefined'
+          ) {
+            listener.instance.enable();
+          }
+        }
+      );
+    }
 
   }
 

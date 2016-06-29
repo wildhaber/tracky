@@ -13,6 +13,7 @@ class TrackyEvent {
     this._tracky = tracky;
     this._options = options;
     this._globalOptions = globalOptions;
+    this._enabled = options.enable;
 
     this._options.breakpoints = this._transformBreakpoints(options.breakpoints);
     this._classNames = this._extractClasses();
@@ -33,14 +34,18 @@ class TrackyEvent {
    * start
    */
   start() {
-    this.onStart();
+    if(this._enabled) {
+      this.onStart();
+    }
   }
 
   /**
    * stop
    */
   stop() {
-    this.onStop();
+    if(this._enabled) {
+      this.onStop();
+    }
   }
 
   /**
@@ -48,7 +53,9 @@ class TrackyEvent {
    * @param nodes
    */
   add(nodes) {
-    this.onAdd(nodes);
+    if(this._enabled) {
+      this.onAdd(nodes);
+    }
   }
 
   /**
@@ -56,7 +63,19 @@ class TrackyEvent {
    * @param nodes
    */
   remove(nodes) {
-    this.onRemove(nodes);
+    if(this._enabled) {
+      this.onRemove(nodes);
+    }
+  }
+
+  enable() {
+    this._enabled = true;
+    this.start();
+  }
+
+  disable() {
+    this.stop();
+    this._enabled = false;
   }
 
   /**

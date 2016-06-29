@@ -166,8 +166,10 @@ class TrackyScroll extends TrackyEvent {
             (_n) => {
               if (this._isBody(_n)) {
                 this.unbindBodyEvent();
+                this.cleanupClasses(document.body);
               } else {
                 this.unbindEvent(_n);
+                this.cleanupClasses(_n);
               }
             }
           );
@@ -246,10 +248,8 @@ class TrackyScroll extends TrackyEvent {
       (_n) => {
         if (this._isBody(_n)) {
           this.unbindBodyEvent();
-          this.cleanupClasses(document.body);
         } else {
           this.unbindEvent(_n);
-          this.cleanupClasses(_n);
         }
       }
     );
