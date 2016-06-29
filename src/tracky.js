@@ -1,6 +1,6 @@
-var defaultOptions = {
-  enableScroll: true,
-};
+import defaultOptions from './tracky.options';
+import TrackyScroll from './tracky.scroll';
+import _extend from 'deep-assign';
 
 class Tracky {
 
@@ -10,7 +10,12 @@ class Tracky {
     this.registerSelectors(selector, true);
 
     // Set Options
-    this._options = Object.assign(defaultOptions, options);
+    this._options = _extend(defaultOptions, options);
+
+    // Set Listeners
+    this._listeners = [{class: TrackyScroll, key: 'scroll'}]; // Todo: load from external resources
+
+    this._bindListeners();
 
   }
 
@@ -121,6 +126,30 @@ class Tracky {
           (typeof s === 'string') && !!s &&
           s.charAt(0) !== '-'
         );
+      }
+    );
+  }
+
+  _getEventsOptions(evt = null) {
+    if (evt) {
+      if (typeof this._options.events[evt] !== 'undefined') {
+        return this._options.events[evt];
+      }
+    } else {
+      return {};
+    }
+  }
+
+  _bindListeners() {
+    console.log(this._listeners);
+    console.log(this._options);
+    this._listeners.forEach(
+      (l) => {
+        let options = this._getEventsOptions(l.key);
+        console.log(options);
+        if (typeof options.enabled !== 'undefined' && options.enabled === true) {
+          l.instance = new l.class(l.key, this, options, this._options);
+        }
       }
     );
   }
