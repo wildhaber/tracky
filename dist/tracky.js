@@ -99,10 +99,14 @@
 	    // Set Options
 	    this._options = (0, _deepAssign2.default)(_tracky2.default, options);
 	
+	    // Set nodes
+	    this._nodes = [];
+	
 	    // Set Listeners
 	    this._listeners = [{ class: _tracky4.default, key: 'scroll' }]; // Todo: load from external resources
 	
 	    this._bindListeners();
+	    this._startGlobalWatcher();
 	  }
 	
 	  /**
@@ -136,7 +140,7 @@
 	      this._selectors = [].concat(_toConsumableArray(new Set(this._selectors)));
 	
 	      // Register Nodes
-	      this.refreshNodes();
+	      this._handleNodeChanges();
 	
 	      return this._selectors;
 	    }
@@ -187,7 +191,7 @@
 	          });
 	
 	          if (_found > 0) {
-	            _this.refreshNodes();
+	            _this._handleNodeChanges();
 	          }
 	        })();
 	      }
@@ -212,6 +216,23 @@
 	    }
 	
 	    /**
+	     * getNodesCount
+	     * @returns {number}
+	     */
+	
+	  }, {
+	    key: 'getNodesCount',
+	    value: function getNodesCount() {
+	      var counter = 0;
+	      if (typeof this._nodes !== 'undefined' && this._nodes.length > 0) {
+	        for (var l = this._nodes.length; l; l--) {
+	          counter += this._nodes[l - 1].length;
+	        }
+	      }
+	      return counter;
+	    }
+	
+	    /**
 	     * cleanupSelector
 	     * @private
 	     */
@@ -226,6 +247,14 @@
 	        return typeof s === 'string' && !!s && s.charAt(0) !== '-';
 	      });
 	    }
+	
+	    /**
+	     * _getEvensOptions
+	     * @param evt
+	     * @returns {Object}
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_getEventsOptions',
 	    value: function _getEventsOptions() {
@@ -239,20 +268,120 @@
 	        return {};
 	      }
 	    }
+	
+	    /**
+	     * _bindListeners
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_bindListeners',
 	    value: function _bindListeners() {
 	      var _this2 = this;
 	
-	      console.log(this._listeners);
-	      console.log(this._options);
 	      this._listeners.forEach(function (l) {
 	        var options = _this2._getEventsOptions(l.key);
-	        console.log(options);
-	        if (typeof options.enabled !== 'undefined' && options.enabled === true) {
+	        if (typeof options.enable !== 'undefined' && options.enable === true) {
 	          l.instance = new l.class(l.key, _this2, options, _this2._options);
 	        }
 	      });
+	    }
+	  }, {
+	    key: '_flattenNodes',
+	    value: function _flattenNodes() {
+	      var nodes = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+	
+	
+	      var flatten = [];
+	      var _nodes = nodes || (typeof this._nodes !== 'undefined' ? this._nodes : []);
+	
+	      _nodes.forEach(function (n) {
+	        n.forEach(function (_n) {
+	          if (flatten.indexOf(_n) === -1) {
+	            flatten.push(_n);
+	          }
+	        });
+	      });
+	      return flatten;
+	    }
+	  }, {
+	    key: 'findNodeDiff',
+	    value: function findNodeDiff(prior, current) {
+	
+	      var priorFlatten = Object.freeze(this._flattenNodes(prior));
+	      var currentFlatten = Object.freeze(this._flattenNodes(current));
+	
+	      var newlyAdded = currentFlatten.filter(function (n) {
+	        return priorFlatten.indexOf(n) === -1;
+	      });
+	
+	      var removed = priorFlatten.filter(function (n) {
+	        return currentFlatten.indexOf(n) === -1;
+	      });
+	
+	      return {
+	        added: newlyAdded,
+	        removed: removed,
+	        changes: newlyAdded.length + removed.length
+	      };
+	    }
+	  }, {
+	    key: 'getNodesFingerprint',
+	    value: function getNodesFingerprint() {
+	      var fp = '';
+	      if (typeof this._nodes !== 'undefined') {
+	        this._nodes.forEach(function (n) {
+	          fp += n.length;
+	        });
+	      }
+	      return fp;
+	    }
+	  }, {
+	    key: '_handleNodeChanges',
+	    value: function _handleNodeChanges() {
+	
+	      var priorNodes = Object.freeze(this._nodes);
+	      this.refreshNodes();
+	      var currentNodes = Object.freeze(this._nodes);
+	
+	      var diffNodes = this.findNodeDiff(priorNodes, currentNodes);
+	
+	      if (diffNodes.changes > 0) {
+	
+	        if (typeof this._listeners !== 'undefined' && this._listeners.length) {
+	          this._listeners.forEach(function (listener) {
+	            if (typeof listener.instance !== 'undefined') {
+	              if (diffNodes.added.length) {
+	                listener.instance.add(diffNodes.added);
+	              }
+	              if (diffNodes.removed.length) {
+	                listener.instance.remove(diffNodes.removed);
+	              }
+	            }
+	          });
+	        }
+	      }
+	    }
+	  }, {
+	    key: '_startGlobalWatcher',
+	    value: function _startGlobalWatcher() {
+	      var _this3 = this;
+	
+	      var observer = new MutationObserver(function (mutations) {
+	        mutations.forEach(function (mutation) {
+	          if (typeof mutation.addedNodes !== 'undefined' && mutation.addedNodes && mutation.addedNodes.length > 0) {
+	            _this3._handleNodeChanges();
+	          }
+	        });
+	      });
+	
+	      // Notify me of everything!
+	      var observerConfig = {
+	        childList: true
+	      };
+	
+	      var targetNode = document.body;
+	      observer.observe(targetNode, observerConfig);
 	    }
 	  }]);
 	
@@ -279,7 +408,7 @@
 	  classBtPrefix: 'bt-',
 	  events: {
 	    scroll: {
-	      enabled: true,
+	      enable: true,
 	      breakpoints: []
 	    }
 	  }
@@ -320,6 +449,13 @@
 	
 	  _createClass(TrackyScroll, [{
 	    key: '_listener',
+	
+	
+	    /**
+	     * _listener
+	     * @param domNode
+	     * @private
+	     */
 	    value: function _listener(domNode) {
 	
 	      var position = this._getScrollPosition(domNode);
@@ -329,16 +465,41 @@
 	        percent: position.percent.top
 	      });
 	    }
+	
+	    /**
+	     * bindEvent
+	     * @param domNode
+	     */
+	
 	  }, {
 	    key: 'bindEvent',
 	    value: function bindEvent(domNode) {
+	
 	      domNode.addEventListener('scroll', this._bindListener);
+	
+	      this._listener(domNode);
 	    }
+	
+	    /**
+	     * _percentRound
+	     * @param value
+	     * @returns {number}
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_percentRound',
 	    value: function _percentRound(value) {
-	      return parseFloat(value.toFixed(2)) * 100;
+	      return parseInt(parseFloat(value.toFixed(2)) * 100, 10);
 	    }
+	
+	    /**
+	     * _getScrollPosition
+	     * @param domNode
+	     * @returns {*}
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_getScrollPosition',
 	    value: function _getScrollPosition(domNode) {
@@ -370,27 +531,58 @@
 	        };
 	      }
 	    }
+	
+	    /**
+	     * bindBodyEvent
+	     */
+	
 	  }, {
 	    key: 'bindBodyEvent',
 	    value: function bindBodyEvent() {
 	
 	      window.addEventListener('scroll', this._bindBodyListener);
+	
+	      this._listener(document.body);
 	    }
+	
+	    /**
+	     * unbindBodyEvent
+	     */
+	
 	  }, {
 	    key: 'unbindBodyEvent',
 	    value: function unbindBodyEvent() {
 	      window.removeEventListener('scroll', this._bindBodyListener);
 	    }
+	
+	    /**
+	     * unbindEvent
+	     * @param domNode
+	     */
+	
 	  }, {
 	    key: 'unbindEvent',
 	    value: function unbindEvent(domNode) {
 	      domNode.removeEventListener('scroll', this._bindListener);
 	    }
+	
+	    /**
+	     * _isBody
+	     * @param domNode
+	     * @returns {boolean}
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_isBody',
 	    value: function _isBody(domNode) {
 	      return domNode.nodeName === 'BODY';
 	    }
+	
+	    /**
+	     * bindEvents
+	     */
+	
 	  }, {
 	    key: 'bindEvents',
 	    value: function bindEvents() {
@@ -408,6 +600,11 @@
 	        }
 	      });
 	    }
+	
+	    /**
+	     * unbindEvents
+	     */
+	
 	  }, {
 	    key: 'unbindEvents',
 	    value: function unbindEvents() {
@@ -425,6 +622,11 @@
 	        }
 	      });
 	    }
+	
+	    /**
+	     * onStart
+	     */
+	
 	  }, {
 	    key: 'onStart',
 	    value: function onStart() {
@@ -456,72 +658,79 @@
 	
 	      this.bindEvents();
 	    }
+	
+	    /**
+	     * onStop
+	     */
+	
 	  }, {
 	    key: 'onStop',
 	    value: function onStop() {
 	      this.unbindEvents();
 	    }
-	  }]);
 	
-	  return TrackyScroll;
-	}(_tracky2.default);
+	    /**
+	     * onAdd
+	     * @param nodes
+	     */
 	
-	exports.default = TrackyScroll;
-
-/***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var TrackyEvent = function () {
-	  function TrackyEvent(eventKey) {
-	    var tracky = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-	    var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-	    var globalOptions = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
-	
-	    _classCallCheck(this, TrackyEvent);
-	
-	    this._key = eventKey;
-	    this._tracky = tracky;
-	    this._options = options;
-	    this._globalOptions = globalOptions;
-	
-	    this._options.breakpoints = this._transformBreakpoints(options.breakpoints);
-	    this._classNames = this._extractClasses();
-	
-	    this.start();
-	  }
-	
-	  _createClass(TrackyEvent, [{
-	    key: 'getNodes',
-	    value: function getNodes() {
-	      return this._tracky && this._tracky instanceof Tracky ? this._tracky._nodes : [];
-	    }
 	  }, {
-	    key: 'start',
-	    value: function start() {
-	      this.onStart();
+	    key: 'onAdd',
+	    value: function onAdd(nodes) {
+	      var _this5 = this;
+	
+	      nodes.forEach(function (_n) {
+	        if (_this5._isBody(_n)) {
+	          _this5.bindBodyEvent();
+	        } else {
+	          _this5.bindEvent(_n);
+	        }
+	      });
 	    }
+	
+	    /**
+	     * onRemove
+	     * @param nodes
+	     */
+	
 	  }, {
-	    key: 'stop',
-	    value: function stop() {
-	      this.onStop();
+	    key: 'onRemove',
+	    value: function onRemove(nodes) {
+	      var _this6 = this;
+	
+	      nodes.forEach(function (_n) {
+	        if (_this6._isBody(_n)) {
+	          _this6.unbindBodyEvent();
+	          _this6.cleanupClasses(document.body);
+	        } else {
+	          _this6.unbindEvent(_n);
+	          _this6.cleanupClasses(_n);
+	        }
+	      });
 	    }
+	
+	    /**
+	     * _buildClassName
+	     * @param value
+	     * @param modifier
+	     * @returns {string}
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_buildClassName',
 	    value: function _buildClassName(value, modifier) {
 	      var o = this._globalOptions;
 	      return o.classPrefix + this._key + '-' + modifier + value + o.classSuffix;
 	    }
+	
+	    /**
+	     * _transformValue
+	     * @param value
+	     * @returns {*}
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_transformValue',
 	    value: function _transformValue(value) {
@@ -538,14 +747,22 @@
 	
 	      return t;
 	    }
+	
+	    /**
+	     * _transformBreakpoints
+	     * @param bp
+	     * @returns {Array|*}
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_transformBreakpoints',
 	    value: function _transformBreakpoints(bp) {
-	      var _this = this;
+	      var _this7 = this;
 	
 	      return bp.map(function (p) {
 	
-	        var go = _this._globalOptions;
+	        var go = _this7._globalOptions;
 	
 	        var prep = typeof p === 'number' || typeof p === 'string' ? {
 	          value: p
@@ -565,18 +782,18 @@
 	        }
 	
 	        if (hasValue) {
-	          prep.value = _this._transformValue(prep.value);
+	          prep.value = _this7._transformValue(prep.value);
 	        } else if (hasBetween) {
-	          prep.min = _this._transformValue(prep.min);
-	          prep.max = _this._transformValue(prep.max);
+	          prep.min = _this7._transformValue(prep.min);
+	          prep.max = _this7._transformValue(prep.max);
 	        }
 	
 	        return {
 	          css: {
-	            lt: !hasBetween ? hasCustomCss && typeof prep.css.lt !== 'undefined' ? prep.css.lt : _this._buildClassName(prep.value[0] + (prep.value[1].percent ? 'pc' : ''), go.classLtPrefix) : null,
-	            gt: !hasBetween ? hasCustomCss && typeof prep.css.gt !== 'undefined' ? prep.css.gt : _this._buildClassName(prep.value[0] + (prep.value[1].percent ? 'pc' : ''), go.classGtPrefix) : null,
-	            eq: !hasBetween ? hasCustomCss && typeof prep.css.eq !== 'undefined' ? prep.css.eq : _this._buildClassName(prep.value[0] + (prep.value[1].percent ? 'pc' : ''), go.classEqPrefix) : null,
-	            bt: hasBetween ? hasCustomCss && typeof prep.css.bt !== 'undefined' ? prep.css.bt : _this._buildClassName(prep.min[0] + (prep.min[1].percent ? 'pc' : '') + '-' + prep.max[0] + (prep.max[1].percent ? 'pc' : ''), go.classBtPrefix) : null
+	            lt: !hasBetween ? hasCustomCss && typeof prep.css.lt !== 'undefined' ? prep.css.lt : _this7._buildClassName(prep.value[0] + (prep.value[1].percent ? 'pc' : ''), go.classLtPrefix) : null,
+	            gt: !hasBetween ? hasCustomCss && typeof prep.css.gt !== 'undefined' ? prep.css.gt : _this7._buildClassName(prep.value[0] + (prep.value[1].percent ? 'pc' : ''), go.classGtPrefix) : null,
+	            eq: !hasBetween ? hasCustomCss && typeof prep.css.eq !== 'undefined' ? prep.css.eq : _this7._buildClassName(prep.value[0] + (prep.value[1].percent ? 'pc' : ''), go.classEqPrefix) : null,
+	            bt: hasBetween ? hasCustomCss && typeof prep.css.bt !== 'undefined' ? prep.css.bt : _this7._buildClassName(prep.min[0] + (prep.min[1].percent ? 'pc' : '') + '-' + prep.max[0] + (prep.max[1].percent ? 'pc' : ''), go.classBtPrefix) : null
 	          },
 	          applyLt: !hasBetween && typeof prep.applyLt !== 'undefined' ? prep.applyLt : !hasBetween,
 	          applyGt: !hasBetween && typeof prep.applyGt !== 'undefined' ? prep.applyGt : !hasBetween,
@@ -588,11 +805,19 @@
 	        };
 	      });
 	    }
+	
+	    /**
+	     * _extractClasses
+	     * @returns {Array}
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_extractClasses',
 	    value: function _extractClasses() {
 	      var bps = this._options.breakpoints;
 	      var classArray = [];
+	
 	      bps.forEach(function (bp) {
 	        for (var c in bp.css) {
 	          if (bp.css[c]) {
@@ -600,8 +825,16 @@
 	          }
 	        }
 	      });
+	
 	      return classArray;
 	    }
+	
+	    /**
+	     * classify
+	     * @param domNode
+	     * @param value
+	     */
+	
 	  }, {
 	    key: 'classify',
 	    value: function classify(domNode) {
@@ -639,6 +872,115 @@
 	
 	      this.attachClasses(domNode, classes);
 	    }
+	  }]);
+	
+	  return TrackyScroll;
+	}(_tracky2.default);
+	
+	exports.default = TrackyScroll;
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var TrackyEvent = function () {
+	
+	  /**
+	   * constructor
+	   * @param eventKey
+	   * @param tracky
+	   * @param options
+	   * @param globalOptions
+	   */
+	
+	  function TrackyEvent(eventKey) {
+	    var tracky = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+	    var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+	    var globalOptions = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+	
+	    _classCallCheck(this, TrackyEvent);
+	
+	    this._key = eventKey;
+	    this._tracky = tracky;
+	    this._options = options;
+	    this._globalOptions = globalOptions;
+	
+	    this._options.breakpoints = this._transformBreakpoints(options.breakpoints);
+	    this._classNames = this._extractClasses();
+	
+	    this.start();
+	  }
+	
+	  /**
+	   * getNodes
+	   * @returns {Array}
+	   */
+	
+	
+	  _createClass(TrackyEvent, [{
+	    key: 'getNodes',
+	    value: function getNodes() {
+	      return this._tracky && this._tracky instanceof Tracky ? this._tracky._nodes : [];
+	    }
+	
+	    /**
+	     * start
+	     */
+	
+	  }, {
+	    key: 'start',
+	    value: function start() {
+	      this.onStart();
+	    }
+	
+	    /**
+	     * stop
+	     */
+	
+	  }, {
+	    key: 'stop',
+	    value: function stop() {
+	      this.onStop();
+	    }
+	
+	    /**
+	     * add
+	     * @param nodes
+	     */
+	
+	  }, {
+	    key: 'add',
+	    value: function add(nodes) {
+	      this.onAdd(nodes);
+	    }
+	
+	    /**
+	     * remove
+	     * @param nodes
+	     */
+	
+	  }, {
+	    key: 'remove',
+	    value: function remove(nodes) {
+	      this.onRemove(nodes);
+	    }
+	
+	    /**
+	     * attachClasses
+	     * @param domNode
+	     * @param classNames
+	     */
+	
 	  }, {
 	    key: 'attachClasses',
 	    value: function attachClasses(domNode, classNames) {
@@ -673,16 +1015,25 @@
 	            }
 	          }
 	        })();
-	      } else {
+	      }
+	    }
 	
-	        // Old Browser Fallback
+	    /**
+	     * cleanupClasses
+	     * @param domNode
+	       */
 	
-	        var newClassNames = current.replace(/\s+/g, ' ').split(' ').filter(function (c) {
-	          return available.indexOf(c) === -1;
-	        }).concat(classNames).join(' ');
+	  }, {
+	    key: 'cleanupClasses',
+	    value: function cleanupClasses(domNode) {
 	
-	        if (current !== newClassNames) {
-	          domNode.className = newClassNames;
+	      var available = this._classNames;
+	
+	      if (domNode.classList) {
+	        if (available.length) {
+	          for (var l = available.length; l; l--) {
+	            domNode.classList.remove(available[l - 1]);
+	          }
 	        }
 	      }
 	    }

@@ -12,10 +12,14 @@ class Tracky {
     // Set Options
     this._options = _extend(defaultOptions, options);
 
+    // Set nodes
+    this._nodes = [];
+
     // Set Listeners
     this._listeners = [{class: TrackyScroll, key: 'scroll'}]; // Todo: load from external resources
 
     this._bindListeners();
+    this._startGlobalWatcher();
 
   }
 
@@ -44,7 +48,7 @@ class Tracky {
     this._selectors = [...new Set(this._selectors)];
 
     // Register Nodes
-    this.refreshNodes();
+    this._handleNodeChanges();
 
     return this._selectors;
 
@@ -86,7 +90,7 @@ class Tracky {
       );
 
       if (_found > 0) {
-        this.refreshNodes();
+        this._handleNodeChanges();
       }
 
     }
@@ -115,6 +119,20 @@ class Tracky {
   }
 
   /**
+   * getNodesCount
+   * @returns {number}
+   */
+  getNodesCount() {
+    let counter = 0;
+    if (typeof this._nodes !== 'undefined' && this._nodes.length > 0) {
+      for (let l = this._nodes.length; l; l--) {
+        counter += this._nodes[l - 1].length;
+      }
+    }
+    return counter;
+  }
+
+  /**
    * cleanupSelector
    * @private
    */
@@ -130,6 +148,12 @@ class Tracky {
     );
   }
 
+  /**
+   * _getEvensOptions
+   * @param evt
+   * @returns {Object}
+   * @private
+   */
   _getEventsOptions(evt = null) {
     if (evt) {
       if (typeof this._options.events[evt] !== 'undefined') {
@@ -140,18 +164,132 @@ class Tracky {
     }
   }
 
+  /**
+   * _bindListeners
+   * @private
+   */
   _bindListeners() {
-    console.log(this._listeners);
-    console.log(this._options);
     this._listeners.forEach(
       (l) => {
         let options = this._getEventsOptions(l.key);
-        console.log(options);
-        if (typeof options.enabled !== 'undefined' && options.enabled === true) {
+        if (typeof options.enable !== 'undefined' && options.enable === true) {
           l.instance = new l.class(l.key, this, options, this._options);
         }
       }
     );
+  }
+
+  _flattenNodes(nodes = null) {
+
+    let flatten = [];
+    let _nodes = nodes || ((typeof this._nodes !== 'undefined') ? this._nodes : []);
+
+    _nodes.forEach(
+      (n) => {
+        n.forEach(
+          (_n) => {
+            if(flatten.indexOf(_n) === -1) {
+              flatten.push(_n);
+            }
+          }
+        );
+      }
+    );
+    return flatten;
+  }
+
+  findNodeDiff(prior, current) {
+
+    let priorFlatten = Object.freeze(this._flattenNodes(prior));
+    let currentFlatten = Object.freeze(this._flattenNodes(current));
+
+    let newlyAdded = currentFlatten.filter(
+      (n) => {
+        return (priorFlatten.indexOf(n) === -1);
+      }
+    );
+
+    let removed = priorFlatten.filter(
+      (n) => {
+        return (currentFlatten.indexOf(n) === -1);
+      }
+    );
+
+    return {
+      added: newlyAdded,
+      removed: removed,
+      changes: (newlyAdded.length + removed.length)
+    };
+  }
+
+  getNodesFingerprint() {
+    let fp = '';
+    if (typeof this._nodes !== 'undefined') {
+      this._nodes.forEach(
+        (n) => {
+          fp += n.length;
+        }
+      );
+    }
+    return fp;
+  }
+
+  _handleNodeChanges() {
+
+    let priorNodes = Object.freeze(this._nodes);
+    this.refreshNodes();
+    let currentNodes = Object.freeze(this._nodes);
+
+    let diffNodes = this.findNodeDiff(priorNodes, currentNodes);
+
+    if (diffNodes.changes > 0) {
+
+      if (typeof this._listeners !== 'undefined' && this._listeners.length) {
+        this._listeners.forEach(
+          (listener) => {
+            if (typeof listener.instance !== 'undefined') {
+              if (diffNodes.added.length) {
+                listener.instance.add(diffNodes.added);
+              }
+              if (diffNodes.removed.length) {
+                listener.instance.remove(diffNodes.removed);
+              }
+            }
+          }
+        );
+      }
+
+    }
+
+  }
+
+
+  _startGlobalWatcher() {
+
+    var observer = new MutationObserver(
+      (mutations) => {
+        mutations.forEach(
+          (mutation) => {
+            if (
+              typeof mutation.addedNodes !== 'undefined' &&
+              mutation.addedNodes &&
+              mutation.addedNodes.length > 0
+            ) {
+              this._handleNodeChanges();
+            }
+          }
+        );
+      }
+    );
+
+    // Notify me of everything!
+    var observerConfig = {
+      childList: true
+    };
+
+    var targetNode = document.body;
+    observer.observe(targetNode, observerConfig);
+
   }
 
 }
