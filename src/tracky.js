@@ -192,7 +192,7 @@ class Tracky {
               flatten.push(_n);
             }
           }
-        )
+        );
       }
     );
     return flatten;
