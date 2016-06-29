@@ -99,10 +99,14 @@
 	    // Set Options
 	    this._options = (0, _deepAssign2.default)(_tracky2.default, options);
 	
+	    // Set nodes
+	    this._nodes = [];
+	
 	    // Set Listeners
 	    this._listeners = [{ class: _tracky4.default, key: 'scroll' }]; // Todo: load from external resources
 	
 	    this._bindListeners();
+	    this._startGlobalWatcher();
 	  }
 	
 	  /**
@@ -136,7 +140,7 @@
 	      this._selectors = [].concat(_toConsumableArray(new Set(this._selectors)));
 	
 	      // Register Nodes
-	      this.refreshNodes();
+	      this._handleNodeChanges();
 	
 	      return this._selectors;
 	    }
@@ -187,7 +191,7 @@
 	          });
 	
 	          if (_found > 0) {
-	            _this.refreshNodes();
+	            _this._handleNodeChanges();
 	          }
 	        })();
 	      }
@@ -212,6 +216,23 @@
 	    }
 	
 	    /**
+	     * getNodesCount
+	     * @returns {number}
+	     */
+	
+	  }, {
+	    key: 'getNodesCount',
+	    value: function getNodesCount() {
+	      var counter = 0;
+	      if (typeof this._nodes !== 'undefined' && this._nodes.length > 0) {
+	        for (var l = this._nodes.length; l; l--) {
+	          counter += this._nodes[l - 1].length;
+	        }
+	      }
+	      return counter;
+	    }
+	
+	    /**
 	     * cleanupSelector
 	     * @private
 	     */
@@ -232,7 +253,7 @@
 	     * @param evt
 	     * @returns {Object}
 	     * @private
-	       */
+	     */
 	
 	  }, {
 	    key: '_getEventsOptions',
@@ -251,7 +272,7 @@
 	    /**
 	     * _bindListeners
 	     * @private
-	       */
+	     */
 	
 	  }, {
 	    key: '_bindListeners',
@@ -264,6 +285,103 @@
 	          l.instance = new l.class(l.key, _this2, options, _this2._options);
 	        }
 	      });
+	    }
+	  }, {
+	    key: '_flattenNodes',
+	    value: function _flattenNodes() {
+	      var nodes = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+	
+	
+	      var flatten = [];
+	      var _nodes = nodes || (typeof this._nodes !== 'undefined' ? this._nodes : []);
+	
+	      _nodes.forEach(function (n) {
+	        n.forEach(function (_n) {
+	          if (flatten.indexOf(_n) === -1) {
+	            flatten.push(_n);
+	          }
+	        });
+	      });
+	      return flatten;
+	    }
+	  }, {
+	    key: 'findNodeDiff',
+	    value: function findNodeDiff(prior, current) {
+	
+	      var priorFlatten = Object.freeze(this._flattenNodes(prior));
+	      var currentFlatten = Object.freeze(this._flattenNodes(current));
+	
+	      var newlyAdded = currentFlatten.filter(function (n) {
+	        return priorFlatten.indexOf(n) === -1;
+	      });
+	
+	      var removed = priorFlatten.filter(function (n) {
+	        return currentFlatten.indexOf(n) === -1;
+	      });
+	
+	      return {
+	        added: newlyAdded,
+	        removed: removed,
+	        changes: newlyAdded.length + removed.length
+	      };
+	    }
+	  }, {
+	    key: 'getNodesFingerprint',
+	    value: function getNodesFingerprint() {
+	      var fp = '';
+	      if (typeof this._nodes !== 'undefined') {
+	        this._nodes.forEach(function (n) {
+	          fp += n.length;
+	        });
+	      }
+	      return fp;
+	    }
+	  }, {
+	    key: '_handleNodeChanges',
+	    value: function _handleNodeChanges() {
+	
+	      var priorNodes = Object.freeze(this._nodes);
+	      this.refreshNodes();
+	      var currentNodes = Object.freeze(this._nodes);
+	
+	      var diffNodes = this.findNodeDiff(priorNodes, currentNodes);
+	
+	      if (diffNodes.changes > 0) {
+	
+	        if (typeof this._listeners !== 'undefined' && this._listeners.length) {
+	          this._listeners.forEach(function (listener) {
+	            if (typeof listener.instance !== 'undefined') {
+	              if (diffNodes.added.length) {
+	                listener.instance.add(diffNodes.added);
+	              }
+	              if (diffNodes.removed.length) {
+	                listener.instance.remove(diffNodes.removed);
+	              }
+	            }
+	          });
+	        }
+	      }
+	    }
+	  }, {
+	    key: '_startGlobalWatcher',
+	    value: function _startGlobalWatcher() {
+	      var _this3 = this;
+	
+	      var observer = new MutationObserver(function (mutations) {
+	        mutations.forEach(function (mutation) {
+	          if (typeof mutation.addedNodes !== 'undefined' && mutation.addedNodes && mutation.addedNodes.length > 0) {
+	            _this3._handleNodeChanges();
+	          }
+	        });
+	      });
+	
+	      // Notify me of everything!
+	      var observerConfig = {
+	        childList: true
+	      };
+	
+	      var targetNode = document.body;
+	      observer.observe(targetNode, observerConfig);
 	    }
 	  }]);
 	
@@ -337,7 +455,7 @@
 	     * _listener
 	     * @param domNode
 	     * @private
-	       */
+	     */
 	    value: function _listener(domNode) {
 	
 	      var position = this._getScrollPosition(domNode);
@@ -351,12 +469,15 @@
 	    /**
 	     * bindEvent
 	     * @param domNode
-	       */
+	     */
 	
 	  }, {
 	    key: 'bindEvent',
 	    value: function bindEvent(domNode) {
+	
 	      domNode.addEventListener('scroll', this._bindListener);
+	
+	      this._listener(domNode);
 	    }
 	
 	    /**
@@ -364,7 +485,7 @@
 	     * @param value
 	     * @returns {number}
 	     * @private
-	       */
+	     */
 	
 	  }, {
 	    key: '_percentRound',
@@ -377,7 +498,7 @@
 	     * @param domNode
 	     * @returns {*}
 	     * @private
-	       */
+	     */
 	
 	  }, {
 	    key: '_getScrollPosition',
@@ -420,6 +541,8 @@
 	    value: function bindBodyEvent() {
 	
 	      window.addEventListener('scroll', this._bindBodyListener);
+	
+	      this._listener(document.body);
 	    }
 	
 	    /**
@@ -435,7 +558,7 @@
 	    /**
 	     * unbindEvent
 	     * @param domNode
-	       */
+	     */
 	
 	  }, {
 	    key: 'unbindEvent',
@@ -448,7 +571,7 @@
 	     * @param domNode
 	     * @returns {boolean}
 	     * @private
-	       */
+	     */
 	
 	  }, {
 	    key: '_isBody',
@@ -545,6 +668,46 @@
 	    value: function onStop() {
 	      this.unbindEvents();
 	    }
+	
+	    /**
+	     * onAdd
+	     * @param nodes
+	     */
+	
+	  }, {
+	    key: 'onAdd',
+	    value: function onAdd(nodes) {
+	      var _this5 = this;
+	
+	      nodes.forEach(function (_n) {
+	        if (_this5._isBody(_n)) {
+	          _this5.bindBodyEvent();
+	        } else {
+	          _this5.bindEvent(_n);
+	        }
+	      });
+	    }
+	
+	    /**
+	     * onRemove
+	     * @param nodes
+	     */
+	
+	  }, {
+	    key: 'onRemove',
+	    value: function onRemove(nodes) {
+	      var _this6 = this;
+	
+	      nodes.forEach(function (_n) {
+	        if (_this6._isBody(_n)) {
+	          _this6.unbindBodyEvent();
+	          _this6.cleanupClasses(document.body);
+	        } else {
+	          _this6.unbindEvent(_n);
+	          _this6.cleanupClasses(_n);
+	        }
+	      });
+	    }
 	  }]);
 	
 	  return TrackyScroll;
@@ -574,7 +737,7 @@
 	   * @param tracky
 	   * @param options
 	   * @param globalOptions
-	     */
+	   */
 	
 	  function TrackyEvent(eventKey) {
 	    var tracky = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
@@ -597,7 +760,7 @@
 	  /**
 	   * getNodes
 	   * @returns {Array}
-	     */
+	   */
 	
 	
 	  _createClass(TrackyEvent, [{
@@ -627,12 +790,34 @@
 	    }
 	
 	    /**
+	     * add
+	     * @param nodes
+	     */
+	
+	  }, {
+	    key: 'add',
+	    value: function add(nodes) {
+	      this.onAdd(nodes);
+	    }
+	
+	    /**
+	     * remove
+	     * @param nodes
+	     */
+	
+	  }, {
+	    key: 'remove',
+	    value: function remove(nodes) {
+	      this.onRemove(nodes);
+	    }
+	
+	    /**
 	     * _buildClassName
 	     * @param value
 	     * @param modifier
 	     * @returns {string}
-	       * @private
-	       */
+	     * @private
+	     */
 	
 	  }, {
 	    key: '_buildClassName',
@@ -646,7 +831,7 @@
 	     * @param value
 	     * @returns {*}
 	     * @private
-	       */
+	     */
 	
 	  }, {
 	    key: '_transformValue',
@@ -670,7 +855,7 @@
 	     * @param bp
 	     * @returns {Array|*}
 	     * @private
-	       */
+	     */
 	
 	  }, {
 	    key: '_transformBreakpoints',
@@ -727,7 +912,7 @@
 	     * _extractClasses
 	     * @returns {Array}
 	     * @private
-	       */
+	     */
 	
 	  }, {
 	    key: '_extractClasses',
@@ -750,7 +935,7 @@
 	     * classify
 	     * @param domNode
 	     * @param value
-	       */
+	     */
 	
 	  }, {
 	    key: 'classify',
@@ -794,7 +979,7 @@
 	     * attachClasses
 	     * @param domNode
 	     * @param classNames
-	       */
+	     */
 	
 	  }, {
 	    key: 'attachClasses',
@@ -830,16 +1015,25 @@
 	            }
 	          }
 	        })();
-	      } else {
+	      }
+	    }
 	
-	        // Old Browser Fallback
+	    /**
+	     * cleanupClasses
+	     * @param domNode
+	       */
 	
-	        var newClassNames = current.replace(/\s+/g, ' ').split(' ').filter(function (c) {
-	          return available.indexOf(c) === -1;
-	        }).concat(classNames).join(' ');
+	  }, {
+	    key: 'cleanupClasses',
+	    value: function cleanupClasses(domNode) {
 	
-	        if (current !== newClassNames) {
-	          domNode.className = newClassNames;
+	      var available = this._classNames;
+	
+	      if (domNode.classList) {
+	        if (available.length) {
+	          for (var l = available.length; l; l--) {
+	            domNode.classList.remove(available[l - 1]);
+	          }
 	        }
 	      }
 	    }
