@@ -6,7 +6,7 @@ class TrackyScroll extends TrackyEvent {
    * _listener
    * @param domNode
    * @private
-     */
+   */
   _listener(domNode) {
 
     let position = this._getScrollPosition(domNode);
@@ -23,12 +23,16 @@ class TrackyScroll extends TrackyEvent {
   /**
    * bindEvent
    * @param domNode
-     */
+   */
   bindEvent(domNode) {
+
     domNode.addEventListener(
       'scroll',
       this._bindListener
     );
+
+    this._listener(domNode);
+
   }
 
   /**
@@ -36,7 +40,7 @@ class TrackyScroll extends TrackyEvent {
    * @param value
    * @returns {number}
    * @private
-     */
+   */
   _percentRound(value) {
     return parseInt((parseFloat(value.toFixed(2)) * 100), 10);
   }
@@ -46,7 +50,7 @@ class TrackyScroll extends TrackyEvent {
    * @param domNode
    * @returns {*}
    * @private
-     */
+   */
   _getScrollPosition(domNode) {
     if (this._isBody(domNode)) {
 
@@ -92,6 +96,9 @@ class TrackyScroll extends TrackyEvent {
     window.addEventListener(
       'scroll', this._bindBodyListener
     );
+
+    this._listener(document.body);
+
   }
 
   /**
@@ -108,7 +115,7 @@ class TrackyScroll extends TrackyEvent {
   /**
    * unbindEvent
    * @param domNode
-     */
+   */
   unbindEvent(domNode) {
     domNode.removeEventListener(
       'scroll', this._bindListener
@@ -120,7 +127,7 @@ class TrackyScroll extends TrackyEvent {
    * @param domNode
    * @returns {boolean}
    * @private
-     */
+   */
   _isBody(domNode) {
     return (domNode.nodeName === 'BODY');
   }
@@ -211,6 +218,41 @@ class TrackyScroll extends TrackyEvent {
    */
   onStop() {
     this.unbindEvents();
+  }
+
+  /**
+   * onAdd
+   * @param nodes
+   */
+  onAdd(nodes) {
+    nodes.forEach(
+      (_n) => {
+        if (this._isBody(_n)) {
+          this.bindBodyEvent();
+        } else {
+          this.bindEvent(_n);
+        }
+      }
+    );
+  }
+
+  /**
+   * onRemove
+   * @param nodes
+   */
+  onRemove(nodes) {
+
+    nodes.forEach(
+      (_n) => {
+        if (this._isBody(_n)) {
+          this.unbindBodyEvent();
+          this.cleanupClasses(document.body);
+        } else {
+          this.unbindEvent(_n);
+          this.cleanupClasses(_n);
+        }
+      }
+    );
   }
 
 }
