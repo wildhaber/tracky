@@ -350,9 +350,9 @@
 	    key: '_handleNodeChanges',
 	    value: function _handleNodeChanges() {
 	
-	      var priorNodes = Object.freeze(this._nodes);
+	      var priorNodes = this._nodes ? Object.freeze(this._nodes) : [];
 	      this.refreshNodes();
-	      var currentNodes = Object.freeze(this._nodes);
+	      var currentNodes = this._nodes ? Object.freeze(this._nodes) : [];
 	
 	      var diffNodes = this.findNodeDiff(priorNodes, currentNodes);
 	
