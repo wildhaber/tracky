@@ -166,8 +166,10 @@ class TrackyScroll extends TrackyEvent {
             (_n) => {
               if (this._isBody(_n)) {
                 this.unbindBodyEvent();
+                this.cleanupClasses(document.body);
               } else {
                 this.unbindEvent(_n);
+                this.cleanupClasses(_n);
               }
             }
           );
@@ -189,7 +191,7 @@ class TrackyScroll extends TrackyEvent {
 
     // It becomes even worse if we consider that body/window needs a separate handling
     // but necessary to keep this-context combined with eventListener add/remove
-    var last_known_scroll_position = 0;
+    var last_known_scroll_position = 0; // eslint-disable-line no-unused-vars
     var ticking = false;
 
     this._bindBodyListener = (e) => {
@@ -246,10 +248,8 @@ class TrackyScroll extends TrackyEvent {
       (_n) => {
         if (this._isBody(_n)) {
           this.unbindBodyEvent();
-          this.cleanupClasses(document.body);
         } else {
           this.unbindEvent(_n);
-          this.cleanupClasses(_n);
         }
       }
     );
@@ -321,7 +321,7 @@ class TrackyScroll extends TrackyEvent {
           prep.css = {
             eq: prep.css,
             bt: prep.css
-          }
+          };
         }
 
         if (hasValue) {
@@ -359,10 +359,10 @@ class TrackyScroll extends TrackyEvent {
           value: (hasValue) ? prep.value : null,
           min: (hasBetween) ? prep.min : null,
           max: (hasBetween) ? prep.max : null,
-        }
+        };
 
       }
-    )
+    );
   }
 
   /**

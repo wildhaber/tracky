@@ -45,7 +45,9 @@ class Tracky {
     }
 
     // Cleanup Unique selectors
-    this._selectors = [...new Set(this._selectors)];
+    this._selectors = this._selectors.filter((value, index, self) => {
+      return self.indexOf(value) === index;
+    });
 
     // Register Nodes
     this._handleNodeChanges();
@@ -169,30 +171,32 @@ class Tracky {
    * @private
    */
   _bindListeners() {
-    this._listeners.forEach(
-      (l) => {
-        let options = this._getEventsOptions(l.key);
-        if (typeof options.enable !== 'undefined' && options.enable === true) {
-          l.instance = new l.class(l.key, this, options, this._options);
+    if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length)
+      this._listeners.forEach(
+        (l) => {
+          let options = this._getEventsOptions(l.key);
+          if (typeof options.enable !== 'undefined' && options.enable === true) {
+            l.instance = new l.class(l.key, this, options, this._options);
+          }
         }
-      }
-    );
+      );
   }
 
   _flattenNodes(nodes = null) {
 
     let flatten = [];
-    let _nodes = nodes || ((typeof this._nodes !== 'undefined') ? this._nodes : []);
-
+    let _nodes = nodes || ((typeof this._nodes !== 'undefined' && this._nodes) ? this._nodes : []);
     _nodes.forEach(
       (n) => {
-        n.forEach(
-          (_n) => {
-            if(flatten.indexOf(_n) === -1) {
-              flatten.push(_n);
+        if (n && n.length) {
+          n.forEach(
+            (_n) => {
+              if (flatten.indexOf(_n) === -1) {
+                flatten.push(_n);
+              }
             }
-          }
-        );
+          );
+        }
       }
     );
     return flatten;
@@ -236,15 +240,15 @@ class Tracky {
 
   _handleNodeChanges() {
 
-    let priorNodes = Object.freeze(this._nodes);
+    let priorNodes = (this._nodes) ? Object.freeze(this._nodes) : [];
     this.refreshNodes();
-    let currentNodes = Object.freeze(this._nodes);
+    let currentNodes = (this._nodes) ? Object.freeze(this._nodes) : [];
 
     let diffNodes = this.findNodeDiff(priorNodes, currentNodes);
 
     if (diffNodes.changes > 0) {
 
-      if (typeof this._listeners !== 'undefined' && this._listeners.length) {
+      if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
         this._listeners.forEach(
           (listener) => {
             if (typeof listener.instance !== 'undefined') {
@@ -263,8 +267,15 @@ class Tracky {
 
   }
 
-
+  /**
+   * _startGlobalWatcher
+   * @private
+   */
   _startGlobalWatcher() {
+
+    if (typeof MutationObserver === 'undefined') {
+      return;
+    }
 
     var observer = new MutationObserver(
       (mutations) => {
@@ -289,6 +300,62 @@ class Tracky {
 
     var targetNode = document.body;
     observer.observe(targetNode, observerConfig);
+
+  }
+
+
+  /**
+   * disable
+   * @param feature
+   */
+  disable(feature = null) {
+    let _features = (typeof feature === 'string') ? [feature] : feature;
+
+    if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
+      this._listeners.forEach(
+        (listener) => {
+          if ((
+              (
+                _features &&
+                _features.indexOf(listener.key) > -1
+              ) || !_features
+            )
+            &&
+            typeof listener.instance !== 'undefined'
+          ) {
+            listener.instance.disable();
+          }
+        }
+      );
+    }
+
+  }
+
+
+  /**
+   * enable
+   * @param feature
+   */
+  enable(feature = null) {
+    let _features = (typeof feature === 'string') ? [feature] : feature;
+
+    if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
+      this._listeners.forEach(
+        (listener) => {
+          if ((
+              (
+                _features &&
+                _features.indexOf(listener.key) > -1
+              ) || !_features
+            )
+            &&
+            typeof listener.instance !== 'undefined'
+          ) {
+            listener.instance.enable();
+          }
+        }
+      );
+    }
 
   }
 

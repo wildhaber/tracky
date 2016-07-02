@@ -60,7 +60,7 @@
 </div>
 
 
-<script src="../../dist/tracky.js"></script>
+<script src="../../dist/tracky.min.js"></script>
 <script>
   // Not really happy with this, but...
   window.Tracky = Tracky.default;
@@ -128,6 +128,21 @@
         console.log('Add three selectors - .take-me-in and #custom-element and .not-yet-known-element');
         t.addSelector(['#custom-element', '.take-me-in', '.not-yet-known-element'])
       }, 3000
+    );
+
+    window.setTimeout(
+      function () {
+        console.log('Disable - features (all).');
+        t.disable();
+      }, 4000
+    );
+
+
+    window.setTimeout(
+      function () {
+        console.log('Re-Enable-Features - only scroll');
+        t.enable('scroll');
+      }, 15000
     );
 
     window.setTimeout(

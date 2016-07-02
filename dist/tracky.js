@@ -1,3 +1,10 @@
+/**
+ * tracky.js - a helper module streamlining user interaction into css-classes
+ * @version 1.0.0
+ * @author Copyright (c) Raphael Wildhaber < https://github.com/wildhaber >
+ * @url https://github.com/wildhaber/tracky#readme
+ * @license MIT
+ */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -44,7 +51,9 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
+	
+	/*eslint-disable */
 	
 	// Not happy with this solution
 	var Tracky = __webpack_require__(1);
@@ -81,8 +90,6 @@
 	var _deepAssign2 = _interopRequireDefault(_deepAssign);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -137,7 +144,9 @@
 	      }
 	
 	      // Cleanup Unique selectors
-	      this._selectors = [].concat(_toConsumableArray(new Set(this._selectors)));
+	      this._selectors = this._selectors.filter(function (value, index, self) {
+	        return self.indexOf(value) === index;
+	      });
 	
 	      // Register Nodes
 	      this._handleNodeChanges();
@@ -279,7 +288,7 @@
 	    value: function _bindListeners() {
 	      var _this2 = this;
 	
-	      this._listeners.forEach(function (l) {
+	      if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) this._listeners.forEach(function (l) {
 	        var options = _this2._getEventsOptions(l.key);
 	        if (typeof options.enable !== 'undefined' && options.enable === true) {
 	          l.instance = new l.class(l.key, _this2, options, _this2._options);
@@ -293,14 +302,15 @@
 	
 	
 	      var flatten = [];
-	      var _nodes = nodes || (typeof this._nodes !== 'undefined' ? this._nodes : []);
-	
+	      var _nodes = nodes || (typeof this._nodes !== 'undefined' && this._nodes ? this._nodes : []);
 	      _nodes.forEach(function (n) {
-	        n.forEach(function (_n) {
-	          if (flatten.indexOf(_n) === -1) {
-	            flatten.push(_n);
-	          }
-	        });
+	        if (n && n.length) {
+	          n.forEach(function (_n) {
+	            if (flatten.indexOf(_n) === -1) {
+	              flatten.push(_n);
+	            }
+	          });
+	        }
 	      });
 	      return flatten;
 	    }
@@ -340,15 +350,15 @@
 	    key: '_handleNodeChanges',
 	    value: function _handleNodeChanges() {
 	
-	      var priorNodes = Object.freeze(this._nodes);
+	      var priorNodes = this._nodes ? Object.freeze(this._nodes) : [];
 	      this.refreshNodes();
-	      var currentNodes = Object.freeze(this._nodes);
+	      var currentNodes = this._nodes ? Object.freeze(this._nodes) : [];
 	
 	      var diffNodes = this.findNodeDiff(priorNodes, currentNodes);
 	
 	      if (diffNodes.changes > 0) {
 	
-	        if (typeof this._listeners !== 'undefined' && this._listeners.length) {
+	        if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
 	          this._listeners.forEach(function (listener) {
 	            if (typeof listener.instance !== 'undefined') {
 	              if (diffNodes.added.length) {
@@ -362,10 +372,20 @@
 	        }
 	      }
 	    }
+	
+	    /**
+	     * _startGlobalWatcher
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_startGlobalWatcher',
 	    value: function _startGlobalWatcher() {
 	      var _this3 = this;
+	
+	      if (typeof MutationObserver === 'undefined') {
+	        return;
+	      }
 	
 	      var observer = new MutationObserver(function (mutations) {
 	        mutations.forEach(function (mutation) {
@@ -382,6 +402,48 @@
 	
 	      var targetNode = document.body;
 	      observer.observe(targetNode, observerConfig);
+	    }
+	
+	    /**
+	     * disable
+	     * @param feature
+	     */
+	
+	  }, {
+	    key: 'disable',
+	    value: function disable() {
+	      var feature = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+	
+	      var _features = typeof feature === 'string' ? [feature] : feature;
+	
+	      if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
+	        this._listeners.forEach(function (listener) {
+	          if ((_features && _features.indexOf(listener.key) > -1 || !_features) && typeof listener.instance !== 'undefined') {
+	            listener.instance.disable();
+	          }
+	        });
+	      }
+	    }
+	
+	    /**
+	     * enable
+	     * @param feature
+	     */
+	
+	  }, {
+	    key: 'enable',
+	    value: function enable() {
+	      var feature = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+	
+	      var _features = typeof feature === 'string' ? [feature] : feature;
+	
+	      if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
+	        this._listeners.forEach(function (listener) {
+	          if ((_features && _features.indexOf(listener.key) > -1 || !_features) && typeof listener.instance !== 'undefined') {
+	            listener.instance.enable();
+	          }
+	        });
+	      }
 	    }
 	  }]);
 	
@@ -615,8 +677,10 @@
 	          n.forEach(function (_n) {
 	            if (_this3._isBody(_n)) {
 	              _this3.unbindBodyEvent();
+	              _this3.cleanupClasses(document.body);
 	            } else {
 	              _this3.unbindEvent(_n);
+	              _this3.cleanupClasses(_n);
 	            }
 	          });
 	        }
@@ -639,7 +703,7 @@
 	
 	      // It becomes even worse if we consider that body/window needs a separate handling
 	      // but necessary to keep this-context combined with eventListener add/remove
-	      var last_known_scroll_position = 0;
+	      var last_known_scroll_position = 0; // eslint-disable-line no-unused-vars
 	      var ticking = false;
 	
 	      this._bindBodyListener = function (e) {
@@ -701,10 +765,8 @@
 	      nodes.forEach(function (_n) {
 	        if (_this6._isBody(_n)) {
 	          _this6.unbindBodyEvent();
-	          _this6.cleanupClasses(document.body);
 	        } else {
 	          _this6.unbindEvent(_n);
-	          _this6.cleanupClasses(_n);
 	        }
 	      });
 	    }
@@ -914,6 +976,7 @@
 	    this._tracky = tracky;
 	    this._options = options;
 	    this._globalOptions = globalOptions;
+	    this._enabled = options.enable;
 	
 	    this._options.breakpoints = this._transformBreakpoints(options.breakpoints);
 	    this._classNames = this._extractClasses();
@@ -930,7 +993,7 @@
 	  _createClass(TrackyEvent, [{
 	    key: 'getNodes',
 	    value: function getNodes() {
-	      return this._tracky && this._tracky instanceof Tracky ? this._tracky._nodes : [];
+	      return this._tracky && typeof this._tracky._nodes !== 'undefined' ? this._tracky._nodes : [];
 	    }
 	
 	    /**
@@ -940,7 +1003,9 @@
 	  }, {
 	    key: 'start',
 	    value: function start() {
-	      this.onStart();
+	      if (this._enabled) {
+	        this.onStart();
+	      }
 	    }
 	
 	    /**
@@ -950,7 +1015,9 @@
 	  }, {
 	    key: 'stop',
 	    value: function stop() {
-	      this.onStop();
+	      if (this._enabled) {
+	        this.onStop();
+	      }
 	    }
 	
 	    /**
@@ -961,7 +1028,9 @@
 	  }, {
 	    key: 'add',
 	    value: function add(nodes) {
-	      this.onAdd(nodes);
+	      if (this._enabled) {
+	        this.onAdd(nodes);
+	      }
 	    }
 	
 	    /**
@@ -972,7 +1041,21 @@
 	  }, {
 	    key: 'remove',
 	    value: function remove(nodes) {
-	      this.onRemove(nodes);
+	      if (this._enabled) {
+	        this.onRemove(nodes);
+	      }
+	    }
+	  }, {
+	    key: 'enable',
+	    value: function enable() {
+	      this._enabled = true;
+	      this.start();
+	    }
+	  }, {
+	    key: 'disable',
+	    value: function disable() {
+	      this.stop();
+	      this._enabled = false;
 	    }
 	
 	    /**
@@ -1021,7 +1104,7 @@
 	    /**
 	     * cleanupClasses
 	     * @param domNode
-	       */
+	     */
 	
 	  }, {
 	    key: 'cleanupClasses',
