@@ -45,7 +45,9 @@ class Tracky {
     }
 
     // Cleanup Unique selectors
-    this._selectors = [...new Set(this._selectors)];
+    this._selectors = this._selectors.filter((value, index, self) => {
+      return self.indexOf(value) === index;
+    });
 
     // Register Nodes
     this._handleNodeChanges();
