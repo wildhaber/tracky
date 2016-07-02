@@ -18,15 +18,15 @@ describe(
 
     it(
       'empty constructor asserts body as selector', function () {
-        let t = new _tracky();
+        var t = new _tracky();
         expect(t._selectors).toContain('body');
       }
     );
 
     it(
       'define custom selectors in constructor', function () {
-        let customSelectors = ['custom1', 'custom2'];
-        let t = new _tracky(customSelectors);
+        var customSelectors = ['custom1', 'custom2'];
+        var t = new _tracky(customSelectors);
         expect(t._selectors).toContain(customSelectors[0]);
         expect(t._selectors).toContain(customSelectors[1]);
         expect(t._selectors).not.toContain('body');
@@ -40,11 +40,11 @@ describe(
 
     it(
       'should add selector without replace flag', function () {
-        let customSelectors = ['custom1', 'custom2'];
-        let addonSelectors = ['addon1', 'addon2'];
-        let addonSelector = 'addon3';
+        var customSelectors = ['custom1', 'custom2'];
+        var addonSelectors = ['addon1', 'addon2'];
+        var addonSelector = 'addon3';
 
-        let t = new _tracky(customSelectors);
+        var t = new _tracky(customSelectors);
         t.registerSelectors(addonSelectors);
         t.registerSelectors(addonSelector);
 
@@ -58,11 +58,11 @@ describe(
 
     it(
       'should return current bound selectors', function () {
-        let customSelectors = ['custom1', 'custom2'];
-        let addonSelectors = ['addon1', 'addon2'];
-        let addonSelector = 'addon3';
+        var customSelectors = ['custom1', 'custom2'];
+        var addonSelectors = ['addon1', 'addon2'];
+        var addonSelector = 'addon3';
 
-        let t = new _tracky(customSelectors);
+        var t = new _tracky(customSelectors);
         t.registerSelectors(addonSelectors);
         t.registerSelectors(addonSelector);
 
@@ -72,11 +72,11 @@ describe(
 
     it(
       'should clear selectors with replace flag', function () {
-        let customSelectors = ['custom1', 'custom2'];
-        let addonSelectors = ['addon1', 'addon2'];
-        let addonSelector = 'addon3';
+        var customSelectors = ['custom1', 'custom2'];
+        var addonSelectors = ['addon1', 'addon2'];
+        var addonSelector = 'addon3';
 
-        let t = new _tracky(customSelectors);
+        var t = new _tracky(customSelectors);
         t.registerSelectors(addonSelectors);
         t.registerSelectors(addonSelector);
         t.registerSelectors(addonSelector, true);
@@ -99,11 +99,11 @@ describe(
 
         it(
             'should add selector without replace flag', function () {
-                let customSelectors = ['custom1', 'custom2'];
-                let addonSelectors = ['addon1', 'addon2'];
-                let addonSelector = 'addon3';
+                var customSelectors = ['custom1', 'custom2'];
+                var addonSelectors = ['addon1', 'addon2'];
+                var addonSelector = 'addon3';
 
-                let t = new _tracky(customSelectors);
+                var t = new _tracky(customSelectors);
                 t.addSelector(addonSelectors)
                     .addSelector(addonSelector);
 
@@ -118,10 +118,10 @@ describe(
         it(
             'should return Tracky instance', function () {
 
-                let addonSelector = 'addon3';
+                var addonSelector = 'addon3';
 
-                let t = new _tracky();
-                let _i = t.addSelector(addonSelector);
+                var t = new _tracky();
+                var _i = t.addSelector(addonSelector);
 
                 expect(_i).toEqual(jasmine.any(_tracky));
             }
@@ -130,9 +130,9 @@ describe(
         it(
             'should ignore anything but valid selector strings', function () {
 
-                let invalidSelectors = [true, false, null, '', '-invalid'];
+                var invalidSelectors = [true, false, null, '', '-invalid'];
 
-                let t = new _tracky();
+                var t = new _tracky();
                 t.addSelector(invalidSelectors);
 
                 expect(t._selectors).not.toContain(invalidSelectors[0]);
@@ -148,9 +148,9 @@ describe(
         it(
             'should ignore double entries', function () {
 
-                let doubleSelectors = ['double', 'double'];
+                var doubleSelectors = ['double', 'double'];
 
-                let t = new _tracky(doubleSelectors);
+                var t = new _tracky(doubleSelectors);
                 t.addSelector(doubleSelectors)
                     .addSelector('double');
 
@@ -167,9 +167,9 @@ describe(
 
         it(
             'should remove a selector', function () {
-                let customSelectors = ['custom1', 'custom2'];
+                var customSelectors = ['custom1', 'custom2'];
 
-                let t = new _tracky(customSelectors);
+                var t = new _tracky(customSelectors);
                 t.removeSelector(customSelectors[0]);
 
                 expect(t._selectors).not.toContain(customSelectors[0]);
@@ -182,9 +182,9 @@ describe(
         it(
             'should return Tracky instance', function () {
 
-                let addonSelector = 'addon3';
+                var addonSelector = 'addon3';
 
-                let t = new _tracky(addonSelector);
+                var t = new _tracky(addonSelector);
 
                 //console.log(instanceof t);
 
@@ -196,7 +196,7 @@ describe(
         it(
             'should ignore removing a not existing selector', function () {
 
-                let t = new _tracky();
+                var t = new _tracky();
                 t.removeSelector('this-selector-does-not-exist');
 
                 expect(t._selectors.length).toEqual(1);
@@ -206,9 +206,9 @@ describe(
         it(
             'should ignore double entries', function () {
 
-                let doubleSelectors = ['double', 'double'];
+                var doubleSelectors = ['double', 'double'];
 
-                let t = new _tracky(doubleSelectors);
+                var t = new _tracky(doubleSelectors);
                 t.addSelector(doubleSelectors)
                     .addSelector('double');
 
