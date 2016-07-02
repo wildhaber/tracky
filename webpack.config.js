@@ -1,6 +1,24 @@
 const webpack = require('webpack');
+const pkg = require('./package.json');
 
-module.exports = {
+
+/**
+ * Create Preamble
+ */
+
+
+const preamble = `/**
+ * tracky.js - ${pkg.description}
+ * @version ${pkg.version}
+ * @author Copyright (c) ${pkg.author.name} < ${pkg.author.url} >
+ * @url ${pkg.homepage}
+ * @license ${pkg.license}
+ */
+ `;
+
+/* CONFIG */
+
+var wpConfig = {
     entry: "./src/tracky.es5.js",
     output: {
         path: __dirname + '/dist',
@@ -24,6 +42,35 @@ module.exports = {
             {
                 'window.Tracky': './tracky'
             }
-        )
+        ),
+        new webpack.BannerPlugin(preamble, {
+          raw : true
+        })
     ]
 };
+
+
+
+/***
+ * Production environment
+ */
+
+const production = (process.argv.indexOf('--prod') > -1);
+
+if(production) {
+
+  // Add .min.js to current filename
+  var fnArr = wpConfig.output.filename.split('.js');
+  fnArr.push('.min.js');
+
+  wpConfig.output.filename = fnArr.join('');
+
+  wpConfig.plugins.push(new webpack.optimize.UglifyJsPlugin({
+    screwIe8 : true,
+    mangle: true,
+    comments: /@(license|preserve|cc_on)/g,
+  }));
+
+}
+
+module.exports = wpConfig;

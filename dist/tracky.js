@@ -1,3 +1,11 @@
+/**
+ * tracky.js - a helper module streamlining user interaction into css-classes
+ * @version 1.0.0
+ * @author Copyright (c) Raphael Wildhaber < https://github.com/wildhaber >
+ * @url https://github.com/wildhaber/tracky#readme
+ * @license MIT
+ */
+ 
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -44,7 +52,9 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
+	
+	/*eslint-disable */
 	
 	// Not happy with this solution
 	var Tracky = __webpack_require__(1);
@@ -279,7 +289,7 @@
 	    value: function _bindListeners() {
 	      var _this2 = this;
 	
-	      this._listeners.forEach(function (l) {
+	      if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) this._listeners.forEach(function (l) {
 	        var options = _this2._getEventsOptions(l.key);
 	        if (typeof options.enable !== 'undefined' && options.enable === true) {
 	          l.instance = new l.class(l.key, _this2, options, _this2._options);
@@ -293,14 +303,15 @@
 	
 	
 	      var flatten = [];
-	      var _nodes = nodes || (typeof this._nodes !== 'undefined' ? this._nodes : []);
-	
+	      var _nodes = nodes || (typeof this._nodes !== 'undefined' && this._nodes ? this._nodes : []);
 	      _nodes.forEach(function (n) {
-	        n.forEach(function (_n) {
-	          if (flatten.indexOf(_n) === -1) {
-	            flatten.push(_n);
-	          }
-	        });
+	        if (n && n.length) {
+	          n.forEach(function (_n) {
+	            if (flatten.indexOf(_n) === -1) {
+	              flatten.push(_n);
+	            }
+	          });
+	        }
 	      });
 	      return flatten;
 	    }
@@ -348,7 +359,7 @@
 	
 	      if (diffNodes.changes > 0) {
 	
-	        if (typeof this._listeners !== 'undefined' && this._listeners.length) {
+	        if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
 	          this._listeners.forEach(function (listener) {
 	            if (typeof listener.instance !== 'undefined') {
 	              if (diffNodes.added.length) {
@@ -372,6 +383,10 @@
 	    key: '_startGlobalWatcher',
 	    value: function _startGlobalWatcher() {
 	      var _this3 = this;
+	
+	      if (typeof MutationObserver === 'undefined') {
+	        return;
+	      }
 	
 	      var observer = new MutationObserver(function (mutations) {
 	        mutations.forEach(function (mutation) {
@@ -402,7 +417,7 @@
 	
 	      var _features = typeof feature === 'string' ? [feature] : feature;
 	
-	      if (typeof this._listeners !== 'undefined' && this._listeners.length) {
+	      if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
 	        this._listeners.forEach(function (listener) {
 	          if ((_features && _features.indexOf(listener.key) > -1 || !_features) && typeof listener.instance !== 'undefined') {
 	            listener.instance.disable();
@@ -423,7 +438,7 @@
 	
 	      var _features = typeof feature === 'string' ? [feature] : feature;
 	
-	      if (typeof this._listeners !== 'undefined' && this._listeners.length) {
+	      if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
 	        this._listeners.forEach(function (listener) {
 	          if ((_features && _features.indexOf(listener.key) > -1 || !_features) && typeof listener.instance !== 'undefined') {
 	            listener.instance.enable();
@@ -689,7 +704,7 @@
 	
 	      // It becomes even worse if we consider that body/window needs a separate handling
 	      // but necessary to keep this-context combined with eventListener add/remove
-	      var last_known_scroll_position = 0;
+	      var last_known_scroll_position = 0; // eslint-disable-line no-unused-vars
 	      var ticking = false;
 	
 	      this._bindBodyListener = function (e) {
@@ -979,7 +994,7 @@
 	  _createClass(TrackyEvent, [{
 	    key: 'getNodes',
 	    value: function getNodes() {
-	      return this._tracky && this._tracky instanceof Tracky ? this._tracky._nodes : [];
+	      return this._tracky && typeof this._tracky._nodes !== 'undefined' ? this._tracky._nodes : [];
 	    }
 	
 	    /**
@@ -1090,7 +1105,7 @@
 	    /**
 	     * cleanupClasses
 	     * @param domNode
-	       */
+	     */
 	
 	  }, {
 	    key: 'cleanupClasses',

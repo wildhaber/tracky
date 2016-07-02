@@ -27,14 +27,14 @@ class TrackyEvent {
    * @returns {Array}
    */
   getNodes() {
-    return (this._tracky && this._tracky instanceof Tracky) ? this._tracky._nodes : [];
+    return (this._tracky && typeof this._tracky._nodes !== 'undefined') ? this._tracky._nodes : [];
   }
 
   /**
    * start
    */
   start() {
-    if(this._enabled) {
+    if (this._enabled) {
       this.onStart();
     }
   }
@@ -43,7 +43,7 @@ class TrackyEvent {
    * stop
    */
   stop() {
-    if(this._enabled) {
+    if (this._enabled) {
       this.onStop();
     }
   }
@@ -53,7 +53,7 @@ class TrackyEvent {
    * @param nodes
    */
   add(nodes) {
-    if(this._enabled) {
+    if (this._enabled) {
       this.onAdd(nodes);
     }
   }
@@ -63,7 +63,7 @@ class TrackyEvent {
    * @param nodes
    */
   remove(nodes) {
-    if(this._enabled) {
+    if (this._enabled) {
       this.onRemove(nodes);
     }
   }
@@ -128,7 +128,7 @@ class TrackyEvent {
   /**
    * cleanupClasses
    * @param domNode
-     */
+   */
   cleanupClasses(domNode) {
 
     let available = this._classNames;

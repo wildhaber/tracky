@@ -1,2 +1,4 @@
+/*eslint-disable */
+
 // Not happy with this solution
-let Tracky = require("expose?Tracky!./tracky.js");
+let Tracky = require('expose?Tracky!./tracky.js');

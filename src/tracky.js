@@ -169,30 +169,32 @@ class Tracky {
    * @private
    */
   _bindListeners() {
-    this._listeners.forEach(
-      (l) => {
-        let options = this._getEventsOptions(l.key);
-        if (typeof options.enable !== 'undefined' && options.enable === true) {
-          l.instance = new l.class(l.key, this, options, this._options);
+    if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length)
+      this._listeners.forEach(
+        (l) => {
+          let options = this._getEventsOptions(l.key);
+          if (typeof options.enable !== 'undefined' && options.enable === true) {
+            l.instance = new l.class(l.key, this, options, this._options);
+          }
         }
-      }
-    );
+      );
   }
 
   _flattenNodes(nodes = null) {
 
     let flatten = [];
-    let _nodes = nodes || ((typeof this._nodes !== 'undefined') ? this._nodes : []);
-
+    let _nodes = nodes || ((typeof this._nodes !== 'undefined' && this._nodes) ? this._nodes : []);
     _nodes.forEach(
       (n) => {
-        n.forEach(
-          (_n) => {
-            if (flatten.indexOf(_n) === -1) {
-              flatten.push(_n);
+        if (n && n.length) {
+          n.forEach(
+            (_n) => {
+              if (flatten.indexOf(_n) === -1) {
+                flatten.push(_n);
+              }
             }
-          }
-        );
+          );
+        }
       }
     );
     return flatten;
@@ -244,7 +246,7 @@ class Tracky {
 
     if (diffNodes.changes > 0) {
 
-      if (typeof this._listeners !== 'undefined' && this._listeners.length) {
+      if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
         this._listeners.forEach(
           (listener) => {
             if (typeof listener.instance !== 'undefined') {
@@ -268,6 +270,10 @@ class Tracky {
    * @private
    */
   _startGlobalWatcher() {
+
+    if (typeof MutationObserver === 'undefined') {
+      return;
+    }
 
     var observer = new MutationObserver(
       (mutations) => {
@@ -303,15 +309,14 @@ class Tracky {
   disable(feature = null) {
     let _features = (typeof feature === 'string') ? [feature] : feature;
 
-    if (typeof this._listeners !== 'undefined' && this._listeners.length) {
+    if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
       this._listeners.forEach(
         (listener) => {
           if ((
               (
                 _features &&
                 _features.indexOf(listener.key) > -1
-              ) ||
-              !_features
+              ) || !_features
             )
             &&
             typeof listener.instance !== 'undefined'
@@ -332,15 +337,14 @@ class Tracky {
   enable(feature = null) {
     let _features = (typeof feature === 'string') ? [feature] : feature;
 
-    if (typeof this._listeners !== 'undefined' && this._listeners.length) {
+    if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
       this._listeners.forEach(
         (listener) => {
           if ((
               (
                 _features &&
                 _features.indexOf(listener.key) > -1
-              ) ||
-              !_features
+              ) || !_features
             )
             &&
             typeof listener.instance !== 'undefined'
