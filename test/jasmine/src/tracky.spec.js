@@ -12,7 +12,7 @@ describe(
 
     it(
       'empty constructor constructs without exception', function () {
-        expect(() => new _tracky()).not.toThrowError();
+        expect(function() { return new _tracky(); }).not.toThrowError();
       }
     );
 
