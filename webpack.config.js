@@ -7,14 +7,13 @@ const pkg = require('./package.json');
  */
 
 
-const preamble = `/**
- * tracky.js - ${pkg.description}
- * @version ${pkg.version}
- * @author Copyright (c) ${pkg.author.name} < ${pkg.author.url} >
- * @url ${pkg.homepage}
- * @license ${pkg.license}
- */
- `;
+const preamble = '/**\n' +
+' * tracky.js - '+pkg.description+'\n'+
+' * @version '+pkg.version+'\n'+
+' * @author Copyright (c) '+pkg.author.name+' < '+pkg.author.url+' >\n' +
+' * @url '+pkg.homepage+'\n'+
+' * @license '+pkg.license+'\n'+
+' */';
 
 /* CONFIG */
 

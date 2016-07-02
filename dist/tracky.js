@@ -5,7 +5,6 @@
  * @url https://github.com/wildhaber/tracky#readme
  * @license MIT
  */
- 
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
