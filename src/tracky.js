@@ -240,9 +240,9 @@ class Tracky {
 
   _handleNodeChanges() {
 
-    let priorNodes = Object.freeze(this._nodes);
+    let priorNodes = (this._nodes) ? Object.freeze(this._nodes) : [];
     this.refreshNodes();
-    let currentNodes = Object.freeze(this._nodes);
+    let currentNodes = (this._nodes) ? Object.freeze(this._nodes) : [];
 
     let diffNodes = this.findNodeDiff(priorNodes, currentNodes);
 
