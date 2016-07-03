@@ -45,9 +45,11 @@ class Tracky {
     }
 
     // Cleanup Unique selectors
-    this._selectors = this._selectors.filter((value, index, self) => {
-      return self.indexOf(value) === index;
-    });
+    this._selectors = this._selectors.filter(
+      (value, index, self) => {
+        return self.indexOf(value) === index;
+      }
+    );
 
     // Register Nodes
     this._handleNodeChanges();
@@ -136,6 +138,7 @@ class Tracky {
 
   /**
    * cleanupSelector
+   * @returns {Array}
    * @private
    */
   _cleanupSelector(selector = null) {
@@ -151,16 +154,14 @@ class Tracky {
   }
 
   /**
-   * _getEvensOptions
+   * _getEventsOptions
    * @param evt
    * @returns {Object}
    * @private
    */
   _getEventsOptions(evt = null) {
-    if (evt) {
-      if (typeof this._options.events[evt] !== 'undefined') {
-        return this._options.events[evt];
-      }
+    if (evt && typeof this._options.events[evt] !== 'undefined') {
+      return this._options.events[evt];
     } else {
       return {};
     }
@@ -182,26 +183,47 @@ class Tracky {
       );
   }
 
+  /**
+   * _flattenNodes
+   * @param nodes
+   * @returns {Array}
+   * @private
+   */
   _flattenNodes(nodes = null) {
 
     let flatten = [];
     let _nodes = nodes || ((typeof this._nodes !== 'undefined' && this._nodes) ? this._nodes : []);
-    _nodes.forEach(
-      (n) => {
-        if (n && n.length) {
-          n.forEach(
-            (_n) => {
-              if (flatten.indexOf(_n) === -1) {
-                flatten.push(_n);
+    if (
+      _nodes instanceof Array &&
+      _nodes.length
+    ) {
+      _nodes.forEach(
+        (n) => {
+          if (
+            n &&
+            n.length &&
+            typeof n.forEach !== 'undefined'
+          ) {
+            n.forEach(
+              (_n) => {
+                if (flatten.indexOf(_n) === -1) {
+                  flatten.push(_n);
+                }
               }
-            }
-          );
+            );
+          }
         }
-      }
-    );
+      );
+    }
     return flatten;
   }
 
+  /**
+   * findNodeDiff
+   * @param prior
+   * @param current
+   * @returns {{added: *, removed: *, changes: *}}
+   */
   findNodeDiff(prior, current) {
 
     let priorFlatten = Object.freeze(this._flattenNodes(prior));
@@ -226,18 +248,10 @@ class Tracky {
     };
   }
 
-  getNodesFingerprint() {
-    let fp = '';
-    if (typeof this._nodes !== 'undefined') {
-      this._nodes.forEach(
-        (n) => {
-          fp += n.length;
-        }
-      );
-    }
-    return fp;
-  }
-
+  /**
+   * _handleNodeChanges
+   * @private
+   */
   _handleNodeChanges() {
 
     let priorNodes = (this._nodes) ? Object.freeze(this._nodes) : [];
