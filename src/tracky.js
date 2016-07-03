@@ -12,10 +12,14 @@ class Tracky {
     // Set Options
     this._options = _extend(defaultOptions, options);
 
+    // Set nodes
+    this._nodes = [];
+
     // Set Listeners
     this._listeners = [{class: TrackyScroll, key: 'scroll'}]; // Todo: load from external resources
 
     this._bindListeners();
+    this._startGlobalWatcher();
 
   }
 
@@ -41,10 +45,14 @@ class Tracky {
     }
 
     // Cleanup Unique selectors
-    this._selectors = [...new Set(this._selectors)];
+    this._selectors = this._selectors.filter(
+      (value, index, self) => {
+        return self.indexOf(value) === index;
+      }
+    );
 
     // Register Nodes
-    this.refreshNodes();
+    this._handleNodeChanges();
 
     return this._selectors;
 
@@ -86,7 +94,7 @@ class Tracky {
       );
 
       if (_found > 0) {
-        this.refreshNodes();
+        this._handleNodeChanges();
       }
 
     }
@@ -115,7 +123,22 @@ class Tracky {
   }
 
   /**
+   * getNodesCount
+   * @returns {number}
+   */
+  getNodesCount() {
+    let counter = 0;
+    if (typeof this._nodes !== 'undefined' && this._nodes.length > 0) {
+      for (let l = this._nodes.length; l; l--) {
+        counter += this._nodes[l - 1].length;
+      }
+    }
+    return counter;
+  }
+
+  /**
    * cleanupSelector
+   * @returns {Array}
    * @private
    */
   _cleanupSelector(selector = null) {
@@ -130,28 +153,224 @@ class Tracky {
     );
   }
 
+  /**
+   * _getEventsOptions
+   * @param evt
+   * @returns {Object}
+   * @private
+   */
   _getEventsOptions(evt = null) {
-    if (evt) {
-      if (typeof this._options.events[evt] !== 'undefined') {
-        return this._options.events[evt];
-      }
+    if (evt && typeof this._options.events[evt] !== 'undefined') {
+      return this._options.events[evt];
     } else {
       return {};
     }
   }
 
+  /**
+   * _bindListeners
+   * @private
+   */
   _bindListeners() {
-    console.log(this._listeners);
-    console.log(this._options);
-    this._listeners.forEach(
-      (l) => {
-        let options = this._getEventsOptions(l.key);
-        console.log(options);
-        if (typeof options.enabled !== 'undefined' && options.enabled === true) {
-          l.instance = new l.class(l.key, this, options, this._options);
+    if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length)
+      this._listeners.forEach(
+        (l) => {
+          let options = this._getEventsOptions(l.key);
+          if (typeof options.enable !== 'undefined' && options.enable === true) {
+            l.instance = new l.class(l.key, this, options, this._options);
+          }
         }
+      );
+  }
+
+  /**
+   * _flattenNodes
+   * @param nodes
+   * @returns {Array}
+   * @private
+   */
+  _flattenNodes(nodes = null) {
+
+    let flatten = [];
+    let _nodes = nodes || ((typeof this._nodes !== 'undefined' && this._nodes) ? this._nodes : []);
+    if (
+      _nodes instanceof Array &&
+      _nodes.length
+    ) {
+      _nodes.forEach(
+        (n) => {
+          if (
+            n &&
+            n.length &&
+            typeof n.forEach !== 'undefined'
+          ) {
+            n.forEach(
+              (_n) => {
+                if (flatten.indexOf(_n) === -1) {
+                  flatten.push(_n);
+                }
+              }
+            );
+          }
+        }
+      );
+    }
+    return flatten;
+  }
+
+  /**
+   * findNodeDiff
+   * @param prior
+   * @param current
+   * @returns {{added: *, removed: *, changes: *}}
+   */
+  findNodeDiff(prior, current) {
+
+    let priorFlatten = Object.freeze(this._flattenNodes(prior));
+    let currentFlatten = Object.freeze(this._flattenNodes(current));
+
+    let newlyAdded = currentFlatten.filter(
+      (n) => {
+        return (priorFlatten.indexOf(n) === -1);
       }
     );
+
+    let removed = priorFlatten.filter(
+      (n) => {
+        return (currentFlatten.indexOf(n) === -1);
+      }
+    );
+
+    return {
+      added: newlyAdded,
+      removed: removed,
+      changes: (newlyAdded.length + removed.length)
+    };
+  }
+
+  /**
+   * _handleNodeChanges
+   * @private
+   */
+  _handleNodeChanges() {
+
+    let priorNodes = (this._nodes) ? Object.freeze(this._nodes) : [];
+    this.refreshNodes();
+    let currentNodes = (this._nodes) ? Object.freeze(this._nodes) : [];
+
+    let diffNodes = this.findNodeDiff(priorNodes, currentNodes);
+
+    if (diffNodes.changes > 0) {
+
+      if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
+        this._listeners.forEach(
+          (listener) => {
+            if (typeof listener.instance !== 'undefined') {
+              if (diffNodes.added.length) {
+                listener.instance.add(diffNodes.added);
+              }
+              if (diffNodes.removed.length) {
+                listener.instance.remove(diffNodes.removed);
+              }
+            }
+          }
+        );
+      }
+
+    }
+
+  }
+
+  /**
+   * _startGlobalWatcher
+   * @private
+   */
+  _startGlobalWatcher() {
+
+    if (typeof MutationObserver === 'undefined') {
+      return;
+    }
+
+    var observer = new MutationObserver(
+      (mutations) => {
+        mutations.forEach(
+          (mutation) => {
+            if (
+              typeof mutation.addedNodes !== 'undefined' &&
+              mutation.addedNodes &&
+              mutation.addedNodes.length > 0
+            ) {
+              this._handleNodeChanges();
+            }
+          }
+        );
+      }
+    );
+
+    // Notify me of everything!
+    var observerConfig = {
+      childList: true
+    };
+
+    var targetNode = document.body;
+    observer.observe(targetNode, observerConfig);
+
+  }
+
+
+  /**
+   * disable
+   * @param feature
+   */
+  disable(feature = null) {
+    let _features = (typeof feature === 'string') ? [feature] : feature;
+
+    if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
+      this._listeners.forEach(
+        (listener) => {
+          if ((
+              (
+                _features &&
+                _features.indexOf(listener.key) > -1
+              ) || !_features
+            )
+            &&
+            typeof listener.instance !== 'undefined'
+          ) {
+            listener.instance.disable();
+          }
+        }
+      );
+    }
+
+  }
+
+
+  /**
+   * enable
+   * @param feature
+   */
+  enable(feature = null) {
+    let _features = (typeof feature === 'string') ? [feature] : feature;
+
+    if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
+      this._listeners.forEach(
+        (listener) => {
+          if ((
+              (
+                _features &&
+                _features.indexOf(listener.key) > -1
+              ) || !_features
+            )
+            &&
+            typeof listener.instance !== 'undefined'
+          ) {
+            listener.instance.enable();
+          }
+        }
+      );
+    }
+
   }
 
 }

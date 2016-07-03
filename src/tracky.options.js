@@ -7,8 +7,8 @@ export default {
   classBtPrefix: 'bt-',
   events: {
     scroll: {
-      enabled: true,
+      enable: true,
       breakpoints: []
     }
   }
-}
+};

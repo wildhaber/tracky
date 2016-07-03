@@ -1,3 +1,10 @@
+/**
+ * tracky.js - a helper module streamlining user interaction into css-classes
+ * @version 1.0.0
+ * @author Copyright (c) Raphael Wildhaber < https://github.com/wildhaber >
+ * @url https://github.com/wildhaber/tracky#readme
+ * @license MIT
+ */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -44,7 +51,9 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
+	
+	/*eslint-disable */
 	
 	// Not happy with this solution
 	var Tracky = __webpack_require__(1);
@@ -82,8 +91,6 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Tracky = function () {
@@ -99,10 +106,14 @@
 	    // Set Options
 	    this._options = (0, _deepAssign2.default)(_tracky2.default, options);
 	
+	    // Set nodes
+	    this._nodes = [];
+	
 	    // Set Listeners
 	    this._listeners = [{ class: _tracky4.default, key: 'scroll' }]; // Todo: load from external resources
 	
 	    this._bindListeners();
+	    this._startGlobalWatcher();
 	  }
 	
 	  /**
@@ -133,10 +144,12 @@
 	      }
 	
 	      // Cleanup Unique selectors
-	      this._selectors = [].concat(_toConsumableArray(new Set(this._selectors)));
+	      this._selectors = this._selectors.filter(function (value, index, self) {
+	        return self.indexOf(value) === index;
+	      });
 	
 	      // Register Nodes
-	      this.refreshNodes();
+	      this._handleNodeChanges();
 	
 	      return this._selectors;
 	    }
@@ -187,7 +200,7 @@
 	          });
 	
 	          if (_found > 0) {
-	            _this.refreshNodes();
+	            _this._handleNodeChanges();
 	          }
 	        })();
 	      }
@@ -212,7 +225,25 @@
 	    }
 	
 	    /**
+	     * getNodesCount
+	     * @returns {number}
+	     */
+	
+	  }, {
+	    key: 'getNodesCount',
+	    value: function getNodesCount() {
+	      var counter = 0;
+	      if (typeof this._nodes !== 'undefined' && this._nodes.length > 0) {
+	        for (var l = this._nodes.length; l; l--) {
+	          counter += this._nodes[l - 1].length;
+	        }
+	      }
+	      return counter;
+	    }
+	
+	    /**
 	     * cleanupSelector
+	     * @returns {Array}
 	     * @private
 	     */
 	
@@ -226,33 +257,205 @@
 	        return typeof s === 'string' && !!s && s.charAt(0) !== '-';
 	      });
 	    }
+	
+	    /**
+	     * _getEventsOptions
+	     * @param evt
+	     * @returns {Object}
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_getEventsOptions',
 	    value: function _getEventsOptions() {
 	      var evt = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 	
-	      if (evt) {
-	        if (typeof this._options.events[evt] !== 'undefined') {
-	          return this._options.events[evt];
-	        }
+	      if (evt && typeof this._options.events[evt] !== 'undefined') {
+	        return this._options.events[evt];
 	      } else {
 	        return {};
 	      }
 	    }
+	
+	    /**
+	     * _bindListeners
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_bindListeners',
 	    value: function _bindListeners() {
 	      var _this2 = this;
 	
-	      console.log(this._listeners);
-	      console.log(this._options);
-	      this._listeners.forEach(function (l) {
+	      if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) this._listeners.forEach(function (l) {
 	        var options = _this2._getEventsOptions(l.key);
-	        console.log(options);
-	        if (typeof options.enabled !== 'undefined' && options.enabled === true) {
+	        if (typeof options.enable !== 'undefined' && options.enable === true) {
 	          l.instance = new l.class(l.key, _this2, options, _this2._options);
 	        }
 	      });
+	    }
+	
+	    /**
+	     * _flattenNodes
+	     * @param nodes
+	     * @returns {Array}
+	     * @private
+	     */
+	
+	  }, {
+	    key: '_flattenNodes',
+	    value: function _flattenNodes() {
+	      var nodes = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+	
+	
+	      var flatten = [];
+	      var _nodes = nodes || (typeof this._nodes !== 'undefined' && this._nodes ? this._nodes : []);
+	      if (_nodes instanceof Array && _nodes.length) {
+	        _nodes.forEach(function (n) {
+	          if (n && n.length && typeof n.forEach !== 'undefined') {
+	            n.forEach(function (_n) {
+	              if (flatten.indexOf(_n) === -1) {
+	                flatten.push(_n);
+	              }
+	            });
+	          }
+	        });
+	      }
+	      return flatten;
+	    }
+	
+	    /**
+	     * findNodeDiff
+	     * @param prior
+	     * @param current
+	     * @returns {{added: *, removed: *, changes: *}}
+	     */
+	
+	  }, {
+	    key: 'findNodeDiff',
+	    value: function findNodeDiff(prior, current) {
+	
+	      var priorFlatten = Object.freeze(this._flattenNodes(prior));
+	      var currentFlatten = Object.freeze(this._flattenNodes(current));
+	
+	      var newlyAdded = currentFlatten.filter(function (n) {
+	        return priorFlatten.indexOf(n) === -1;
+	      });
+	
+	      var removed = priorFlatten.filter(function (n) {
+	        return currentFlatten.indexOf(n) === -1;
+	      });
+	
+	      return {
+	        added: newlyAdded,
+	        removed: removed,
+	        changes: newlyAdded.length + removed.length
+	      };
+	    }
+	
+	    /**
+	     * _handleNodeChanges
+	     * @private
+	     */
+	
+	  }, {
+	    key: '_handleNodeChanges',
+	    value: function _handleNodeChanges() {
+	
+	      var priorNodes = this._nodes ? Object.freeze(this._nodes) : [];
+	      this.refreshNodes();
+	      var currentNodes = this._nodes ? Object.freeze(this._nodes) : [];
+	
+	      var diffNodes = this.findNodeDiff(priorNodes, currentNodes);
+	
+	      if (diffNodes.changes > 0) {
+	
+	        if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
+	          this._listeners.forEach(function (listener) {
+	            if (typeof listener.instance !== 'undefined') {
+	              if (diffNodes.added.length) {
+	                listener.instance.add(diffNodes.added);
+	              }
+	              if (diffNodes.removed.length) {
+	                listener.instance.remove(diffNodes.removed);
+	              }
+	            }
+	          });
+	        }
+	      }
+	    }
+	
+	    /**
+	     * _startGlobalWatcher
+	     * @private
+	     */
+	
+	  }, {
+	    key: '_startGlobalWatcher',
+	    value: function _startGlobalWatcher() {
+	      var _this3 = this;
+	
+	      if (typeof MutationObserver === 'undefined') {
+	        return;
+	      }
+	
+	      var observer = new MutationObserver(function (mutations) {
+	        mutations.forEach(function (mutation) {
+	          if (typeof mutation.addedNodes !== 'undefined' && mutation.addedNodes && mutation.addedNodes.length > 0) {
+	            _this3._handleNodeChanges();
+	          }
+	        });
+	      });
+	
+	      // Notify me of everything!
+	      var observerConfig = {
+	        childList: true
+	      };
+	
+	      var targetNode = document.body;
+	      observer.observe(targetNode, observerConfig);
+	    }
+	
+	    /**
+	     * disable
+	     * @param feature
+	     */
+	
+	  }, {
+	    key: 'disable',
+	    value: function disable() {
+	      var feature = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+	
+	      var _features = typeof feature === 'string' ? [feature] : feature;
+	
+	      if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
+	        this._listeners.forEach(function (listener) {
+	          if ((_features && _features.indexOf(listener.key) > -1 || !_features) && typeof listener.instance !== 'undefined') {
+	            listener.instance.disable();
+	          }
+	        });
+	      }
+	    }
+	
+	    /**
+	     * enable
+	     * @param feature
+	     */
+	
+	  }, {
+	    key: 'enable',
+	    value: function enable() {
+	      var feature = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+	
+	      var _features = typeof feature === 'string' ? [feature] : feature;
+	
+	      if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
+	        this._listeners.forEach(function (listener) {
+	          if ((_features && _features.indexOf(listener.key) > -1 || !_features) && typeof listener.instance !== 'undefined') {
+	            listener.instance.enable();
+	          }
+	        });
+	      }
 	    }
 	  }]);
 	
@@ -279,7 +482,7 @@
 	  classBtPrefix: 'bt-',
 	  events: {
 	    scroll: {
-	      enabled: true,
+	      enable: true,
 	      breakpoints: []
 	    }
 	  }
@@ -294,6 +497,8 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
@@ -320,6 +525,13 @@
 	
 	  _createClass(TrackyScroll, [{
 	    key: '_listener',
+	
+	
+	    /**
+	     * _listener
+	     * @param domNode
+	     * @private
+	     */
 	    value: function _listener(domNode) {
 	
 	      var position = this._getScrollPosition(domNode);
@@ -329,16 +541,41 @@
 	        percent: position.percent.top
 	      });
 	    }
+	
+	    /**
+	     * bindEvent
+	     * @param domNode
+	     */
+	
 	  }, {
 	    key: 'bindEvent',
 	    value: function bindEvent(domNode) {
+	
 	      domNode.addEventListener('scroll', this._bindListener);
+	
+	      this._listener(domNode);
 	    }
+	
+	    /**
+	     * _percentRound
+	     * @param value
+	     * @returns {number}
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_percentRound',
 	    value: function _percentRound(value) {
-	      return parseFloat(value.toFixed(2)) * 100;
+	      return typeof value === 'number' && !isNaN(value) ? Math.round(parseInt((parseFloat(value) * 100).toFixed(2), 10) / 100) : 0;
 	    }
+	
+	    /**
+	     * _getScrollPosition
+	     * @param domNode
+	     * @returns {*}
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_getScrollPosition',
 	    value: function _getScrollPosition(domNode) {
@@ -370,27 +607,58 @@
 	        };
 	      }
 	    }
+	
+	    /**
+	     * bindBodyEvent
+	     */
+	
 	  }, {
 	    key: 'bindBodyEvent',
 	    value: function bindBodyEvent() {
 	
 	      window.addEventListener('scroll', this._bindBodyListener);
+	
+	      this._listener(document.body);
 	    }
+	
+	    /**
+	     * unbindBodyEvent
+	     */
+	
 	  }, {
 	    key: 'unbindBodyEvent',
 	    value: function unbindBodyEvent() {
 	      window.removeEventListener('scroll', this._bindBodyListener);
 	    }
+	
+	    /**
+	     * unbindEvent
+	     * @param domNode
+	     */
+	
 	  }, {
 	    key: 'unbindEvent',
 	    value: function unbindEvent(domNode) {
 	      domNode.removeEventListener('scroll', this._bindListener);
 	    }
+	
+	    /**
+	     * _isBody
+	     * @param domNode
+	     * @returns {boolean}
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_isBody',
 	    value: function _isBody(domNode) {
-	      return domNode.nodeName === 'BODY';
+	      return !!domNode && _typeof(domNode.nodeName) && domNode.nodeName === 'BODY';
 	    }
+	
+	    /**
+	     * bindEvents
+	     */
+	
 	  }, {
 	    key: 'bindEvents',
 	    value: function bindEvents() {
@@ -408,6 +676,11 @@
 	        }
 	      });
 	    }
+	
+	    /**
+	     * unbindEvents
+	     */
+	
 	  }, {
 	    key: 'unbindEvents',
 	    value: function unbindEvents() {
@@ -418,13 +691,20 @@
 	          n.forEach(function (_n) {
 	            if (_this3._isBody(_n)) {
 	              _this3.unbindBodyEvent();
+	              _this3.cleanupClasses(document.body);
 	            } else {
 	              _this3.unbindEvent(_n);
+	              _this3.cleanupClasses(_n);
 	            }
 	          });
 	        }
 	      });
 	    }
+	
+	    /**
+	     * onStart
+	     */
+	
 	  }, {
 	    key: 'onStart',
 	    value: function onStart() {
@@ -437,7 +717,7 @@
 	
 	      // It becomes even worse if we consider that body/window needs a separate handling
 	      // but necessary to keep this-context combined with eventListener add/remove
-	      var last_known_scroll_position = 0;
+	      var last_known_scroll_position = 0; // eslint-disable-line no-unused-vars
 	      var ticking = false;
 	
 	      this._bindBodyListener = function (e) {
@@ -456,102 +736,117 @@
 	
 	      this.bindEvents();
 	    }
+	
+	    /**
+	     * onStop
+	     */
+	
 	  }, {
 	    key: 'onStop',
 	    value: function onStop() {
 	      this.unbindEvents();
 	    }
-	  }]);
 	
-	  return TrackyScroll;
-	}(_tracky2.default);
+	    /**
+	     * onAdd
+	     * @param nodes
+	     */
 	
-	exports.default = TrackyScroll;
-
-/***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var TrackyEvent = function () {
-	  function TrackyEvent(eventKey) {
-	    var tracky = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-	    var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
-	    var globalOptions = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
-	
-	    _classCallCheck(this, TrackyEvent);
-	
-	    this._key = eventKey;
-	    this._tracky = tracky;
-	    this._options = options;
-	    this._globalOptions = globalOptions;
-	
-	    this._options.breakpoints = this._transformBreakpoints(options.breakpoints);
-	    this._classNames = this._extractClasses();
-	
-	    this.start();
-	  }
-	
-	  _createClass(TrackyEvent, [{
-	    key: 'getNodes',
-	    value: function getNodes() {
-	      return this._tracky && this._tracky instanceof Tracky ? this._tracky._nodes : [];
-	    }
 	  }, {
-	    key: 'start',
-	    value: function start() {
-	      this.onStart();
+	    key: 'onAdd',
+	    value: function onAdd(nodes) {
+	      var _this5 = this;
+	
+	      nodes.forEach(function (_n) {
+	        if (_this5._isBody(_n)) {
+	          _this5.bindBodyEvent();
+	        } else {
+	          _this5.bindEvent(_n);
+	        }
+	      });
 	    }
+	
+	    /**
+	     * onRemove
+	     * @param nodes
+	     */
+	
 	  }, {
-	    key: 'stop',
-	    value: function stop() {
-	      this.onStop();
+	    key: 'onRemove',
+	    value: function onRemove(nodes) {
+	      var _this6 = this;
+	
+	      nodes.forEach(function (_n) {
+	        if (_this6._isBody(_n)) {
+	          _this6.unbindBodyEvent();
+	        } else {
+	          _this6.unbindEvent(_n);
+	        }
+	      });
 	    }
+	
+	    /**
+	     * _buildClassName
+	     * @param value
+	     * @param modifier
+	     * @returns {string}
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_buildClassName',
 	    value: function _buildClassName(value, modifier) {
 	      var o = this._globalOptions;
 	      return o.classPrefix + this._key + '-' + modifier + value + o.classSuffix;
 	    }
+	
+	    /**
+	     * _transformValue
+	     * @param value
+	     * @returns {*}
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_transformValue',
 	    value: function _transformValue(value) {
 	
 	      var t = null;
 	
-	      if (typeof value === 'number') {
+	      if (typeof value === 'number' && !isNaN(value)) {
 	        t = [value, { percent: false }];
 	      } else if (typeof value === 'string') {
 	        t = value.indexOf('%') == value.length - 1 ? [parseInt(value, 10), { percent: true }] : null;
-	      } else {
+	      } else if (value instanceof Array && value.length === 2 && typeof value[0] === 'number' && !isNaN(value[0]) && !!value[1] && typeof value[1].percent !== 'undefined') {
 	        t = value;
 	      }
 	
 	      return t;
 	    }
+	
+	    /**
+	     * _transformBreakpoints
+	     * @param bp
+	     * @returns {Array|*}
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_transformBreakpoints',
 	    value: function _transformBreakpoints(bp) {
-	      var _this = this;
+	      var _this7 = this;
 	
-	      return bp.map(function (p) {
+	      return bp instanceof Array ? bp.filter(function (p) {
+	        return typeof p === 'number' && !isNaN(p) || typeof p === 'string' && !isNaN(parseFloat(p)) || (typeof p === 'undefined' ? 'undefined' : _typeof(p)) === 'object' && p !== null && (typeof p.value !== 'undefined' || typeof p.min !== 'undefined' && typeof p.max !== 'undefined');
+	      }).map(function (p) {
 	
-	        var go = _this._globalOptions;
+	        var go = _this7._globalOptions;
 	
 	        var prep = typeof p === 'number' || typeof p === 'string' ? {
 	          value: p
 	        } : p;
 	
-	        var hasBetween = !(typeof prep.min !== 'undefined' && typeof prep.max !== 'undefined') ? false : typeof prep.applyBt !== 'undefined' ? prep.applyBt : true;
+	        var hasBetween = typeof prep.min === 'undefined' || typeof prep.max === 'undefined' ? false : typeof prep.applyBt !== 'undefined' ? prep.applyBt : true;
 	
 	        var hasValue = !hasBetween && typeof prep.value !== 'undefined';
 	
@@ -565,18 +860,24 @@
 	        }
 	
 	        if (hasValue) {
-	          prep.value = _this._transformValue(prep.value);
+	          prep.value = _this7._transformValue(prep.value);
+	          if (!prep.value) {
+	            return null;
+	          }
 	        } else if (hasBetween) {
-	          prep.min = _this._transformValue(prep.min);
-	          prep.max = _this._transformValue(prep.max);
+	          prep.min = _this7._transformValue(prep.min);
+	          prep.max = _this7._transformValue(prep.max);
+	          if (!prep.min || !prep.max) {
+	            return null;
+	          }
 	        }
 	
 	        return {
 	          css: {
-	            lt: !hasBetween ? hasCustomCss && typeof prep.css.lt !== 'undefined' ? prep.css.lt : _this._buildClassName(prep.value[0] + (prep.value[1].percent ? 'pc' : ''), go.classLtPrefix) : null,
-	            gt: !hasBetween ? hasCustomCss && typeof prep.css.gt !== 'undefined' ? prep.css.gt : _this._buildClassName(prep.value[0] + (prep.value[1].percent ? 'pc' : ''), go.classGtPrefix) : null,
-	            eq: !hasBetween ? hasCustomCss && typeof prep.css.eq !== 'undefined' ? prep.css.eq : _this._buildClassName(prep.value[0] + (prep.value[1].percent ? 'pc' : ''), go.classEqPrefix) : null,
-	            bt: hasBetween ? hasCustomCss && typeof prep.css.bt !== 'undefined' ? prep.css.bt : _this._buildClassName(prep.min[0] + (prep.min[1].percent ? 'pc' : '') + '-' + prep.max[0] + (prep.max[1].percent ? 'pc' : ''), go.classBtPrefix) : null
+	            lt: !hasBetween ? hasCustomCss && typeof prep.css.lt !== 'undefined' ? prep.css.lt : _this7._buildClassName(prep.value[0] + (prep.value[1].percent ? 'pc' : ''), go.classLtPrefix) : null,
+	            gt: !hasBetween ? hasCustomCss && typeof prep.css.gt !== 'undefined' ? prep.css.gt : _this7._buildClassName(prep.value[0] + (prep.value[1].percent ? 'pc' : ''), go.classGtPrefix) : null,
+	            eq: !hasBetween ? hasCustomCss && typeof prep.css.eq !== 'undefined' ? prep.css.eq : _this7._buildClassName(prep.value[0] + (prep.value[1].percent ? 'pc' : ''), go.classEqPrefix) : null,
+	            bt: hasBetween ? hasCustomCss && typeof prep.css.bt !== 'undefined' ? prep.css.bt : _this7._buildClassName(prep.min[0] + (prep.min[1].percent ? 'pc' : '') + '-' + prep.max[0] + (prep.max[1].percent ? 'pc' : ''), go.classBtPrefix) : null
 	          },
 	          applyLt: !hasBetween && typeof prep.applyLt !== 'undefined' ? prep.applyLt : !hasBetween,
 	          applyGt: !hasBetween && typeof prep.applyGt !== 'undefined' ? prep.applyGt : !hasBetween,
@@ -586,13 +887,23 @@
 	          min: hasBetween ? prep.min : null,
 	          max: hasBetween ? prep.max : null
 	        };
-	      });
+	      }).filter(function (pObj) {
+	        return !!pObj;
+	      }) : [];
 	    }
+	
+	    /**
+	     * _extractClasses
+	     * @returns {Array}
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_extractClasses',
 	    value: function _extractClasses() {
 	      var bps = this._options.breakpoints;
 	      var classArray = [];
+	
 	      bps.forEach(function (bp) {
 	        for (var c in bp.css) {
 	          if (bp.css[c]) {
@@ -600,8 +911,16 @@
 	          }
 	        }
 	      });
+	
 	      return classArray;
 	    }
+	
+	    /**
+	     * classify
+	     * @param domNode
+	     * @param value
+	     */
+	
 	  }, {
 	    key: 'classify',
 	    value: function classify(domNode) {
@@ -639,6 +958,137 @@
 	
 	      this.attachClasses(domNode, classes);
 	    }
+	  }]);
+	
+	  return TrackyScroll;
+	}(_tracky2.default);
+	
+	exports.default = TrackyScroll;
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var TrackyEvent = function () {
+	
+	  /**
+	   * constructor
+	   * @param eventKey
+	   * @param tracky
+	   * @param options
+	   * @param globalOptions
+	   */
+	
+	  function TrackyEvent(eventKey) {
+	    var tracky = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+	    var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+	    var globalOptions = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+	
+	    _classCallCheck(this, TrackyEvent);
+	
+	    this._key = eventKey;
+	    this._tracky = tracky;
+	    this._options = options;
+	    this._globalOptions = globalOptions;
+	    this._enabled = options.enable;
+	
+	    this._options.breakpoints = typeof options.breakpoints !== 'undefined' && options.breakpoints instanceof Array ? this._transformBreakpoints(options.breakpoints) : [];
+	
+	    this._classNames = this._extractClasses();
+	
+	    this.start();
+	  }
+	
+	  /**
+	   * getNodes
+	   * @returns {Array}
+	   */
+	
+	
+	  _createClass(TrackyEvent, [{
+	    key: 'getNodes',
+	    value: function getNodes() {
+	      return this._tracky && typeof this._tracky._nodes !== 'undefined' ? this._tracky._nodes : [];
+	    }
+	
+	    /**
+	     * start
+	     */
+	
+	  }, {
+	    key: 'start',
+	    value: function start() {
+	      if (this._enabled) {
+	        this.onStart();
+	      }
+	    }
+	
+	    /**
+	     * stop
+	     */
+	
+	  }, {
+	    key: 'stop',
+	    value: function stop() {
+	      if (this._enabled) {
+	        this.onStop();
+	      }
+	    }
+	
+	    /**
+	     * add
+	     * @param nodes
+	     */
+	
+	  }, {
+	    key: 'add',
+	    value: function add(nodes) {
+	      if (this._enabled) {
+	        this.onAdd(nodes);
+	      }
+	    }
+	
+	    /**
+	     * remove
+	     * @param nodes
+	     */
+	
+	  }, {
+	    key: 'remove',
+	    value: function remove(nodes) {
+	      if (this._enabled) {
+	        this.onRemove(nodes);
+	      }
+	    }
+	  }, {
+	    key: 'enable',
+	    value: function enable() {
+	      this._enabled = true;
+	      this.start();
+	    }
+	  }, {
+	    key: 'disable',
+	    value: function disable() {
+	      this.stop();
+	      this._enabled = false;
+	    }
+	
+	    /**
+	     * attachClasses
+	     * @param domNode
+	     * @param classNames
+	     */
+	
 	  }, {
 	    key: 'attachClasses',
 	    value: function attachClasses(domNode, classNames) {
@@ -673,16 +1123,25 @@
 	            }
 	          }
 	        })();
-	      } else {
+	      }
+	    }
 	
-	        // Old Browser Fallback
+	    /**
+	     * cleanupClasses
+	     * @param domNode
+	     */
 	
-	        var newClassNames = current.replace(/\s+/g, ' ').split(' ').filter(function (c) {
-	          return available.indexOf(c) === -1;
-	        }).concat(classNames).join(' ');
+	  }, {
+	    key: 'cleanupClasses',
+	    value: function cleanupClasses(domNode) {
 	
-	        if (current !== newClassNames) {
-	          domNode.className = newClassNames;
+	      var available = this._classNames;
+	
+	      if (domNode.classList) {
+	        if (available.length) {
+	          for (var l = available.length; l; l--) {
+	            domNode.classList.remove(available[l - 1]);
+	          }
 	        }
 	      }
 	    }
