@@ -498,6 +498,8 @@
 	  value: true
 	});
 	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _tracky = __webpack_require__(5);
@@ -564,7 +566,7 @@
 	  }, {
 	    key: '_percentRound',
 	    value: function _percentRound(value) {
-	      return parseInt(parseFloat(value.toFixed(2)) * 100, 10);
+	      return typeof value === 'number' && !isNaN(value) ? Math.round(parseInt((parseFloat(value) * 100).toFixed(2), 10) / 100) : 0;
 	    }
 	
 	    /**
@@ -650,7 +652,7 @@
 	  }, {
 	    key: '_isBody',
 	    value: function _isBody(domNode) {
-	      return domNode.nodeName === 'BODY';
+	      return !!domNode && _typeof(domNode.nodeName) && domNode.nodeName === 'BODY';
 	    }
 	
 	    /**
@@ -811,11 +813,11 @@
 	
 	      var t = null;
 	
-	      if (typeof value === 'number') {
+	      if (typeof value === 'number' && !isNaN(value)) {
 	        t = [value, { percent: false }];
 	      } else if (typeof value === 'string') {
 	        t = value.indexOf('%') == value.length - 1 ? [parseInt(value, 10), { percent: true }] : null;
-	      } else {
+	      } else if (value instanceof Array && value.length === 2 && typeof value[0] === 'number' && !isNaN(value[0]) && !!value[1] && typeof value[1].percent !== 'undefined') {
 	        t = value;
 	      }
 	
@@ -834,7 +836,9 @@
 	    value: function _transformBreakpoints(bp) {
 	      var _this7 = this;
 	
-	      return bp.map(function (p) {
+	      return bp instanceof Array ? bp.filter(function (p) {
+	        return typeof p === 'number' && !isNaN(p) || typeof p === 'string' && !isNaN(parseFloat(p)) || (typeof p === 'undefined' ? 'undefined' : _typeof(p)) === 'object' && p !== null && (typeof p.value !== 'undefined' || typeof p.min !== 'undefined' && typeof p.max !== 'undefined');
+	      }).map(function (p) {
 	
 	        var go = _this7._globalOptions;
 	
@@ -842,7 +846,7 @@
 	          value: p
 	        } : p;
 	
-	        var hasBetween = !(typeof prep.min !== 'undefined' && typeof prep.max !== 'undefined') ? false : typeof prep.applyBt !== 'undefined' ? prep.applyBt : true;
+	        var hasBetween = typeof prep.min === 'undefined' || typeof prep.max === 'undefined' ? false : typeof prep.applyBt !== 'undefined' ? prep.applyBt : true;
 	
 	        var hasValue = !hasBetween && typeof prep.value !== 'undefined';
 	
@@ -857,9 +861,15 @@
 	
 	        if (hasValue) {
 	          prep.value = _this7._transformValue(prep.value);
+	          if (!prep.value) {
+	            return null;
+	          }
 	        } else if (hasBetween) {
 	          prep.min = _this7._transformValue(prep.min);
 	          prep.max = _this7._transformValue(prep.max);
+	          if (!prep.min || !prep.max) {
+	            return null;
+	          }
 	        }
 	
 	        return {
@@ -877,7 +887,9 @@
 	          min: hasBetween ? prep.min : null,
 	          max: hasBetween ? prep.max : null
 	        };
-	      });
+	      }).filter(function (pObj) {
+	        return !!pObj;
+	      }) : [];
 	    }
 	
 	    /**
@@ -990,7 +1002,8 @@
 	    this._globalOptions = globalOptions;
 	    this._enabled = options.enable;
 	
-	    this._options.breakpoints = this._transformBreakpoints(options.breakpoints);
+	    this._options.breakpoints = typeof options.breakpoints !== 'undefined' && options.breakpoints instanceof Array ? this._transformBreakpoints(options.breakpoints) : [];
+	
 	    this._classNames = this._extractClasses();
 	
 	    this.start();
