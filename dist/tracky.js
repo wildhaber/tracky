@@ -243,6 +243,7 @@
 	
 	    /**
 	     * cleanupSelector
+	     * @returns {Array}
 	     * @private
 	     */
 	
@@ -258,7 +259,7 @@
 	    }
 	
 	    /**
-	     * _getEvensOptions
+	     * _getEventsOptions
 	     * @param evt
 	     * @returns {Object}
 	     * @private
@@ -269,10 +270,8 @@
 	    value: function _getEventsOptions() {
 	      var evt = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 	
-	      if (evt) {
-	        if (typeof this._options.events[evt] !== 'undefined') {
-	          return this._options.events[evt];
-	        }
+	      if (evt && typeof this._options.events[evt] !== 'undefined') {
+	        return this._options.events[evt];
 	      } else {
 	        return {};
 	      }
@@ -295,6 +294,14 @@
 	        }
 	      });
 	    }
+	
+	    /**
+	     * _flattenNodes
+	     * @param nodes
+	     * @returns {Array}
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_flattenNodes',
 	    value: function _flattenNodes() {
@@ -303,17 +310,27 @@
 	
 	      var flatten = [];
 	      var _nodes = nodes || (typeof this._nodes !== 'undefined' && this._nodes ? this._nodes : []);
-	      _nodes.forEach(function (n) {
-	        if (n && n.length) {
-	          n.forEach(function (_n) {
-	            if (flatten.indexOf(_n) === -1) {
-	              flatten.push(_n);
-	            }
-	          });
-	        }
-	      });
+	      if (_nodes instanceof Array && _nodes.length) {
+	        _nodes.forEach(function (n) {
+	          if (n && n.length && typeof n.forEach !== 'undefined') {
+	            n.forEach(function (_n) {
+	              if (flatten.indexOf(_n) === -1) {
+	                flatten.push(_n);
+	              }
+	            });
+	          }
+	        });
+	      }
 	      return flatten;
 	    }
+	
+	    /**
+	     * findNodeDiff
+	     * @param prior
+	     * @param current
+	     * @returns {{added: *, removed: *, changes: *}}
+	     */
+	
 	  }, {
 	    key: 'findNodeDiff',
 	    value: function findNodeDiff(prior, current) {
@@ -335,17 +352,12 @@
 	        changes: newlyAdded.length + removed.length
 	      };
 	    }
-	  }, {
-	    key: 'getNodesFingerprint',
-	    value: function getNodesFingerprint() {
-	      var fp = '';
-	      if (typeof this._nodes !== 'undefined') {
-	        this._nodes.forEach(function (n) {
-	          fp += n.length;
-	        });
-	      }
-	      return fp;
-	    }
+	
+	    /**
+	     * _handleNodeChanges
+	     * @private
+	     */
+	
 	  }, {
 	    key: '_handleNodeChanges',
 	    value: function _handleNodeChanges() {
