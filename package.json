@@ -5,8 +5,10 @@
   "main": "src/tracky.js",
   "scripts": {
     "test": "npm run test:eslint && npm run build:dev && npm run test:jasmine",
+    "test:local": "npm run test:eslint && npm run build:dev && npm run test:jasmine:formatted",
     "test:eslint": "./node_modules/.bin/eslint ./src/**/*.js",
     "test:jasmine": "./node_modules/.bin/jasmine JASMINE_CONFIG_PATH=test/jasmine.json",
+    "test:jasmine:formatted": "node ./test/jasmine/jasmine.js",
     "build": "npm run build:prod && npm run build:dev",
     "build:prod": "webpack --prod",
     "build:dev": "webpack"
@@ -57,6 +59,7 @@
     "expose-loader": "^0.7.1",
     "jasmine": "^2.4.1",
     "jasmine-core": "^2.4.1",
+    "jasmine-spec-reporter": "^2.5.0",
     "path": "^0.12.7",
     "webpack": "^1.13.1"
   },
