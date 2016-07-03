@@ -42,7 +42,9 @@ class TrackyScroll extends TrackyEvent {
    * @private
    */
   _percentRound(value) {
-    return parseInt((parseFloat(value.toFixed(2)) * 100), 10);
+    return (typeof value === 'number' && !isNaN(value)) ? Math.round(
+      parseInt((parseFloat(value) * 100).toFixed(2), 10) / 100
+    ) : 0;
   }
 
   /**
@@ -129,7 +131,10 @@ class TrackyScroll extends TrackyEvent {
    * @private
    */
   _isBody(domNode) {
-    return (domNode.nodeName === 'BODY');
+    return (
+      !!domNode && typeof domNode.nodeName &&
+      domNode.nodeName === 'BODY'
+    );
   }
 
   /**
@@ -278,11 +283,18 @@ class TrackyScroll extends TrackyEvent {
 
     let t = null;
 
-    if (typeof value === 'number') {
+    if (
+      typeof value === 'number' && !isNaN(value)
+    ) {
       t = [value, {percent: false}];
     } else if (typeof value === 'string') {
       t = (value.indexOf('%') == (value.length - 1)) ? [parseInt(value, 10), {percent: true}] : null;
-    } else {
+    } else if (
+      value instanceof Array &&
+      value.length === 2 &&
+      typeof value[0] === 'number' && !isNaN(value[0]) && !!value[1] &&
+      typeof value[1].percent !== 'undefined'
+    ) {
       t = value;
     }
 
@@ -297,7 +309,28 @@ class TrackyScroll extends TrackyEvent {
    */
   _transformBreakpoints(bp) {
 
-    return bp.map(
+    return (bp instanceof Array) ? bp.filter(
+      (p) => {
+        return (
+          (
+            typeof p === 'number' && !isNaN(p)
+          ) ||
+          (
+            typeof p === 'string' && !isNaN(parseFloat(p))
+          ) ||
+          (
+            typeof p === 'object' &&
+            p !== null &&
+            (typeof p.value !== 'undefined' ||
+              (
+                typeof p.min !== 'undefined' &&
+                typeof p.max !== 'undefined'
+              )
+            )
+          )
+        );
+      }
+    ).map(
       (p) => {
 
         let go = this._globalOptions;
@@ -308,9 +341,9 @@ class TrackyScroll extends TrackyEvent {
           value: p
         } : p;
 
-        let hasBetween = !(
-          typeof prep.min !== 'undefined' &&
-          typeof prep.max !== 'undefined'
+        let hasBetween = (
+          typeof prep.min === 'undefined' ||
+          typeof prep.max === 'undefined'
         ) ? false : ((typeof prep.applyBt !== 'undefined') ? prep.applyBt : true);
 
         let hasValue = (!hasBetween && typeof prep.value !== 'undefined');
@@ -326,11 +359,16 @@ class TrackyScroll extends TrackyEvent {
 
         if (hasValue) {
           prep.value = this._transformValue(prep.value);
+          if (!prep.value) {
+            return null;
+          }
         } else if (hasBetween) {
           prep.min = this._transformValue(prep.min);
           prep.max = this._transformValue(prep.max);
+          if (!prep.min || !prep.max) {
+            return null;
+          }
         }
-
 
         return {
           css: {
@@ -362,7 +400,11 @@ class TrackyScroll extends TrackyEvent {
         };
 
       }
-    );
+    ).filter(
+      (pObj) => {
+        return !!pObj;
+      }
+    ) : [];
   }
 
   /**
