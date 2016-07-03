@@ -249,8 +249,6 @@ describe(
 
         var t = new _tracky(addonSelector);
 
-        //console.log(instanceof t);
-
         expect(t.removeSelector(addonSelector)).toEqual(jasmine.any(_tracky));
 
       }
@@ -528,7 +526,7 @@ describe(
     );
 
     it(
-      'returned properties added and removed must be arrays', function () {
+      'should return properties added and removed must be arrays', function () {
         var t = new _tracky('selector', {});
         var nodeDiff = t.findNodeDiff(examplePrior, exampleCurrent);
 
