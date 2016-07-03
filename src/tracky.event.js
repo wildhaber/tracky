@@ -15,7 +15,13 @@ class TrackyEvent {
     this._globalOptions = globalOptions;
     this._enabled = options.enable;
 
-    this._options.breakpoints = this._transformBreakpoints(options.breakpoints);
+    this._options.breakpoints = (
+      typeof options.breakpoints !== 'undefined' &&
+      options.breakpoints instanceof Array
+    ) ? this._transformBreakpoints(
+      options.breakpoints
+    ) : [];
+
     this._classNames = this._extractClasses();
 
     this.start();
