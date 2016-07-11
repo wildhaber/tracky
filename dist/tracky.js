@@ -134,18 +134,11 @@
 	      var replace = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
 	
 	
-	      // Cleanup selector to contain only valid selectors
-	      selector = this._cleanupSelector(selector);
-	
 	      // Ensure this._selectors is available and an array
 	      this._selectors = !!this._selectors && !replace ? this._selectors : [];
 	
 	      // Push Selectors
-	      if (selector instanceof Array) {
-	        this._selectors = this._selectors.concat(selector);
-	      } else if (typeof selector === 'string') {
-	        this._selectors.push(selector);
-	      }
+	      this._selectors = this._selectors.concat(this._cleanupSelector(selector));
 	
 	      // Cleanup Unique selectors
 	      this._selectors = this._selectors.filter(function (value, index, self) {
@@ -221,6 +214,7 @@
 	    key: 'refreshNodes',
 	    value: function refreshNodes() {
 	
+	      /* istanbul ignore next */
 	      this._nodes = this._selectors.map(function (selector) {
 	        return typeof document !== 'undefined' && typeof document.querySelectorAll !== 'undefined' ? document.querySelectorAll(selector) : null;
 	      });
@@ -372,6 +366,7 @@
 	
 	      var diffNodes = this.findNodeDiff(priorNodes, currentNodes);
 	
+	      /* istanbul ignore if */
 	      if (diffNodes.changes > 0) {
 	
 	        if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
@@ -403,6 +398,7 @@
 	        return;
 	      }
 	
+	      /* istanbul ignore next */
 	      var observer = new MutationObserver(function (mutations) {
 	        mutations.forEach(function (mutation) {
 	          if (typeof mutation.addedNodes !== 'undefined' && mutation.addedNodes && mutation.addedNodes.length > 0) {
@@ -412,23 +408,33 @@
 	      });
 	
 	      // Notify me of everything!
+	      /* istanbul ignore next */
 	      var observerConfig = {
 	        childList: true
 	      };
 	
+	      /* istanbul ignore next */
 	      var targetNode = document.body;
+	
+	      /* istanbul ignore next */
 	      observer.observe(targetNode, observerConfig);
 	    }
 	
 	    /**
 	     * disable
 	     * @param feature
+	     * @returns boolean
 	     */
 	
 	  }, {
 	    key: 'disable',
 	    value: function disable() {
 	      var feature = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+	
+	
+	      if (!feature) {
+	        return false;
+	      }
 	
 	      var _features = typeof feature === 'string' ? [feature] : feature;
 	
@@ -439,17 +445,25 @@
 	          }
 	        });
 	      }
+	
+	      return true;
 	    }
 	
 	    /**
 	     * enable
 	     * @param feature
+	     * @returns boolean
 	     */
 	
 	  }, {
 	    key: 'enable',
 	    value: function enable() {
 	      var feature = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+	
+	
+	      if (!feature) {
+	        return false;
+	      }
 	
 	      var _features = typeof feature === 'string' ? [feature] : feature;
 	
@@ -460,6 +474,8 @@
 	          }
 	        });
 	      }
+	
+	      return true;
 	    }
 	  }]);
 	
@@ -542,8 +558,10 @@
 	     */
 	    value: function _listener(domNode) {
 	
+	      /* istanbul ignore next */
 	      var position = this._getScrollPosition(domNode);
 	
+	      /* istanbul ignore next */
 	      this.classify(domNode, position);
 	    }
 	
@@ -556,8 +574,10 @@
 	    key: 'bindEvent',
 	    value: function bindEvent(domNode) {
 	
+	      /* istanbul ignore next */
 	      domNode.addEventListener('scroll', this._bindListener);
 	
+	      /* istanbul ignore next */
 	      this._listener(domNode);
 	    }
 	
@@ -571,6 +591,7 @@
 	  }, {
 	    key: '_getScrollPosition',
 	    value: function _getScrollPosition(domNode) {
+	
 	      if (this._isBody(domNode)) {
 	
 	        var doc = document.documentElement;
@@ -608,8 +629,10 @@
 	    key: 'bindBodyEvent',
 	    value: function bindBodyEvent() {
 	
+	      /* istanbul ignore next */
 	      window.addEventListener('scroll', this._bindBodyListener);
 	
+	      /* istanbul ignore next */
 	      this._listener(document.body);
 	    }
 	
@@ -620,6 +643,8 @@
 	  }, {
 	    key: 'unbindBodyEvent',
 	    value: function unbindBodyEvent() {
+	
+	      /* istanbul ignore next */
 	      window.removeEventListener('scroll', this._bindBodyListener);
 	    }
 	
@@ -631,6 +656,8 @@
 	  }, {
 	    key: 'unbindEvent',
 	    value: function unbindEvent(domNode) {
+	
+	      /* istanbul ignore next */
 	      domNode.removeEventListener('scroll', this._bindListener);
 	    }
 	
@@ -656,6 +683,7 @@
 	    value: function bindEvents() {
 	      var _this2 = this;
 	
+	      /* istanbul ignore next */
 	      this.getNodes().forEach(function (n) {
 	        if (n) {
 	          n.forEach(function (_n) {
@@ -678,6 +706,7 @@
 	    value: function unbindEvents() {
 	      var _this3 = this;
 	
+	      /* istanbul ignore next */
 	      this.getNodes().forEach(function (n) {
 	        if (n) {
 	          n.forEach(function (_n) {
@@ -703,6 +732,7 @@
 	      var _this4 = this;
 	
 	      // Ugly but necessary to keep this-context combined with eventListener add/remove
+	      /* istanbul ignore next */
 	      this._bindListener = function (e) {
 	        _this4._listener(e.target);
 	      };
@@ -712,6 +742,7 @@
 	      var last_known_scroll_position = 0; // eslint-disable-line no-unused-vars
 	      var ticking = false;
 	
+	      /* istanbul ignore next */
 	      this._bindBodyListener = function (e) {
 	
 	        last_known_scroll_position = window.scrollY;
@@ -736,6 +767,7 @@
 	  }, {
 	    key: 'onStop',
 	    value: function onStop() {
+	      /* istanbul ignore next */
 	      this.unbindEvents();
 	    }
 	
@@ -749,6 +781,7 @@
 	    value: function onAdd(nodes) {
 	      var _this5 = this;
 	
+	      /* istanbul ignore next */
 	      nodes.forEach(function (_n) {
 	        if (_this5._isBody(_n)) {
 	          _this5.bindBodyEvent();
@@ -768,6 +801,7 @@
 	    value: function onRemove(nodes) {
 	      var _this6 = this;
 	
+	      /* istanbul ignore next */
 	      nodes.forEach(function (_n) {
 	        if (_this6._isBody(_n)) {
 	          _this6.unbindBodyEvent();
@@ -867,6 +901,7 @@
 	      var bp = this._options.breakpoints;
 	      var classes = [];
 	
+	      /* istanbul ignore if */
 	      if (bp.length > 0) {
 	        for (var l = bp.length; l; l--) {
 	          var _bp = bp[l - 1];
@@ -916,6 +951,8 @@
 	    value: function _applyCallbacks(domNode, bps) {
 	      var keyword = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
 	
+	
+	      /* istanbul ignore if */
 	      if (typeof keyword === 'string' && bps instanceof Array && bps.length > 0) {
 	        bps.forEach(function (bp) {
 	          if (typeof bp.callbacks[keyword] === 'function') {
@@ -936,12 +973,14 @@
 	    key: 'callbackHandler',
 	    value: function callbackHandler(domNode, added, removed) {
 	
+	      /* istanbul ignore if */
 	      if (added instanceof Array && added.length > 0) {
 	        this._applyCallbacks(domNode, this._getBpsByClassNames(added, ['eq', 'bt']), 'match');
 	        this._applyCallbacks(domNode, this._getBpsByClassNames(added, ['lt']), 'lower');
 	        this._applyCallbacks(domNode, this._getBpsByClassNames(added, ['gt']), 'greater');
 	      }
 	
+	      /* istanbul ignore if */
 	      if (removed instanceof Array && removed.length > 0) {
 	        this._applyCallbacks(domNode, this._getBpsByClassNames(removed, ['eq', 'bt']), 'unmatch');
 	      }
