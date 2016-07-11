@@ -397,6 +397,8 @@ class TrackyScroll extends TrackyEvent {
           callbacks: {
             match: (typeof prep.onMatch === 'function') ? prep.onMatch : null,
             unmatch: (typeof prep.onUnmatch === 'function') ? prep.onUnmatch : null,
+            lower: (typeof prep.onLower === 'function') ? prep.onLower : null,
+            greater: (typeof prep.onGreater === 'function') ? prep.onGreater : null,
           },
           value: (hasValue) ? prep.value : null,
           min: (hasBetween) ? prep.min : null,
@@ -507,38 +509,62 @@ class TrackyScroll extends TrackyEvent {
   /**
    * _getBpsByClassName
    * @param className
+   * @param findIn
    * @returns {Array | null}
    * @private
    */
-  _getBpsByClassName(className = null) {
+  _getBpsByClassName(className = null, findIn = ['eq', 'bt']) {
     return (
       className &&
       typeof className === 'string' &&
-      this._options.breakpoints instanceof Array
+      this._options.breakpoints instanceof Array &&
+      this._options.breakpoints.length &&
+      findIn &&
+      findIn instanceof Array &&
+      findIn.length
     ) ?
       this._options.breakpoints.filter(
-        (bp) => [
-          bp.css.eq,
-          bp.css.bt,
-        ].indexOf(className) > -1
+        (bp) => {
+          let cls = [];
+
+          if (
+            findIn instanceof Array &&
+            findIn.length
+          ) {
+            findIn.forEach(
+              (operator) => {
+                if (typeof bp.css[operator] === 'string') {
+                  cls.push(bp.css[operator]);
+                }
+              }
+            );
+          }
+
+          return cls.indexOf(className) > -1;
+
+        }
       ) : null;
   }
 
   /**
    * _getBpsByClassNames
    * @param classNames
+   * @param findIn
    * @returns {Array | null}
    * @private
    */
-  _getBpsByClassNames(classNames = []) {
+  _getBpsByClassNames(classNames = [], findIn = ['eq', 'bt']) {
     if (
       classNames instanceof Array &&
-      classNames.length > 0
+      classNames.length > 0 &&
+      findIn &&
+      findIn instanceof Array &&
+      findIn.length
     ) {
       let bps = [];
       classNames.forEach(
         (cn) => {
-          let bp = this._getBpsByClassName(cn);
+          let bp = this._getBpsByClassName(cn, findIn);
           if (bp && bp.length > 0) {
             bps = bps.concat(bp);
           }
@@ -585,14 +611,16 @@ class TrackyScroll extends TrackyEvent {
       added instanceof Array &&
       added.length > 0
     ) {
-      this._applyCallbacks(domNode, this._getBpsByClassNames(added), 'match');
+      this._applyCallbacks(domNode, this._getBpsByClassNames(added, ['eq', 'bt']), 'match');
+      this._applyCallbacks(domNode, this._getBpsByClassNames(added, ['lt']), 'lower');
+      this._applyCallbacks(domNode, this._getBpsByClassNames(added, ['gt']), 'greater');
     }
 
     if (
       removed instanceof Array &&
       removed.length > 0
     ) {
-      this._applyCallbacks(domNode, this._getBpsByClassNames(removed), 'unmatch');
+      this._applyCallbacks(domNode, this._getBpsByClassNames(removed, ['eq', 'bt']), 'unmatch');
     }
 
   }

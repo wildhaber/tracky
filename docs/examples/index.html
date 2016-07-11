@@ -234,13 +234,23 @@
           scroll: {
             breakpoints: [
               0, 50, 200, 500, 2000, {
-                css: 'this-is-my-special-class-at-350',
+                css: {
+                  lt : 'this-is-my-special-class-under-350',
+                  gt : 'this-is-my-special-class-over-350',
+                  eq : 'this-is-my-special-class-at-350'
+                },
                 value: 350,
                 onMatch: function() {
                   console.log('wow, this was a 350px-scroll-match!');
                 },
                 onUnmatch: function() {
                   console.log('nope, this was not a 350px-scroll-match!');
+                },
+                onGreater: function() {
+                  console.log('aaaha... the scroll is greater than 350px');
+                },
+                onLower: function() {
+                  console.log('deep-stapled. < 350px');
                 }
               }, {
                 value: '99%'
