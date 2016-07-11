@@ -19,7 +19,13 @@ var scrollEventOptions = {
         }, {
           css: 'this-is-between-400-and-500',
           min: 400,
-          max: 500
+          max: 500,
+          onMatch: function () {
+            return 'match';
+          },
+          onUnmatch: function () {
+            return 'unmatch';
+          }
         }, {
           css: 'mega-element-active',
           min: '40%',
@@ -44,6 +50,12 @@ var scrollEventOptions = {
           applyGt: false,
           applyEq: false,
           applyBt: false,
+          onMatch: function () {
+            return 'match';
+          },
+          onUnmatch: function () {
+            return 'unmatch';
+          },
           value: [77, {percent: false}],
           min: [44, {percent: true}],
           max: [66, {percent: true}]
@@ -520,6 +532,97 @@ describe(
       }
     );
 
+    it(
+      'should return a callback property with having properties match/unmatch', function () {
+        trackyScroll
+          ._transformBreakpoints(scrollEventOptions.events.scroll.breakpoints)
+          .forEach(
+            function (bp) {
+              expect(bp.callbacks).toBeDefined();
+              expect(bp.callbacks.match).toBeDefined();
+              expect(bp.callbacks.unmatch).toBeDefined();
+            }
+          );
+      }
+    );
+
+    it(
+      'should bind onMatch callback property to breakpoint', function () {
+        trackyScroll
+          ._transformBreakpoints(
+            {
+              css: 'this-is-between-400-and-500',
+              min: 400,
+              max: 500,
+              onMatch: function () {
+                return 'match';
+              }
+            }
+          )
+          .forEach(
+            function (bp) {
+              expect(typeof bp.callbacks.match).toEqual('function');
+              expect(bp.callbacks.match()).toEqual('match');
+            }
+          );
+      }
+    );
+
+    it(
+      'should bind onUnmatch callback property to breakpoint', function () {
+        trackyScroll
+          ._transformBreakpoints(
+            {
+              css: 'this-is-between-400-and-500',
+              min: 400,
+              max: 500,
+              onUnmatch: function () {
+                return 'unmatch';
+              }
+            }
+          )
+          .forEach(
+            function (bp) {
+              expect(typeof bp.callbacks.unmatch).toEqual('function');
+              expect(bp.callbacks.unmatch()).toEqual('unmatch');
+            }
+          );
+      }
+    );
+
+
+  }
+);
+
+
+describe(
+  'tracky.scroll.js - _getBpsByClassNames', function () {
+
+    var exampleArray = ['this-is-between-400-and-500', 'tracky-scroll-eq-99pc', 'not-found'];
+
+    it(
+      'should return an array or null', function () {
+        expect(trackyScroll._getBpsByClassNames([])).toEqual(null);
+        expect(trackyScroll._getBpsByClassNames(null)).toEqual(null);
+        expect(trackyScroll._getBpsByClassNames(false)).toEqual(null);
+        expect(trackyScroll._getBpsByClassNames({})).toEqual(null);
+        expect(trackyScroll._getBpsByClassNames(NaN)).toEqual(null);
+        expect(trackyScroll._getBpsByClassNames(exampleArray)).toEqual(jasmine.any(Array));
+        expect(trackyScroll._getBpsByClassNames(exampleArray).length).toEqual(2);
+      }
+    );
+
+    it(
+      'should return an array with objects', function () {
+        trackyScroll
+          ._getBpsByClassNames(exampleArray)
+          .forEach(
+            function (bp) {
+              expect(bp).toEqual(jasmine.any(Object));
+            }
+          );
+      }
+    );
 
   }
 );
