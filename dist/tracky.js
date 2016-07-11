@@ -536,10 +536,7 @@
 	
 	      var position = this._getScrollPosition(domNode);
 	
-	      this.classify(domNode, {
-	        absolute: position.absolute.top,
-	        percent: position.percent.top
-	      });
+	      this.classify(domNode, position);
 	    }
 	
 	    /**
@@ -879,6 +876,7 @@
 	            eq: !hasBetween ? hasCustomCss && typeof prep.css.eq !== 'undefined' ? prep.css.eq : _this7._buildClassName(prep.value[0] + (prep.value[1].percent ? 'pc' : ''), go.classEqPrefix) : null,
 	            bt: hasBetween ? hasCustomCss && typeof prep.css.bt !== 'undefined' ? prep.css.bt : _this7._buildClassName(prep.min[0] + (prep.min[1].percent ? 'pc' : '') + '-' + prep.max[0] + (prep.max[1].percent ? 'pc' : ''), go.classBtPrefix) : null
 	          },
+	          axis: typeof prep.axis === 'string' && prep.axis.toLowerCase() === 'x' ? 'x' : 'y',
 	          applyLt: !hasBetween && typeof prep.applyLt !== 'undefined' ? prep.applyLt : !hasBetween,
 	          applyGt: !hasBetween && typeof prep.applyGt !== 'undefined' ? prep.applyGt : !hasBetween,
 	          applyEq: !hasBetween && typeof prep.applyEq !== 'undefined' ? prep.applyEq : !hasBetween,
@@ -930,7 +928,7 @@
 	  }, {
 	    key: 'classify',
 	    value: function classify(domNode) {
-	      var value = arguments.length <= 1 || arguments[1] === undefined ? { absolute: 0, percent: 0 } : arguments[1];
+	      var value = arguments.length <= 1 || arguments[1] === undefined ? { absolute: { top: 0, left: 0 }, percent: { top: 0, left: 0 } } : arguments[1];
 	
 	
 	      var bp = this._options.breakpoints;
@@ -939,24 +937,31 @@
 	      if (bp.length > 0) {
 	        for (var l = bp.length; l; l--) {
 	          var _bp = bp[l - 1];
+	          var _value = _bp.axis === 'x' ? {
+	            absolute: value.absolute.left,
+	            percent: value.percent.left
+	          } : {
+	            absolute: value.absolute.top,
+	            percent: value.percent.top
+	          };
 	
 	          // Check lt
-	          if (_bp.applyLt && (!_bp.value[1].percent && value.absolute < _bp.value[0] || _bp.value[1].percent && value.percent < _bp.value[0])) {
+	          if (_bp.applyLt && (!_bp.value[1].percent && _value.absolute < _bp.value[0] || _bp.value[1].percent && _value.percent < _bp.value[0])) {
 	            classes.push(_bp.css.lt);
 	          }
 	
 	          // Check gt
-	          if (_bp.applyGt && (!_bp.value[1].percent && value.absolute > _bp.value[0] || _bp.value[1].percent && value.percent > _bp.value[0])) {
+	          if (_bp.applyGt && (!_bp.value[1].percent && _value.absolute > _bp.value[0] || _bp.value[1].percent && _value.percent > _bp.value[0])) {
 	            classes.push(_bp.css.gt);
 	          }
 	
 	          // Check eq
-	          if (_bp.applyEq && (!_bp.value[1].percent && value.absolute === _bp.value[0] || _bp.value[1].percent && value.percent === _bp.value[0])) {
+	          if (_bp.applyEq && (!_bp.value[1].percent && _value.absolute === _bp.value[0] || _bp.value[1].percent && _value.percent === _bp.value[0])) {
 	            classes.push(_bp.css.eq);
 	          }
 	
 	          // Check between
-	          if (_bp.applyBt && (!_bp.min[1].percent && value.absolute >= _bp.min[0] || _bp.min[1].percent && value.percent >= _bp.min[0]) && (!_bp.max[1].percent && value.absolute <= _bp.max[0] || _bp.max[1].percent && value.percent <= _bp.max[0])) {
+	          if (_bp.applyBt && (!_bp.min[1].percent && _value.absolute >= _bp.min[0] || _bp.min[1].percent && _value.percent >= _bp.min[0]) && (!_bp.max[1].percent && _value.absolute <= _bp.max[0] || _bp.max[1].percent && _value.percent <= _bp.max[0])) {
 	            classes.push(_bp.css.bt);
 	          }
 	        }
