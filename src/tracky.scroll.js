@@ -394,6 +394,10 @@ class TrackyScroll extends TrackyEvent {
           applyGt: (!hasBetween && typeof prep.applyGt !== 'undefined') ? prep.applyGt : !hasBetween,
           applyEq: (!hasBetween && typeof prep.applyEq !== 'undefined') ? prep.applyEq : !hasBetween,
           applyBt: hasBetween,
+          callbacks: {
+            match: (typeof prep.onMatch === 'function') ? prep.onMatch : null,
+            unmatch: (typeof prep.onUnmatch === 'function') ? prep.onUnmatch : null,
+          },
           value: (hasValue) ? prep.value : null,
           min: (hasBetween) ? prep.min : null,
           max: (hasBetween) ? prep.max : null,
@@ -497,6 +501,99 @@ class TrackyScroll extends TrackyEvent {
     }
 
     this.attachClasses(domNode, classes);
+
+  }
+
+  /**
+   * _getBpsByClassName
+   * @param className
+   * @returns {Array | null}
+   * @private
+   */
+  _getBpsByClassName(className = null) {
+    return (
+      className &&
+      typeof className === 'string' &&
+      this._options.breakpoints instanceof Array
+    ) ?
+      this._options.breakpoints.filter(
+        (bp) => [
+          bp.css.eq,
+          bp.css.bt,
+        ].indexOf(className) > -1
+      ) : null;
+  }
+
+  /**
+   * _getBpsByClassNames
+   * @param classNames
+   * @returns {Array | null}
+   * @private
+   */
+  _getBpsByClassNames(classNames = []) {
+    if (
+      classNames instanceof Array &&
+      classNames.length > 0
+    ) {
+      let bps = [];
+      classNames.forEach(
+        (cn) => {
+          let bp = this._getBpsByClassName(cn);
+          if (bp && bp.length > 0) {
+            bps = bps.concat(bp);
+          }
+        }
+      );
+      return bps;
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * _applyCallbacks
+   * @param domNode
+   * @param bps
+   * @param keyword
+   * @private
+   */
+  _applyCallbacks(domNode, bps, keyword = null) {
+    if (
+      typeof keyword === 'string' &&
+      bps instanceof Array &&
+      bps.length > 0
+    ) {
+      bps.forEach(
+        (bp) => {
+          if (typeof bp.callbacks[keyword] === 'function') {
+            bp.callbacks[keyword].call(domNode, bp);
+          }
+        }
+      );
+    }
+  }
+
+  /**
+   * callbackHandler
+   * @param domNode
+   * @param added
+   * @param removed
+   */
+  callbackHandler(domNode, added, removed) {
+
+    if (
+      added instanceof Array &&
+      added.length > 0
+    ) {
+      this._applyCallbacks(domNode, this._getBpsByClassNames(added), 'match');
+    }
+
+    if (
+      removed instanceof Array &&
+      removed.length > 0
+    ) {
+      this._applyCallbacks(domNode, this._getBpsByClassNames(removed), 'unmatch');
+    }
 
   }
 
