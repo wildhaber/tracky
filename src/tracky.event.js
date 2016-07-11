@@ -94,7 +94,6 @@ class TrackyEvent {
     let available = this._classNames;
     let current = domNode.className;
 
-
     if (domNode.classList) {
 
       let applied = current.replace(/\s+/g, ' ').split(' ').filter(
@@ -125,6 +124,13 @@ class TrackyEvent {
         for (let l = toApply.length; l; l--) {
           domNode.classList.add(toApply[l - 1]);
         }
+      }
+
+      if (
+        toRemove.length > 0 ||
+        toApply.length > 0
+      ) {
+        this.callbackHandler(domNode, toApply, toRemove);
       }
 
     }
