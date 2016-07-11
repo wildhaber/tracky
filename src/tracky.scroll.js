@@ -9,8 +9,10 @@ class TrackyScroll extends TrackyEvent {
    */
   _listener(domNode) {
 
+    /* istanbul ignore next */
     let position = this._getScrollPosition(domNode);
 
+    /* istanbul ignore next */
     this.classify(domNode, position);
 
   }
@@ -21,11 +23,13 @@ class TrackyScroll extends TrackyEvent {
    */
   bindEvent(domNode) {
 
+    /* istanbul ignore next */
     domNode.addEventListener(
       'scroll',
       this._bindListener
     );
 
+    /* istanbul ignore next */
     this._listener(domNode);
 
   }
@@ -37,6 +41,7 @@ class TrackyScroll extends TrackyEvent {
    * @private
    */
   _getScrollPosition(domNode) {
+
     if (this._isBody(domNode)) {
 
       let doc = document.documentElement;
@@ -78,10 +83,12 @@ class TrackyScroll extends TrackyEvent {
    */
   bindBodyEvent() {
 
+    /* istanbul ignore next */
     window.addEventListener(
       'scroll', this._bindBodyListener
     );
 
+    /* istanbul ignore next */
     this._listener(document.body);
 
   }
@@ -90,6 +97,8 @@ class TrackyScroll extends TrackyEvent {
    * unbindBodyEvent
    */
   unbindBodyEvent() {
+
+    /* istanbul ignore next */
     window.removeEventListener(
       'scroll',
       this._bindBodyListener
@@ -102,9 +111,12 @@ class TrackyScroll extends TrackyEvent {
    * @param domNode
    */
   unbindEvent(domNode) {
+
+    /* istanbul ignore next */
     domNode.removeEventListener(
       'scroll', this._bindListener
     );
+
   }
 
   /**
@@ -125,6 +137,7 @@ class TrackyScroll extends TrackyEvent {
    */
   bindEvents() {
 
+    /* istanbul ignore next */
     this.getNodes().forEach(
       (n) => {
         if (n) {
@@ -147,6 +160,7 @@ class TrackyScroll extends TrackyEvent {
    */
   unbindEvents() {
 
+    /* istanbul ignore next */
     this.getNodes().forEach(
       (n) => {
         if (n) {
@@ -173,6 +187,7 @@ class TrackyScroll extends TrackyEvent {
   onStart() {
 
     // Ugly but necessary to keep this-context combined with eventListener add/remove
+    /* istanbul ignore next */
     this._bindListener = (e) => {
       this._listener(e.target);
     };
@@ -182,6 +197,7 @@ class TrackyScroll extends TrackyEvent {
     var last_known_scroll_position = 0; // eslint-disable-line no-unused-vars
     var ticking = false;
 
+    /* istanbul ignore next */
     this._bindBodyListener = (e) => {
 
       last_known_scroll_position = window.scrollY;
@@ -207,6 +223,7 @@ class TrackyScroll extends TrackyEvent {
    * onStop
    */
   onStop() {
+    /* istanbul ignore next */
     this.unbindEvents();
   }
 
@@ -215,6 +232,7 @@ class TrackyScroll extends TrackyEvent {
    * @param nodes
    */
   onAdd(nodes) {
+    /* istanbul ignore next */
     nodes.forEach(
       (_n) => {
         if (this._isBody(_n)) {
@@ -232,6 +250,7 @@ class TrackyScroll extends TrackyEvent {
    */
   onRemove(nodes) {
 
+    /* istanbul ignore next */
     nodes.forEach(
       (_n) => {
         if (this._isBody(_n)) {
@@ -366,6 +385,7 @@ class TrackyScroll extends TrackyEvent {
     let bp = this._options.breakpoints;
     let classes = [];
 
+    /* istanbul ignore if */
     if (bp.length > 0) {
       for (let l = bp.length; l; l--) {
         let _bp = bp[(l - 1)];
@@ -442,6 +462,8 @@ class TrackyScroll extends TrackyEvent {
    * @private
    */
   _applyCallbacks(domNode, bps, keyword = null) {
+
+    /* istanbul ignore if */
     if (
       typeof keyword === 'string' &&
       bps instanceof Array &&
@@ -465,6 +487,7 @@ class TrackyScroll extends TrackyEvent {
    */
   callbackHandler(domNode, added, removed) {
 
+    /* istanbul ignore if */
     if (
       added instanceof Array &&
       added.length > 0
@@ -474,6 +497,7 @@ class TrackyScroll extends TrackyEvent {
       this._applyCallbacks(domNode, this._getBpsByClassNames(added, ['gt']), 'greater');
     }
 
+    /* istanbul ignore if */
     if (
       removed instanceof Array &&
       removed.length > 0
