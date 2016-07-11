@@ -883,6 +883,10 @@
 	          applyGt: !hasBetween && typeof prep.applyGt !== 'undefined' ? prep.applyGt : !hasBetween,
 	          applyEq: !hasBetween && typeof prep.applyEq !== 'undefined' ? prep.applyEq : !hasBetween,
 	          applyBt: hasBetween,
+	          callbacks: {
+	            match: typeof prep.onMatch === 'function' ? prep.onMatch : null,
+	            unmatch: typeof prep.onUnmatch === 'function' ? prep.onUnmatch : null
+	          },
 	          value: hasValue ? prep.value : null,
 	          min: hasBetween ? prep.min : null,
 	          max: hasBetween ? prep.max : null
@@ -957,6 +961,99 @@
 	      }
 	
 	      this.attachClasses(domNode, classes);
+	    }
+	
+	    /**
+	     * _getBpsByClassName
+	     * @param className
+	     * @returns {Array | null}
+	     * @private
+	     */
+	
+	  }, {
+	    key: '_getBpsByClassName',
+	    value: function _getBpsByClassName() {
+	      var className = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+	
+	      return className && typeof className === 'string' && this._options.breakpoints instanceof Array ? this._options.breakpoints.filter(function (bp) {
+	        return [bp.css.eq, bp.css.bt].indexOf(className) > -1;
+	      }) : null;
+	    }
+	
+	    /**
+	     * _getBpsByClassNames
+	     * @param classNames
+	     * @returns {Array | null}
+	     * @private
+	     */
+	
+	  }, {
+	    key: '_getBpsByClassNames',
+	    value: function _getBpsByClassNames() {
+	      var _this8 = this;
+	
+	      var classNames = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+	
+	      if (classNames instanceof Array && classNames.length > 0) {
+	        var _ret = function () {
+	          var bps = [];
+	          classNames.forEach(function (cn) {
+	            var bp = _this8._getBpsByClassName(cn);
+	            if (bp && bp.length > 0) {
+	              bps = bps.concat(bp);
+	            }
+	          });
+	          return {
+	            v: bps
+	          };
+	        }();
+	
+	        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	      } else {
+	        return null;
+	      }
+	    }
+	
+	    /**
+	     * _applyCallbacks
+	     * @param domNode
+	     * @param bps
+	     * @param keyword
+	     * @private
+	     */
+	
+	  }, {
+	    key: '_applyCallbacks',
+	    value: function _applyCallbacks(domNode, bps) {
+	      var keyword = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
+	
+	      if (typeof keyword === 'string' && bps instanceof Array && bps.length > 0) {
+	        bps.forEach(function (bp) {
+	          if (typeof bp.callbacks[keyword] === 'function') {
+	            bp.callbacks[keyword].call(domNode, bp);
+	          }
+	        });
+	      }
+	    }
+	
+	    /**
+	     * callbackHandler
+	     * @param domNode
+	     * @param added
+	     * @param removed
+	     */
+	
+	  }, {
+	    key: 'callbackHandler',
+	    value: function callbackHandler(domNode, added, removed) {
+	
+	      if (added instanceof Array && added.length > 0) {
+	        this._applyCallbacks(domNode, this._getBpsByClassNames(added), 'match');
+	      }
+	
+	      if (removed instanceof Array && removed.length > 0) {
+	        this._applyCallbacks(domNode, this._getBpsByClassNames(removed), 'unmatch');
+	      }
 	    }
 	  }]);
 	
@@ -1092,6 +1189,7 @@
 	  }, {
 	    key: 'attachClasses',
 	    value: function attachClasses(domNode, classNames) {
+	      var _this = this;
 	
 	      var available = this._classNames;
 	      var current = domNode.className;
@@ -1121,6 +1219,10 @@
 	            for (var _l = toApply.length; _l; _l--) {
 	              domNode.classList.add(toApply[_l - 1]);
 	            }
+	          }
+	
+	          if (toRemove.length > 0 || toApply.length > 0) {
+	            _this.callbackHandler(domNode, toApply, toRemove);
 	          }
 	        })();
 	      }

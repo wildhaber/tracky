@@ -235,13 +235,25 @@
             breakpoints: [
               0, 50, 200, 500, 2000, {
                 css: 'this-is-my-special-class-at-350',
-                value: 350
+                value: 350,
+                onMatch: function() {
+                  console.log('wow, this was a 350px-scroll-match!');
+                },
+                onUnmatch: function() {
+                  console.log('nope, this was not a 350px-scroll-match!');
+                }
               }, {
                 value: '99%'
               }, {
                 css: 'this-is-between-400-and-500',
                 min: 400,
-                max: 500
+                max: 500,
+                onMatch: function() {
+//                  console.log('hold - on, we\'re comfortably sitting between 400 and 500-px');
+                },
+                onUnmatch: function() {
+//                  console.log('oops, we have left the save-zone between 400/500px');
+                }
               }, {
                 css: 'mega-element-active',
                 min: '40%',
@@ -291,20 +303,20 @@
       }, 3000
     );
 
-    window.setTimeout(
-      function () {
-        console.log('Disable - features (all).');
-        t.disable();
-      }, 4000
-    );
+//    window.setTimeout(
+//      function () {
+//        console.log('Disable - features (all).');
+//        t.disable();
+//      }, 4000
+//    );
 
 
-    window.setTimeout(
-      function () {
-        console.log('Re-Enable-Features - only scroll');
-        t.enable('scroll');
-      }, 15000
-    );
+//    window.setTimeout(
+//      function () {
+//        console.log('Re-Enable-Features - only scroll');
+//        t.enable('scroll');
+//      }, 15000
+//    );
 
     window.setTimeout(
       function () {
