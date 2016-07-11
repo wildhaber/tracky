@@ -885,7 +885,9 @@
 	          applyBt: hasBetween,
 	          callbacks: {
 	            match: typeof prep.onMatch === 'function' ? prep.onMatch : null,
-	            unmatch: typeof prep.onUnmatch === 'function' ? prep.onUnmatch : null
+	            unmatch: typeof prep.onUnmatch === 'function' ? prep.onUnmatch : null,
+	            lower: typeof prep.onLower === 'function' ? prep.onLower : null,
+	            greater: typeof prep.onGreater === 'function' ? prep.onGreater : null
 	          },
 	          value: hasValue ? prep.value : null,
 	          min: hasBetween ? prep.min : null,
@@ -966,6 +968,7 @@
 	    /**
 	     * _getBpsByClassName
 	     * @param className
+	     * @param findIn
 	     * @returns {Array | null}
 	     * @private
 	     */
@@ -974,15 +977,27 @@
 	    key: '_getBpsByClassName',
 	    value: function _getBpsByClassName() {
 	      var className = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+	      var findIn = arguments.length <= 1 || arguments[1] === undefined ? ['eq', 'bt'] : arguments[1];
 	
-	      return className && typeof className === 'string' && this._options.breakpoints instanceof Array ? this._options.breakpoints.filter(function (bp) {
-	        return [bp.css.eq, bp.css.bt].indexOf(className) > -1;
+	      return className && typeof className === 'string' && this._options.breakpoints instanceof Array && this._options.breakpoints.length && findIn && findIn instanceof Array && findIn.length ? this._options.breakpoints.filter(function (bp) {
+	        var cls = [];
+	
+	        if (findIn instanceof Array && findIn.length) {
+	          findIn.forEach(function (operator) {
+	            if (typeof bp.css[operator] === 'string') {
+	              cls.push(bp.css[operator]);
+	            }
+	          });
+	        }
+	
+	        return cls.indexOf(className) > -1;
 	      }) : null;
 	    }
 	
 	    /**
 	     * _getBpsByClassNames
 	     * @param classNames
+	     * @param findIn
 	     * @returns {Array | null}
 	     * @private
 	     */
@@ -993,12 +1008,13 @@
 	      var _this8 = this;
 	
 	      var classNames = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+	      var findIn = arguments.length <= 1 || arguments[1] === undefined ? ['eq', 'bt'] : arguments[1];
 	
-	      if (classNames instanceof Array && classNames.length > 0) {
+	      if (classNames instanceof Array && classNames.length > 0 && findIn && findIn instanceof Array && findIn.length) {
 	        var _ret = function () {
 	          var bps = [];
 	          classNames.forEach(function (cn) {
-	            var bp = _this8._getBpsByClassName(cn);
+	            var bp = _this8._getBpsByClassName(cn, findIn);
 	            if (bp && bp.length > 0) {
 	              bps = bps.concat(bp);
 	            }
@@ -1048,11 +1064,13 @@
 	    value: function callbackHandler(domNode, added, removed) {
 	
 	      if (added instanceof Array && added.length > 0) {
-	        this._applyCallbacks(domNode, this._getBpsByClassNames(added), 'match');
+	        this._applyCallbacks(domNode, this._getBpsByClassNames(added, ['eq', 'bt']), 'match');
+	        this._applyCallbacks(domNode, this._getBpsByClassNames(added, ['lt']), 'lower');
+	        this._applyCallbacks(domNode, this._getBpsByClassNames(added, ['gt']), 'greater');
 	      }
 	
 	      if (removed instanceof Array && removed.length > 0) {
-	        this._applyCallbacks(domNode, this._getBpsByClassNames(removed), 'unmatch');
+	        this._applyCallbacks(domNode, this._getBpsByClassNames(removed, ['eq', 'bt']), 'unmatch');
 	      }
 	    }
 	  }]);
