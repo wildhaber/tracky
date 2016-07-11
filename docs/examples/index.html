@@ -17,7 +17,7 @@
 
     .super-element {
       display: block;
-      width: 100%;
+      width: 50%;
       height: 250px;
       background-color: indianred;
       overflow: auto;
@@ -31,6 +31,7 @@
       display: block;
       height: 150px;
       background-color: coral;
+      width: 200%;
     }
 
   </style>
@@ -239,6 +240,7 @@
                   gt : 'this-is-my-special-class-over-350',
                   eq : 'this-is-my-special-class-at-350'
                 },
+                axis: 'x',
                 value: 350,
                 onMatch: function() {
                   console.log('wow, this was a 350px-scroll-match!');

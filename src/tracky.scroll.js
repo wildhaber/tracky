@@ -11,12 +11,7 @@ class TrackyScroll extends TrackyEvent {
 
     let position = this._getScrollPosition(domNode);
 
-    this.classify(
-      domNode, {
-        absolute: position.absolute.top,
-        percent: position.percent.top
-      }
-    );
+    this.classify(domNode, position);
 
   }
 
@@ -390,6 +385,7 @@ class TrackyScroll extends TrackyEvent {
                 go.classBtPrefix
               )) : null,
           },
+          axis: (typeof prep.axis === 'string' && prep.axis.toLowerCase() === 'x') ? 'x' : 'y',
           applyLt: (!hasBetween && typeof prep.applyLt !== 'undefined') ? prep.applyLt : !hasBetween,
           applyGt: (!hasBetween && typeof prep.applyGt !== 'undefined') ? prep.applyGt : !hasBetween,
           applyEq: (!hasBetween && typeof prep.applyEq !== 'undefined') ? prep.applyEq : !hasBetween,
@@ -440,7 +436,7 @@ class TrackyScroll extends TrackyEvent {
    * @param domNode
    * @param value
    */
-  classify(domNode, value = {absolute: 0, percent: 0}) {
+  classify(domNode, value = {absolute: {top: 0, left: 0,}, percent: {top: 0, left: 0,}}) {
 
     let bp = this._options.breakpoints;
     let classes = [];
@@ -448,13 +444,20 @@ class TrackyScroll extends TrackyEvent {
     if (bp.length > 0) {
       for (let l = bp.length; l; l--) {
         let _bp = bp[(l - 1)];
+        let _value = (_bp.axis === 'x') ? {
+          absolute: value.absolute.left,
+          percent: value.percent.left,
+        } : {
+          absolute: value.absolute.top,
+          percent: value.percent.top,
+        };
 
         // Check lt
         if (
           _bp.applyLt &&
           (
-            (!_bp.value[1].percent && value.absolute < _bp.value[0]) ||
-            (_bp.value[1].percent && value.percent < _bp.value[0])
+            (!_bp.value[1].percent && _value.absolute < _bp.value[0]) ||
+            (_bp.value[1].percent && _value.percent < _bp.value[0])
           )
         ) {
           classes.push(_bp.css.lt);
@@ -464,8 +467,8 @@ class TrackyScroll extends TrackyEvent {
         if (
           _bp.applyGt &&
           (
-            (!_bp.value[1].percent && value.absolute > _bp.value[0]) ||
-            (_bp.value[1].percent && value.percent > _bp.value[0])
+            (!_bp.value[1].percent && _value.absolute > _bp.value[0]) ||
+            (_bp.value[1].percent && _value.percent > _bp.value[0])
           )
         ) {
           classes.push(_bp.css.gt);
@@ -475,8 +478,8 @@ class TrackyScroll extends TrackyEvent {
         if (
           _bp.applyEq &&
           (
-            (!_bp.value[1].percent && value.absolute === _bp.value[0]) ||
-            (_bp.value[1].percent && value.percent === _bp.value[0])
+            (!_bp.value[1].percent && _value.absolute === _bp.value[0]) ||
+            (_bp.value[1].percent && _value.percent === _bp.value[0])
           )
         ) {
           classes.push(_bp.css.eq);
@@ -487,12 +490,12 @@ class TrackyScroll extends TrackyEvent {
           _bp.applyBt &&
           (
             (
-              (!_bp.min[1].percent && value.absolute >= _bp.min[0]) ||
-              (_bp.min[1].percent && value.percent >= _bp.min[0])
+              (!_bp.min[1].percent && _value.absolute >= _bp.min[0]) ||
+              (_bp.min[1].percent && _value.percent >= _bp.min[0])
             ) &&
             (
-              (!_bp.max[1].percent && value.absolute <= _bp.max[0]) ||
-              (_bp.max[1].percent && value.percent <= _bp.max[0])
+              (!_bp.max[1].percent && _value.absolute <= _bp.max[0]) ||
+              (_bp.max[1].percent && _value.percent <= _bp.max[0])
             )
           )
         ) {
