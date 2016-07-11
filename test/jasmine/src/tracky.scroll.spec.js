@@ -816,15 +816,15 @@ describe(
         expect(trackyScroll._getBpsByClassNames(false)).toEqual(null);
         expect(trackyScroll._getBpsByClassNames({})).toEqual(null);
         expect(trackyScroll._getBpsByClassNames(NaN)).toEqual(null);
-        expect(trackyScroll._getBpsByClassNames(exampleArray)).toEqual(jasmine.any(Array));
-        expect(trackyScroll._getBpsByClassNames(exampleArray).length).toEqual(2);
+        expect(trackyScroll._getBpsByClassNames(exampleArray, ['eq','bt'])).toEqual(jasmine.any(Array));
+        expect(trackyScroll._getBpsByClassNames(exampleArray, ['eq','bt']).length).toEqual(2);
       }
     );
 
     it(
       'should return an array with objects', function () {
         trackyScroll
-          ._getBpsByClassNames(exampleArray)
+          ._getBpsByClassNames(exampleArray,['eq','bt'])
           .forEach(
             function (bp) {
               expect(bp).toEqual(jasmine.any(Object));
