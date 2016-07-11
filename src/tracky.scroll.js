@@ -31,18 +31,6 @@ class TrackyScroll extends TrackyEvent {
   }
 
   /**
-   * _percentRound
-   * @param value
-   * @returns {number}
-   * @private
-   */
-  _percentRound(value) {
-    return (typeof value === 'number' && !isNaN(value)) ? Math.round(
-      parseInt((parseFloat(value) * 100).toFixed(2), 10) / 100
-    ) : 0;
-  }
-
-  /**
    * _getScrollPosition
    * @param domNode
    * @returns {*}
@@ -255,47 +243,6 @@ class TrackyScroll extends TrackyEvent {
     );
   }
 
-
-  /**
-   * _buildClassName
-   * @param value
-   * @param modifier
-   * @returns {string}
-   * @private
-   */
-  _buildClassName(value, modifier) {
-    let o = this._globalOptions;
-    return o.classPrefix + this._key + '-' + modifier + value + o.classSuffix;
-  }
-
-  /**
-   * _transformValue
-   * @param value
-   * @returns {*}
-   * @private
-   */
-  _transformValue(value) {
-
-    let t = null;
-
-    if (
-      typeof value === 'number' && !isNaN(value)
-    ) {
-      t = [value, {percent: false}];
-    } else if (typeof value === 'string') {
-      t = (value.indexOf('%') == (value.length - 1)) ? [parseInt(value, 10), {percent: true}] : null;
-    } else if (
-      value instanceof Array &&
-      value.length === 2 &&
-      typeof value[0] === 'number' && !isNaN(value[0]) && !!value[1] &&
-      typeof value[1].percent !== 'undefined'
-    ) {
-      t = value;
-    }
-
-    return t;
-  }
-
   /**
    * _transformBreakpoints
    * @param bp
@@ -410,28 +357,6 @@ class TrackyScroll extends TrackyEvent {
   }
 
   /**
-   * _extractClasses
-   * @returns {Array}
-   * @private
-   */
-  _extractClasses() {
-    let bps = this._options.breakpoints;
-    let classArray = [];
-
-    bps.forEach(
-      (bp) => {
-        for (let c in bp.css) {
-          if (bp.css[c]) {
-            classArray.push(bp.css[c]);
-          }
-        }
-      }
-    );
-
-    return classArray;
-  }
-
-  /**
    * classify
    * @param domNode
    * @param value
@@ -507,76 +432,6 @@ class TrackyScroll extends TrackyEvent {
 
     this.attachClasses(domNode, classes);
 
-  }
-
-  /**
-   * _getBpsByClassName
-   * @param className
-   * @param findIn
-   * @returns {Array | null}
-   * @private
-   */
-  _getBpsByClassName(className = null, findIn = ['eq', 'bt']) {
-    return (
-      className &&
-      typeof className === 'string' &&
-      this._options.breakpoints instanceof Array &&
-      this._options.breakpoints.length &&
-      findIn &&
-      findIn instanceof Array &&
-      findIn.length
-    ) ?
-      this._options.breakpoints.filter(
-        (bp) => {
-          let cls = [];
-
-          if (
-            findIn instanceof Array &&
-            findIn.length
-          ) {
-            findIn.forEach(
-              (operator) => {
-                if (typeof bp.css[operator] === 'string') {
-                  cls.push(bp.css[operator]);
-                }
-              }
-            );
-          }
-
-          return cls.indexOf(className) > -1;
-
-        }
-      ) : null;
-  }
-
-  /**
-   * _getBpsByClassNames
-   * @param classNames
-   * @param findIn
-   * @returns {Array | null}
-   * @private
-   */
-  _getBpsByClassNames(classNames = [], findIn = ['eq', 'bt']) {
-    if (
-      classNames instanceof Array &&
-      classNames.length > 0 &&
-      findIn &&
-      findIn instanceof Array &&
-      findIn.length
-    ) {
-      let bps = [];
-      classNames.forEach(
-        (cn) => {
-          let bp = this._getBpsByClassName(cn, findIn);
-          if (bp && bp.length > 0) {
-            bps = bps.concat(bp);
-          }
-        }
-      );
-      return bps;
-    } else {
-      return null;
-    }
   }
 
   /**
