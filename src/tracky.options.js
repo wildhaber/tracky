@@ -9,6 +9,10 @@ export default {
     scroll: {
       enable: true,
       breakpoints: []
+    },
+    edge: {
+      enable: true,
+      breakpoints: []
     }
   }
 };
