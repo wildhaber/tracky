@@ -56,6 +56,7 @@ var scrollEventOptions = {
           applyGt: false,
           applyEq: false,
           applyBt: false,
+          axis: 'x',
           onMatch: function () {
             return 'match';
           },
@@ -668,6 +669,21 @@ describe(
               expect(bp.value).toBeDefined();
               expect(bp.min).toBeDefined();
               expect(bp.max).toBeDefined();
+            }
+          );
+      }
+    );
+
+    it(
+      'should set axis as x or y', function () {
+        trackyScroll
+          ._transformBreakpoints(scrollEventOptions.events.scroll.breakpoints)
+          .forEach(
+            function (bp) {
+              expect(bp.axis).toBeDefined();
+              expect(bp.axis).toEqual(jasmine.any(String));
+              expect(bp.axis.length).toEqual(1);
+              expect(['x','y'].indexOf(bp.axis)).toBeGreaterThan(-1);
             }
           );
       }
