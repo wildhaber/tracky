@@ -1,5 +1,6 @@
 import defaultOptions from './tracky.options';
 import TrackyScroll from './tracky.scroll';
+import TrackyEdge from './tracky.edge';
 import _extend from 'deep-assign';
 
 class Tracky {
@@ -16,7 +17,10 @@ class Tracky {
     this._nodes = [];
 
     // Set Listeners
-    this._listeners = [{class: TrackyScroll, key: 'scroll'}]; // Todo: load from external resources
+    this._listeners = [
+      {class: TrackyScroll, key: 'scroll'},
+      {class: TrackyEdge, key: 'edge'}
+    ]; // Todo: load from external resources
 
     this._bindListeners();
     this._startGlobalWatcher();
