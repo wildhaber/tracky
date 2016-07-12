@@ -10,6 +10,7 @@ var eventKey = 'edge';
 var eventOptions = {
   events: {
     edge: {
+      enable: true,
       breakpoints: [
         50, [18, 55, 66, 77], {
           css: {

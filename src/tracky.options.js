@@ -7,15 +7,15 @@ export default {
   classBtPrefix: 'bt-',
   events: {
     scroll: {
-      enable: true,
+      enable: false,
       breakpoints: []
     },
     edge: {
-      enable: true,
+      enable: false,
       breakpoints: []
     },
     orientation: {
-      enable: true,
+      enable: false,
       breakpoints: []
     }
   }

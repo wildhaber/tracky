@@ -10,6 +10,7 @@ var scrollEventKey = 'scroll';
 var scrollEventOptions = {
   events: {
     scroll: {
+      enable: true,
       breakpoints: [
         0, 50, 200, 500, 2000, {
           css: 'this-is-my-special-class-at-350',
