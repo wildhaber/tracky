@@ -30,19 +30,21 @@ Example **ES5**:
 
 ## Documentation
 
-**Tracky**
+#### Tracky
 
 `Tracky( selector, { options } )`
 
-_Arguments_
-1. selector (String | Array | _default: 'body'_) - selector or array of strings that fits into `querySelectAll()`.
-2. options (Object | _default: null_) - options for your Tracky instance
+**Arguments**
 
-_Returns_
+  1. selector (String | Array | _default: 'body'_) - selector or array of strings that fits into `querySelectAll()`.
+  2. options (Object | _default: null_) - options for your Tracky instance
+
+**Returns**
 
 Tracky instance
 
-_Example_
+**Example**
+
 ```javascript
 
  // apply trackers to body
@@ -79,20 +81,22 @@ new Tracky('div', {
 
 ---
 
-**Tracky.addSelector()**
-
-`.addSelector( selector )`
+#### Tracky.addSelector()
 
 > Adds one or many selector to the existing selectors and attach events.
 
-_Arguments_
-1. selector (String | Array) - selector or array of strings that fits into `querySelectAll()`.
+`.addSelector( selector )`
 
-_Returns_
+**Arguments**
+
+  1. selector (String | Array) - selector or array of strings that fits into `querySelectAll()`.
+
+**Returns**
 
 Tracky instance
 
-_Example_
+**Example**
+
 ```javascript
 
  // apply trackers to body
@@ -108,20 +112,22 @@ t.addSelector('#single-selector');
 
 ---
 
-**Tracky.removeSelector()**
-
-`.removeSelector( selector )`
+#### Tracky.removeSelector()
 
 > Removes one or many selector from the existing selectors and unbind events.
 
-_Arguments_
-1. selector (String | Array) - selector or array of selectors that are currently added to the instance.
+`.removeSelector( selector )`
 
-_Returns_
+**Arguments**
+
+  1. selector (String | Array) - selector or array of selectors that are currently added to the instance.
+
+**Returns**
 
 Tracky instance
 
-_Example_
+**Example**
+
 ```javascript
 
  // apply trackers
@@ -137,20 +143,22 @@ t.removeSelector('#s4');
 
 ---
 
-**Tracky.disable()**
-
-`.disable( tracker )`
+#### Tracky.disable()
 
 > Disables a given tracker and unbind the event listeners.
 
-_Arguments_
-1. tracker (String) - tracker as a string that is currently enabled.
+`.disable( tracker )`
 
-_Returns_
+**Arguments**
+
+  1. tracker (String) - tracker as a string that is currently enabled.
+
+**Returns**
 
 Tracky instance
 
-_Example_
+**Example**
+
 ```javascript
 
  // apply events to body
@@ -170,20 +178,22 @@ t.disable('scroll');
 
 ---
 
-**Tracky.enable()**
-
-`.enable( tracker )`
+#### Tracky.enable()
 
 > Enables a given event and unbind the event listeners.
 
-_Arguments_
-1. tracker (String) - tracker as a string from the listeners.
+`.enable( tracker )`
 
-_Returns_
+**Arguments**
+
+  1. tracker (String) - tracker as a string from the listeners.
+
+**Returns**
 
 Tracky instance
 
-_Example_
+**Example**
+
 ```javascript
 
  // apply events to body
@@ -205,11 +215,11 @@ t.enable('orientation');
 
 ### Event Options
 
-**scroll**
+#### scroll
 
-Tracks horizontal and vertical scroll.
+> Tracks horizontal and vertical scroll.
 
-_Default classNames_
+**Default classNames**
 
 If no custom css class-name is defined. Tracky creates a unique name by the given values by default. Note that the %-digit will be replaced by 'pc' (percent).
 
@@ -243,6 +253,8 @@ tracky-scroll-eq-77pc // when equal than 77%
 // min: 5% / max: 200
 tracky-scroll-bt-5pc-200 // when between 5% and 200 pixel
 ```
+
+**Example configuration:**
 
 ```javascript
 {
@@ -317,12 +329,13 @@ tracky-scroll-bt-5pc-200 // when between 5% and 200 pixel
 }
 ```
 
+---
 
-**edge**
+#### edge
 
-Tracks mousemove on a certain area of an elements edge.
+> Tracks mousemove on a certain area of an elements edge.
 
-_Default classNames_
+**Default classNames**
 
 If no custom css class-name is defined. Tracky creates a unique name by the given values by default. Note that the %-digit will be replaced by 'pc' (percent).
 
@@ -361,7 +374,8 @@ tracky-edge-bottom-right-10-25pc // when touches bottom right
 tracky-edge-bottom-left-10-90 // when touches bottom left
 ```
 
-_Example configuration object_
+**Example configuration object**
+
 ```javascript
 {
   events: {
@@ -500,11 +514,13 @@ _Example configuration object_
 }
 ```
 
-**orientation**
+---
 
-Tracks device orientation on x/y/z axis. Defined by the angle of alpha/beta/gamma. Values are in degree or percent. 
+#### orientation
 
-_Default classNames_
+> Tracks device orientation on x/y/z axis. Defined by the angle of alpha/beta/gamma. Values are in degree or percent. 
+
+**Default classNames**
 
 If no custom css class-name is defined. Tracky creates a unique name by the given values by default. Note that the %-digit will be replaced by 'pc' (percent).
 
@@ -539,7 +555,8 @@ tracky-orientation-gamma-left-10 // when gamma > value && direction === left
 tracky-orientation-gamma-right-10 // when gamma > value && direction === right
 ```
 
-_Example configuration object_
+**Example configuration object**
+
 ```javascript
 {
   events: {
