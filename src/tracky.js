@@ -1,6 +1,7 @@
 import defaultOptions from './tracky.options';
 import TrackyScroll from './tracky.scroll';
 import TrackyEdge from './tracky.edge';
+import TrackyOrientation from './tracky.orientation';
 import _extend from 'deep-assign';
 
 class Tracky {
@@ -19,7 +20,8 @@ class Tracky {
     // Set Listeners
     this._listeners = [
       {class: TrackyScroll, key: 'scroll'},
-      {class: TrackyEdge, key: 'edge'}
+      {class: TrackyEdge, key: 'edge'},
+      {class: TrackyOrientation, key: 'orientation'},
     ]; // Todo: load from external resources
 
     this._bindListeners();
