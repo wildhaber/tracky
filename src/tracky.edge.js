@@ -34,7 +34,7 @@ class TrackyEdge extends TrackyEvent {
         this._bindListener, 100, {
           leading: true,
           maxWait: 200,
-          trailing: false
+          trailing: true
         }
       )
     );
@@ -45,8 +45,6 @@ class TrackyEdge extends TrackyEvent {
         this.cleanupClasses(e.target);
       }
     );
-
-    this._listener(domNode);
 
   }
 
@@ -567,29 +565,6 @@ class TrackyEdge extends TrackyEvent {
 
 
   /**
-   * _applyCallbacks
-   * @param domNode
-   * @param bps
-   * @param keyword
-   * @private
-   */
-  _applyCallbacks(domNode, bps, keyword = null) {
-    if (
-      typeof keyword === 'string' &&
-      bps instanceof Array &&
-      bps.length > 0
-    ) {
-      bps.forEach(
-        (bp) => {
-          if (typeof bp.callbacks[keyword] === 'function') {
-            bp.callbacks[keyword].call(domNode, bp);
-          }
-        }
-      );
-    }
-  }
-
-  /**
    * callbackHandler
    * @param domNode
    * @param added
@@ -623,7 +598,7 @@ class TrackyEdge extends TrackyEvent {
       this._applyCallbacks(
         domNode, this._getBpsByClassNames(
           removed, ['top', 'right', 'bottom', 'left', 'topRight', 'topLeft', 'bottomRight', 'bottomLeft']
-        ), 'match'
+        ), 'unmatch'
       );
       this._applyCallbacks(domNode, this._getBpsByClassNames(removed, ['top']), 'unmatchTop');
       this._applyCallbacks(domNode, this._getBpsByClassNames(removed, ['right']), 'unmatchRight');
