@@ -31,10 +31,10 @@ class TrackyEdge extends TrackyEvent {
     domNode.addEventListener(
       'mousemove',
       debounce(
-        this._bindListener, 100, {
+        this._bindListener, 25, {
           leading: true,
-          maxWait: 200,
-          trailing: true
+          maxWait: 40,
+          trailing: false
         }
       )
     );

@@ -10,56 +10,111 @@
   <style>
 
     body {
-      transition: all;
-      border: 15px solid #3a33d1;
-      height: 850px;
+      transition: all 1s;
+      -webkit-perspective: 800;
+      height: 800px;
+      background-size: 20px 20px;
+      background-image: linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+
     }
 
     .super-element {
       display: block;
       width: 50%;
       height: 250px;
-      background-color: olivedrab;
-      overflow: auto;
-      transition: all 0.4s;
+
+      background: linear-gradient(to bottom, rgba(255, 240, 0, 1) 0%, rgba(255, 240, 0, 1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+
+      padding: 25px;
+      font-weight: 400;
+      line-height: 1.24em;
+      font-size: 1.5em;
+      color: black;
+      overflow: hidden;
+      transition: all 0.6s;
       position: fixed;
       top: 50%;
       left: 50%;
 
-      transform: translate(-50%, -50%);
+      border: 25px solid black;
 
+      font-family: 'Roboto', sans-serif;
+
+      transform: translate(-50%, -50%) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+
+      box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.4);
+
+    }
+
+    .super-element h1 {
+      position: absolute;
+      bottom: 15px;
+      right: 35px;
+      font-weight: 800;
+      text-transform: uppercase;
+      line-height: 1.24em;
+      margin: 0px;
+      font-size: 65px;
     }
 
     .super-element.edge-tracker-top {
-      background-color: green;
+      box-shadow: -0px -25px 100px rgba(0, 0, 0, 0.4);
+      transform: translate(-50%, -50%) rotateX(-10deg) rotateY(0deg) rotateZ(0deg);
+
+      background: linear-gradient(to bottom, rgba(255, 240, 0, 1) 0%, rgba(234, 226, 0, 1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+
     }
 
     .super-element.edge-tracker-right {
-      background-color: red;
+      box-shadow: 25px 0px 100px rgba(0, 0, 0, 0.4);
+      transform: translate(-50%, -50%) rotateX(0deg) rotateY(-5deg) rotateZ(0deg);
+
+      /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#eae200+0,fff000+100 */
+      background: linear-gradient(to right, rgba(234, 226, 0, 1) 0%, rgba(255, 240, 0, 1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+
     }
 
     .super-element.edge-tracker-bottom {
-      background-color: cadetblue;
+      box-shadow: 0px 25px 100px rgba(0, 0, 0, 0.4);
+      transform: translate(-50%, -50%) rotateX(10deg) rotateY(0deg) rotateZ(0deg);
+
+      /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#eae200+0,fff000+100 */
+      background: linear-gradient(to bottom, rgba(234, 226, 0, 1) 0%, rgba(255, 240, 0, 1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+
     }
 
     .super-element.edge-tracker-left {
-      background-color: yellow;
+      box-shadow: -25px 0px 100px rgba(0, 0, 0, 0.4);
+      transform: translate(-50%, -50%) rotateX(0deg) rotateY(5deg) rotateZ(0deg);
+
+      /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#fff000+0,eae200+100 */
+      background: linear-gradient(to right, rgba(255, 240, 0, 1) 0%, rgba(234, 226, 0, 1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+
     }
 
-    .super-element.edge-tracker-top-right {
-      background-color: pink;
+    .super-element.edge-tracker-top.edge-tracker-right.edge-tracker-top-right {
+      transform: translate(-50%, -50%) rotateX(-10deg) rotateY(-5deg) rotateZ(0deg);
+      box-shadow: 25px -25px 100px rgba(0, 0, 0, 0.4);
+      background: linear-gradient(135deg, rgba(234, 226, 0, 1) 0%, rgba(255, 240, 0, 1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+
     }
 
-    .super-element.edge-tracker-top-left {
-      background-color: brown;
+    .super-element.edge-tracker-top.edge-tracker-left.edge-tracker-top-left {
+      transform: translate(-50%, -50%) rotateX(-10deg) rotateY(5deg) rotateZ(0deg);
+      box-shadow: -25px -25px 100px rgba(0, 0, 0, 0.4);
+      background: linear-gradient(135deg, rgba(255, 240, 0, 1) 0%, rgba(234, 226, 0, 1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     }
 
-    .super-element.edge-tracker-bottom-right {
-      background-color: teal;
+    .super-element.edge-tracker-bottom.edge-tracker-right.edge-tracker-bottom-right {
+      transform: translate(-50%, -50%) rotateX(10deg) rotateY(-5deg) rotateZ(0deg);
+      box-shadow: 25px 25px 100px rgba(0, 0, 0, 0.4);
+      background: linear-gradient(45deg, rgba(234, 226, 0, 1) 0%, rgba(255, 240, 0, 1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     }
 
-    .super-element.edge-tracker-bottom-left {
-      background-color: crimson;
+    .super-element.edge-tracker-bottom.edge-tracker-left.edge-tracker-bottom-left {
+      transform: translate(-50%, -50%) rotateX(10deg) rotateY(5deg) rotateZ(0deg);
+      box-shadow: -25px 25px 100px rgba(0, 0, 0, 0.4);
+      background: linear-gradient(45deg, rgba(255, 240, 0, 1) 0%, rgba(234, 226, 0, 1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     }
 
     body.edge-tracker-top {
@@ -94,151 +149,69 @@
       border-bottom-left-radius: 75px;
     }
 
+    .super-element:hover .orientation-debug-helper-top,
+    .super-element:hover .orientation-debug-helper-right,
+    .super-element:hover .orientation-debug-helper-bottom,
+    .super-element:hover .orientation-debug-helper-left {
+      opacity: 0.2;
+    }
+
+    .orientation-debug-helper-top {
+      opacity: 0;
+      position: absolute;
+      top: 25%;
+      background-color: darkred;
+      left: 0px;
+      right: 0px;
+      height: 2px;
+      overflow: hidden;
+    }
+
+    .orientation-debug-helper-bottom {
+      opacity: 0;
+      position: absolute;
+      top: 75%;
+      background-color: darkred;
+      left: 0px;
+      right: 0px;
+      height: 2px;
+      overflow: hidden;
+    }
+
+    .orientation-debug-helper-left {
+      opacity: 0;
+      position: absolute;
+      top: 0px;
+      background-color: darkred;
+      left: 25%;
+      right: 0px;
+      height: 100%;
+      width: 2px;
+      overflow: hidden;
+    }
+
+    .orientation-debug-helper-right {
+      opacity: 0;
+      position: absolute;
+      top: 0px;
+      background-color: darkred;
+      left: 75%;
+      right: 0px;
+      height: 100%;
+      width: 2px;
+      overflow: hidden;
+    }
 
   </style>
 
 </head>
 <body class="this is a sample body class concatination thing">
-
 <div class="super-element">
-  .A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo none.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat rationeone.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat rationeobis nostrum odit
-  officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  <div class="mega-element">Cool Thing</div>
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemone.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat rationeone.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat rationeone.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat rationeo nobis nostrum odit
-  officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  <div class="mega-element">Cool Thing</div>
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis none.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat rationeone.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat rationeone.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat rationeone.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat rationeone.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat rationeostrum odit officia
-  omnis placeat ratione
+  <h1>Edge Tracking</h1>
+  <div class="orientation-debug-helper-top"></div>
+  <div class="orientation-debug-helper-right"></div>
+  <div class="orientation-debug-helper-bottom"></div>
+  <div class="orientation-debug-helper-left"></div>
 </div>
 
 <script src="../../dist/tracky.min.js"></script>
@@ -249,11 +222,12 @@
   (function ini() {
 
     var t = new Tracky(
-      ['.super-element', 'body'], {
+      ['.super-element'], {
         events: {
           edge: {
+            enable: true,
             breakpoints: [
-              50, [18, 55, 66, 77], {
+              {
                 css: {
                   top: 'edge-tracker-top',
                   right: 'edge-tracker-right',
@@ -264,81 +238,7 @@
                   bottomRight: 'edge-tracker-bottom-right',
                   bottomLeft: 'edge-tracker-bottom-left',
                 },
-                value: '15%',
-                onMatch: function () {
-                  console.log('cb: match');
-                },
-                onUnmatch: function () {
-                  console.log('cb: mismatch');
-                },
-                onMatchTop: function () {
-                  console.log('cb: match-top');
-                },
-                onMatchRight: function () {
-                  console.log('cb: match-right');
-                },
-                onMatchBottom: function () {
-                  console.log('cb: match-bottom');
-                },
-                onMatchLeft: function () {
-                  console.log('cb: match-left');
-                },
-                onMatchTopRight: function () {
-                  console.log('cb: match-top-right');
-                },
-                onMatchTopLeft: function () {
-                  console.log('cb: match-top-left');
-                },
-                onMatchBottomRight: function () {
-                  console.log('cb: match-bottom-right');
-                },
-                onMatchBottomLeft: function () {
-                  console.log('cb: match-bottom-left');
-                },
-                onUnmatchTop: function () {
-                  console.log('cb: un-match-top');
-                },
-                onUnmatchRight: function () {
-                  console.log('cb: un-match-right');
-                },
-                onUnmatchBottom: function () {
-                  console.log('cb: un-match-bottom');
-                },
-                onUnmatchLeft: function () {
-                  console.log('cb: un-match-left');
-                },
-                onUnmatchTopRight: function () {
-                  console.log('cb: un-match-top-right');
-                },
-                onUnmatchTopLeft: function () {
-                  console.log('cb: un-match-top-left');
-                },
-                onUnmatchBottomRight: function () {
-                  console.log('cb: un-match-bottom-right');
-                },
-                onUnmatchBottomLeft: function () {
-                  console.log('cb: un-match-bottom-left');
-                }
-              }, {
-                value: [
-                  '15%',
-                  '88%',
-                  45,
-                  66
-                ]
-              }, {
-                value: {
-                  top: 44,
-                  right: 88,
-                  bottom: '66%',
-                  left: 99,
-                }
-              }, {
-                css: 'hit-any-edge',
-                value: [14, 66]
-              }, {
-                min: 60,
-                max: '40%'
+                value: '25%',
               }
             ]
           }

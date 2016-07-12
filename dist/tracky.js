@@ -1400,10 +1400,10 @@
 	    value: function bindEvent(domNode) {
 	      var _this2 = this;
 	
-	      domNode.addEventListener('mousemove', (0, _lodash2.default)(this._bindListener, 100, {
+	      domNode.addEventListener('mousemove', (0, _lodash2.default)(this._bindListener, 25, {
 	        leading: true,
-	        maxWait: 200,
-	        trailing: true
+	        maxWait: 40,
+	        trailing: false
 	      }));
 	
 	      domNode.addEventListener('mouseleave', function (e) {
