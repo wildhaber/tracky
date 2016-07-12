@@ -1,5 +1,7 @@
 import defaultOptions from './tracky.options';
 import TrackyScroll from './tracky.scroll';
+import TrackyEdge from './tracky.edge';
+import TrackyOrientation from './tracky.orientation';
 import _extend from 'deep-assign';
 
 class Tracky {
@@ -16,7 +18,11 @@ class Tracky {
     this._nodes = [];
 
     // Set Listeners
-    this._listeners = [{class: TrackyScroll, key: 'scroll'}]; // Todo: load from external resources
+    this._listeners = [
+      {class: TrackyScroll, key: 'scroll'},
+      {class: TrackyEdge, key: 'edge'},
+      {class: TrackyOrientation, key: 'orientation'},
+    ]; // Todo: load from external resources
 
     this._bindListeners();
     this._startGlobalWatcher();
@@ -31,18 +37,13 @@ class Tracky {
    */
   registerSelectors(selector, replace = false) {
 
-    // Cleanup selector to contain only valid selectors
-    selector = this._cleanupSelector(selector);
-
     // Ensure this._selectors is available and an array
     this._selectors = (!!this._selectors && !replace) ? this._selectors : [];
 
     // Push Selectors
-    if (selector instanceof Array) {
-      this._selectors = this._selectors.concat(selector);
-    } else if (typeof selector === 'string') {
-      this._selectors.push(selector);
-    }
+    this._selectors = this._selectors.concat(
+      this._cleanupSelector(selector)
+    );
 
     // Cleanup Unique selectors
     this._selectors = this._selectors.filter(
@@ -109,6 +110,7 @@ class Tracky {
    */
   refreshNodes() {
 
+    /* istanbul ignore next */
     this._nodes = this._selectors.map(
       (selector) => {
         return (typeof document !== 'undefined' && typeof document.querySelectorAll !== 'undefined') ?
@@ -260,6 +262,7 @@ class Tracky {
 
     let diffNodes = this.findNodeDiff(priorNodes, currentNodes);
 
+    /* istanbul ignore if */
     if (diffNodes.changes > 0) {
 
       if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
@@ -291,6 +294,7 @@ class Tracky {
       return;
     }
 
+    /* istanbul ignore next */
     var observer = new MutationObserver(
       (mutations) => {
         mutations.forEach(
@@ -308,11 +312,15 @@ class Tracky {
     );
 
     // Notify me of everything!
+    /* istanbul ignore next */
     var observerConfig = {
       childList: true
     };
 
+    /* istanbul ignore next */
     var targetNode = document.body;
+
+    /* istanbul ignore next */
     observer.observe(targetNode, observerConfig);
 
   }
@@ -321,8 +329,14 @@ class Tracky {
   /**
    * disable
    * @param feature
+   * @returns boolean
    */
   disable(feature = null) {
+
+    if(!feature) {
+      return false;
+    }
+
     let _features = (typeof feature === 'string') ? [feature] : feature;
 
     if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
@@ -343,14 +357,22 @@ class Tracky {
       );
     }
 
+    return true;
+
   }
 
 
   /**
    * enable
    * @param feature
+   * @returns boolean
    */
   enable(feature = null) {
+
+    if(!feature) {
+      return false;
+    }
+
     let _features = (typeof feature === 'string') ? [feature] : feature;
 
     if (typeof this._listeners !== 'undefined' && this._listeners && this._listeners.length) {
@@ -370,6 +392,8 @@ class Tracky {
         }
       );
     }
+
+    return true;
 
   }
 

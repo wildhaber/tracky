@@ -9,14 +9,11 @@ class TrackyScroll extends TrackyEvent {
    */
   _listener(domNode) {
 
+    /* istanbul ignore next */
     let position = this._getScrollPosition(domNode);
 
-    this.classify(
-      domNode, {
-        absolute: position.absolute.top,
-        percent: position.percent.top
-      }
-    );
+    /* istanbul ignore next */
+    this.classify(domNode, position);
 
   }
 
@@ -26,25 +23,15 @@ class TrackyScroll extends TrackyEvent {
    */
   bindEvent(domNode) {
 
+    /* istanbul ignore next */
     domNode.addEventListener(
       'scroll',
       this._bindListener
     );
 
+    /* istanbul ignore next */
     this._listener(domNode);
 
-  }
-
-  /**
-   * _percentRound
-   * @param value
-   * @returns {number}
-   * @private
-   */
-  _percentRound(value) {
-    return (typeof value === 'number' && !isNaN(value)) ? Math.round(
-      parseInt((parseFloat(value) * 100).toFixed(2), 10) / 100
-    ) : 0;
   }
 
   /**
@@ -54,6 +41,7 @@ class TrackyScroll extends TrackyEvent {
    * @private
    */
   _getScrollPosition(domNode) {
+
     if (this._isBody(domNode)) {
 
       let doc = document.documentElement;
@@ -95,10 +83,12 @@ class TrackyScroll extends TrackyEvent {
    */
   bindBodyEvent() {
 
+    /* istanbul ignore next */
     window.addEventListener(
       'scroll', this._bindBodyListener
     );
 
+    /* istanbul ignore next */
     this._listener(document.body);
 
   }
@@ -107,6 +97,8 @@ class TrackyScroll extends TrackyEvent {
    * unbindBodyEvent
    */
   unbindBodyEvent() {
+
+    /* istanbul ignore next */
     window.removeEventListener(
       'scroll',
       this._bindBodyListener
@@ -119,9 +111,12 @@ class TrackyScroll extends TrackyEvent {
    * @param domNode
    */
   unbindEvent(domNode) {
+
+    /* istanbul ignore next */
     domNode.removeEventListener(
       'scroll', this._bindListener
     );
+
   }
 
   /**
@@ -142,6 +137,7 @@ class TrackyScroll extends TrackyEvent {
    */
   bindEvents() {
 
+    /* istanbul ignore next */
     this.getNodes().forEach(
       (n) => {
         if (n) {
@@ -164,6 +160,7 @@ class TrackyScroll extends TrackyEvent {
    */
   unbindEvents() {
 
+    /* istanbul ignore next */
     this.getNodes().forEach(
       (n) => {
         if (n) {
@@ -190,6 +187,7 @@ class TrackyScroll extends TrackyEvent {
   onStart() {
 
     // Ugly but necessary to keep this-context combined with eventListener add/remove
+    /* istanbul ignore next */
     this._bindListener = (e) => {
       this._listener(e.target);
     };
@@ -199,6 +197,7 @@ class TrackyScroll extends TrackyEvent {
     var last_known_scroll_position = 0; // eslint-disable-line no-unused-vars
     var ticking = false;
 
+    /* istanbul ignore next */
     this._bindBodyListener = (e) => {
 
       last_known_scroll_position = window.scrollY;
@@ -224,6 +223,7 @@ class TrackyScroll extends TrackyEvent {
    * onStop
    */
   onStop() {
+    /* istanbul ignore next */
     this.unbindEvents();
   }
 
@@ -232,6 +232,7 @@ class TrackyScroll extends TrackyEvent {
    * @param nodes
    */
   onAdd(nodes) {
+    /* istanbul ignore next */
     nodes.forEach(
       (_n) => {
         if (this._isBody(_n)) {
@@ -249,6 +250,7 @@ class TrackyScroll extends TrackyEvent {
    */
   onRemove(nodes) {
 
+    /* istanbul ignore next */
     nodes.forEach(
       (_n) => {
         if (this._isBody(_n)) {
@@ -258,47 +260,6 @@ class TrackyScroll extends TrackyEvent {
         }
       }
     );
-  }
-
-
-  /**
-   * _buildClassName
-   * @param value
-   * @param modifier
-   * @returns {string}
-   * @private
-   */
-  _buildClassName(value, modifier) {
-    let o = this._globalOptions;
-    return o.classPrefix + this._key + '-' + modifier + value + o.classSuffix;
-  }
-
-  /**
-   * _transformValue
-   * @param value
-   * @returns {*}
-   * @private
-   */
-  _transformValue(value) {
-
-    let t = null;
-
-    if (
-      typeof value === 'number' && !isNaN(value)
-    ) {
-      t = [value, {percent: false}];
-    } else if (typeof value === 'string') {
-      t = (value.indexOf('%') == (value.length - 1)) ? [parseInt(value, 10), {percent: true}] : null;
-    } else if (
-      value instanceof Array &&
-      value.length === 2 &&
-      typeof value[0] === 'number' && !isNaN(value[0]) && !!value[1] &&
-      typeof value[1].percent !== 'undefined'
-    ) {
-      t = value;
-    }
-
-    return t;
   }
 
   /**
@@ -390,6 +351,7 @@ class TrackyScroll extends TrackyEvent {
                 go.classBtPrefix
               )) : null,
           },
+          axis: (typeof prep.axis === 'string' && prep.axis.toLowerCase() === 'x') ? 'x' : 'y',
           applyLt: (!hasBetween && typeof prep.applyLt !== 'undefined') ? prep.applyLt : !hasBetween,
           applyGt: (!hasBetween && typeof prep.applyGt !== 'undefined') ? prep.applyGt : !hasBetween,
           applyEq: (!hasBetween && typeof prep.applyEq !== 'undefined') ? prep.applyEq : !hasBetween,
@@ -397,6 +359,8 @@ class TrackyScroll extends TrackyEvent {
           callbacks: {
             match: (typeof prep.onMatch === 'function') ? prep.onMatch : null,
             unmatch: (typeof prep.onUnmatch === 'function') ? prep.onUnmatch : null,
+            lower: (typeof prep.onLower === 'function') ? prep.onLower : null,
+            greater: (typeof prep.onGreater === 'function') ? prep.onGreater : null,
           },
           value: (hasValue) ? prep.value : null,
           min: (hasBetween) ? prep.min : null,
@@ -412,47 +376,33 @@ class TrackyScroll extends TrackyEvent {
   }
 
   /**
-   * _extractClasses
-   * @returns {Array}
-   * @private
-   */
-  _extractClasses() {
-    let bps = this._options.breakpoints;
-    let classArray = [];
-
-    bps.forEach(
-      (bp) => {
-        for (let c in bp.css) {
-          if (bp.css[c]) {
-            classArray.push(bp.css[c]);
-          }
-        }
-      }
-    );
-
-    return classArray;
-  }
-
-  /**
    * classify
    * @param domNode
    * @param value
    */
-  classify(domNode, value = {absolute: 0, percent: 0}) {
+  classify(domNode, value = {absolute: {top: 0, left: 0,}, percent: {top: 0, left: 0,}}) {
 
     let bp = this._options.breakpoints;
     let classes = [];
 
+    /* istanbul ignore if */
     if (bp.length > 0) {
       for (let l = bp.length; l; l--) {
         let _bp = bp[(l - 1)];
+        let _value = (_bp.axis === 'x') ? {
+          absolute: value.absolute.left,
+          percent: value.percent.left,
+        } : {
+          absolute: value.absolute.top,
+          percent: value.percent.top,
+        };
 
         // Check lt
         if (
           _bp.applyLt &&
           (
-            (!_bp.value[1].percent && value.absolute < _bp.value[0]) ||
-            (_bp.value[1].percent && value.percent < _bp.value[0])
+            (!_bp.value[1].percent && _value.absolute < _bp.value[0]) ||
+            (_bp.value[1].percent && _value.percent < _bp.value[0])
           )
         ) {
           classes.push(_bp.css.lt);
@@ -462,8 +412,8 @@ class TrackyScroll extends TrackyEvent {
         if (
           _bp.applyGt &&
           (
-            (!_bp.value[1].percent && value.absolute > _bp.value[0]) ||
-            (_bp.value[1].percent && value.percent > _bp.value[0])
+            (!_bp.value[1].percent && _value.absolute > _bp.value[0]) ||
+            (_bp.value[1].percent && _value.percent > _bp.value[0])
           )
         ) {
           classes.push(_bp.css.gt);
@@ -473,8 +423,8 @@ class TrackyScroll extends TrackyEvent {
         if (
           _bp.applyEq &&
           (
-            (!_bp.value[1].percent && value.absolute === _bp.value[0]) ||
-            (_bp.value[1].percent && value.percent === _bp.value[0])
+            (!_bp.value[1].percent && _value.absolute === _bp.value[0]) ||
+            (_bp.value[1].percent && _value.percent === _bp.value[0])
           )
         ) {
           classes.push(_bp.css.eq);
@@ -485,12 +435,12 @@ class TrackyScroll extends TrackyEvent {
           _bp.applyBt &&
           (
             (
-              (!_bp.min[1].percent && value.absolute >= _bp.min[0]) ||
-              (_bp.min[1].percent && value.percent >= _bp.min[0])
+              (!_bp.min[1].percent && _value.absolute >= _bp.min[0]) ||
+              (_bp.min[1].percent && _value.percent >= _bp.min[0])
             ) &&
             (
-              (!_bp.max[1].percent && value.absolute <= _bp.max[0]) ||
-              (_bp.max[1].percent && value.percent <= _bp.max[0])
+              (!_bp.max[1].percent && _value.absolute <= _bp.max[0]) ||
+              (_bp.max[1].percent && _value.percent <= _bp.max[0])
             )
           )
         ) {
@@ -505,75 +455,6 @@ class TrackyScroll extends TrackyEvent {
   }
 
   /**
-   * _getBpsByClassName
-   * @param className
-   * @returns {Array | null}
-   * @private
-   */
-  _getBpsByClassName(className = null) {
-    return (
-      className &&
-      typeof className === 'string' &&
-      this._options.breakpoints instanceof Array
-    ) ?
-      this._options.breakpoints.filter(
-        (bp) => [
-          bp.css.eq,
-          bp.css.bt,
-        ].indexOf(className) > -1
-      ) : null;
-  }
-
-  /**
-   * _getBpsByClassNames
-   * @param classNames
-   * @returns {Array | null}
-   * @private
-   */
-  _getBpsByClassNames(classNames = []) {
-    if (
-      classNames instanceof Array &&
-      classNames.length > 0
-    ) {
-      let bps = [];
-      classNames.forEach(
-        (cn) => {
-          let bp = this._getBpsByClassName(cn);
-          if (bp && bp.length > 0) {
-            bps = bps.concat(bp);
-          }
-        }
-      );
-      return bps;
-    } else {
-      return null;
-    }
-  }
-
-  /**
-   * _applyCallbacks
-   * @param domNode
-   * @param bps
-   * @param keyword
-   * @private
-   */
-  _applyCallbacks(domNode, bps, keyword = null) {
-    if (
-      typeof keyword === 'string' &&
-      bps instanceof Array &&
-      bps.length > 0
-    ) {
-      bps.forEach(
-        (bp) => {
-          if (typeof bp.callbacks[keyword] === 'function') {
-            bp.callbacks[keyword].call(domNode, bp);
-          }
-        }
-      );
-    }
-  }
-
-  /**
    * callbackHandler
    * @param domNode
    * @param added
@@ -581,18 +462,22 @@ class TrackyScroll extends TrackyEvent {
    */
   callbackHandler(domNode, added, removed) {
 
+    /* istanbul ignore if */
     if (
       added instanceof Array &&
       added.length > 0
     ) {
-      this._applyCallbacks(domNode, this._getBpsByClassNames(added), 'match');
+      this._applyCallbacks(domNode, this._getBpsByClassNames(added, ['eq', 'bt']), 'match');
+      this._applyCallbacks(domNode, this._getBpsByClassNames(added, ['lt']), 'lower');
+      this._applyCallbacks(domNode, this._getBpsByClassNames(added, ['gt']), 'greater');
     }
 
+    /* istanbul ignore if */
     if (
       removed instanceof Array &&
       removed.length > 0
     ) {
-      this._applyCallbacks(domNode, this._getBpsByClassNames(removed), 'unmatch');
+      this._applyCallbacks(domNode, this._getBpsByClassNames(removed, ['eq', 'bt']), 'unmatch');
     }
 
   }

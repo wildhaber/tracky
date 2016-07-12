@@ -10,6 +10,7 @@ var scrollEventKey = 'scroll';
 var scrollEventOptions = {
   events: {
     scroll: {
+      enable: true,
       breakpoints: [
         0, 50, 200, 500, 2000, {
           css: 'this-is-my-special-class-at-350',
@@ -25,6 +26,12 @@ var scrollEventOptions = {
           },
           onUnmatch: function () {
             return 'unmatch';
+          },
+          onGreater: function() {
+            return 'greater';
+          },
+          onLower: function() {
+            return 'lower';
           }
         }, {
           css: 'mega-element-active',
@@ -50,6 +57,7 @@ var scrollEventOptions = {
           applyGt: false,
           applyEq: false,
           applyBt: false,
+          axis: 'x',
           onMatch: function () {
             return 'match';
           },
@@ -279,12 +287,119 @@ describe(
       }
     );
 
+    it(
+      'should define a private _listener method', function () {
+        expect(trackyScroll._listener).toBeDefined();
+        expect(trackyScroll._listener).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should define a private bindEvent method', function () {
+        expect(trackyScroll.bindEvent).toBeDefined();
+        expect(trackyScroll.bindEvent).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should define a private _percentRound method', function () {
+        expect(trackyScroll._percentRound).toBeDefined();
+        expect(trackyScroll._percentRound).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should define a private _getScrollPosition method', function () {
+        expect(trackyScroll._getScrollPosition).toBeDefined();
+        expect(trackyScroll._getScrollPosition).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should define a public bindBodyEvent method', function () {
+        expect(trackyScroll.bindBodyEvent).toBeDefined();
+        expect(trackyScroll.bindBodyEvent).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should define a public unbindBodyEvent method', function () {
+        expect(trackyScroll.unbindBodyEvent).toBeDefined();
+        expect(trackyScroll.unbindBodyEvent).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should define a private _isBody method', function () {
+        expect(trackyScroll._isBody).toBeDefined();
+        expect(trackyScroll._isBody).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should define a public bindEvents method', function () {
+        expect(trackyScroll.bindEvents).toBeDefined();
+        expect(trackyScroll.bindEvents).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should define a public unbindEvents method', function () {
+        expect(trackyScroll.unbindEvents).toBeDefined();
+        expect(trackyScroll.unbindEvents).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should define a private _buildClassName method', function () {
+        expect(trackyScroll._buildClassName).toBeDefined();
+        expect(trackyScroll._buildClassName).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should define a private _extractClasses method', function () {
+        expect(trackyScroll._extractClasses).toBeDefined();
+        expect(trackyScroll._extractClasses).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should define a public classify method', function () {
+        expect(trackyScroll.classify).toBeDefined();
+        expect(trackyScroll.classify).toEqual(jasmine.any(Function));
+      }
+    );
+
+
+    it(
+      'should define a private _applyCallbacks method', function () {
+        expect(trackyScroll._applyCallbacks).toBeDefined();
+        expect(trackyScroll._applyCallbacks).toEqual(jasmine.any(Function));
+      }
+    );
+
+
+    it(
+      'should define a public callbackHandler method', function () {
+        expect(trackyScroll.callbackHandler).toBeDefined();
+        expect(trackyScroll.callbackHandler).toEqual(jasmine.any(Function));
+      }
+    );
+
   }
 );
 
 
 describe(
   'tracky.scroll.js - getNodes', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyScroll.getNodes).toBeDefined();
+        expect(trackyScroll.getNodes).toEqual(jasmine.any(Function));
+      }
+    );
 
     it(
       'should return an array', function () {
@@ -303,6 +418,13 @@ describe(
 
 describe(
   'tracky.scroll.js - _percentRound', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyScroll._percentRound).toBeDefined();
+        expect(trackyScroll._percentRound).toEqual(jasmine.any(Function));
+      }
+    );
 
     it(
       'should return an integer', function () {
@@ -347,6 +469,13 @@ describe(
     var malformed4 = NaN;
     var malformed5 = 'burumm';
     var malformed6 = true;
+
+    it(
+      'method should be defined', function () {
+        expect(trackyScroll._isBody).toBeDefined();
+        expect(trackyScroll._isBody).toEqual(jasmine.any(Function));
+      }
+    );
 
     it(
       'should return a boolean', function () {
@@ -399,6 +528,13 @@ describe(
     var malformed6 = true;
     var malformed7 = ['44%', {percent: true}];
     var malformed8 = [['44%', {percent: true}], [22, {percent: false}]];
+
+    it(
+      'method should be defined', function () {
+        expect(trackyScroll._transformValue).toBeDefined();
+        expect(trackyScroll._transformValue).toEqual(jasmine.any(Function));
+      }
+    );
 
     it(
       'should return an array with length of two on valid inputs', function () {
@@ -456,6 +592,13 @@ describe(
 
 describe(
   'tracky.scroll.js - _transformBreakpoints', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyScroll._transformBreakpoints).toBeDefined();
+        expect(trackyScroll._transformBreakpoints).toEqual(jasmine.any(Function));
+      }
+    );
 
     it(
       'should return an array', function () {
@@ -533,7 +676,22 @@ describe(
     );
 
     it(
-      'should return a callback property with having properties match/unmatch', function () {
+      'should set axis as x or y', function () {
+        trackyScroll
+          ._transformBreakpoints(scrollEventOptions.events.scroll.breakpoints)
+          .forEach(
+            function (bp) {
+              expect(bp.axis).toBeDefined();
+              expect(bp.axis).toEqual(jasmine.any(String));
+              expect(bp.axis.length).toEqual(1);
+              expect(['x','y'].indexOf(bp.axis)).toBeGreaterThan(-1);
+            }
+          );
+      }
+    );
+
+    it(
+      'should return a callback property with having properties match/unmatch/lower/greater', function () {
         trackyScroll
           ._transformBreakpoints(scrollEventOptions.events.scroll.breakpoints)
           .forEach(
@@ -541,6 +699,8 @@ describe(
               expect(bp.callbacks).toBeDefined();
               expect(bp.callbacks.match).toBeDefined();
               expect(bp.callbacks.unmatch).toBeDefined();
+              expect(bp.callbacks.lower).toBeDefined();
+              expect(bp.callbacks.greater).toBeDefined();
             }
           );
       }
@@ -590,6 +750,49 @@ describe(
       }
     );
 
+    it(
+      'should bind onLower callback property to breakpoint', function () {
+        trackyScroll
+          ._transformBreakpoints(
+            {
+              css: 'this-is-between-400-and-500',
+              min: 400,
+              max: 500,
+              onLower: function () {
+                return 'lower';
+              }
+            }
+          )
+          .forEach(
+            function (bp) {
+              expect(typeof bp.callbacks.lower).toEqual('function');
+              expect(bp.callbacks.lower()).toEqual('lower');
+            }
+          );
+      }
+    );
+
+    it(
+      'should bind onGreater callback property to breakpoint', function () {
+        trackyScroll
+          ._transformBreakpoints(
+            {
+              css: 'this-is-between-400-and-500',
+              min: 400,
+              max: 500,
+              onGreater: function () {
+                return 'greater';
+              }
+            }
+          )
+          .forEach(
+            function (bp) {
+              expect(typeof bp.callbacks.greater).toEqual('function');
+              expect(bp.callbacks.greater()).toEqual('greater');
+            }
+          );
+      }
+    );
 
   }
 );
@@ -601,26 +804,45 @@ describe(
     var exampleArray = ['this-is-between-400-and-500', 'tracky-scroll-eq-99pc', 'not-found'];
 
     it(
+      'method should be defined', function () {
+        expect(trackyScroll._getBpsByClassNames).toBeDefined();
+        expect(trackyScroll._getBpsByClassNames).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
       'should return an array or null', function () {
         expect(trackyScroll._getBpsByClassNames([])).toEqual(null);
         expect(trackyScroll._getBpsByClassNames(null)).toEqual(null);
         expect(trackyScroll._getBpsByClassNames(false)).toEqual(null);
         expect(trackyScroll._getBpsByClassNames({})).toEqual(null);
         expect(trackyScroll._getBpsByClassNames(NaN)).toEqual(null);
-        expect(trackyScroll._getBpsByClassNames(exampleArray)).toEqual(jasmine.any(Array));
-        expect(trackyScroll._getBpsByClassNames(exampleArray).length).toEqual(2);
+        expect(trackyScroll._getBpsByClassNames(exampleArray, ['eq','bt'])).toEqual(jasmine.any(Array));
+        expect(trackyScroll._getBpsByClassNames(exampleArray, ['eq','bt']).length).toEqual(2);
       }
     );
 
     it(
       'should return an array with objects', function () {
         trackyScroll
-          ._getBpsByClassNames(exampleArray)
+          ._getBpsByClassNames(exampleArray,['eq','bt'])
           .forEach(
             function (bp) {
               expect(bp).toEqual(jasmine.any(Object));
             }
           );
+      }
+    );
+
+    it(
+      'should return an array or null - findIn parameter', function () {
+        expect(trackyScroll._getBpsByClassNames(exampleArray, null)).toEqual(null);
+        expect(trackyScroll._getBpsByClassNames(exampleArray, ['something'])).toEqual(jasmine.any(Array));
+        expect(trackyScroll._getBpsByClassNames(exampleArray, 'eq')).toEqual(null);
+        expect(trackyScroll._getBpsByClassNames(exampleArray, {})).toEqual(null);
+        expect(trackyScroll._getBpsByClassNames(exampleArray, NaN)).toEqual(null);
+        expect(trackyScroll._getBpsByClassNames(exampleArray, ['eq', 'lt', 'gt', 'bt'])).toEqual(jasmine.any(Array));
+        expect(trackyScroll._getBpsByClassNames(exampleArray, ['eq', 'lt', 'gt', 'bt']).length).toEqual(2);
       }
     );
 

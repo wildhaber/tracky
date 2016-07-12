@@ -156,8 +156,11 @@ describe(
 
         var t = new _tracky();
         var _i = t.addSelector(addonSelector);
+        var _emptyInstance = t.addSelector();
 
         expect(_i).toEqual(jasmine.any(_tracky));
+        expect(_emptyInstance).toEqual(jasmine.any(_tracky));
+
       }
     );
 
@@ -235,9 +238,16 @@ describe(
         var t = new _tracky(customSelectors);
         t.removeSelector(customSelectors[0]);
 
+        var tArray = new _tracky(customSelectors);
+        tArray.removeSelector(customSelectors);
+
         expect(t._selectors).not.toContain(customSelectors[0]);
         expect(t._selectors).toContain(customSelectors[1]);
         expect(t._selectors.length).toEqual(1);
+
+        expect(tArray._selectors).not.toContain(customSelectors[0]);
+        expect(tArray._selectors).not.toContain(customSelectors[1]);
+        expect(tArray._selectors.length).toEqual(0);
 
       }
     );
@@ -250,6 +260,7 @@ describe(
         var t = new _tracky(addonSelector);
 
         expect(t.removeSelector(addonSelector)).toEqual(jasmine.any(_tracky));
+        expect(t.removeSelector()).toEqual(jasmine.any(_tracky));
 
       }
     );
@@ -268,7 +279,6 @@ describe(
   }
 );
 
-
 describe(
   'tracky.js - getNodesCount', function () {
 
@@ -276,6 +286,15 @@ describe(
       'should return length of nodes', function () {
         var t = new _tracky();
         expect(t.getNodesCount()).toBeGreaterThan(-1);
+      }
+    );
+
+    it(
+      'should return 2 mocked nodes', function () {
+        var t = new _tracky();
+        t._nodes = [ ['mocked'] , ['nodes'] ];
+
+        expect(t.getNodesCount()).toEqual(2);
       }
     );
 
@@ -322,7 +341,6 @@ describe(
 
   }
 );
-
 
 describe(
   'tracky.js - flattenNodes', function () {
@@ -466,7 +484,6 @@ describe(
 
   }
 );
-
 
 describe(
   'tracky.js - findNodeDiff', function () {
@@ -626,7 +643,188 @@ describe(
       }
     );
 
+    describe(
+      'tracky.js - disable', function () {
+
+        var options = {
+          events : {
+            scroll : {
+              enable: true
+            },
+            edge : {
+              enable: true
+            }
+          }
+        };
+
+        it(
+          'should disable scroll a listener by string', function () {
+            var t = new _tracky('body', options);
+            t.disable('scroll');
+
+            var scrollInstance = t._listeners.filter(function(l) {
+              return l.key === 'scroll';
+            })[0].instance;
+
+            expect(scrollInstance._enabled).toEqual(false);
+          }
+        );
+
+        it(
+          'should disable scroll a listener by array', function () {
+            var t = new _tracky('body', options);
+            t.disable(['scroll']);
+
+            var scrollInstance = t._listeners.filter(function(l) {
+              return l.key === 'scroll';
+            })[0].instance;
+
+            expect(scrollInstance._enabled).toEqual(false);
+          }
+        );
+
+        it(
+          'should disable edge a listener by string', function () {
+            var t = new _tracky('body', options);
+            t.disable('edge');
+
+            var edgeInstance = t._listeners.filter(function(l) {
+              return l.key === 'edge';
+            })[0].instance;
+
+            expect(edgeInstance._enabled).toEqual(false);
+          }
+        );
+
+        it(
+          'should disable edge a listener by array', function () {
+            var t = new _tracky('body', options);
+            t.disable(['edge']);
+
+            var edgeInstance = t._listeners.filter(function(l) {
+              return l.key === 'edge';
+            })[0].instance;
+
+            expect(edgeInstance._enabled).toEqual(false);
+          }
+        );
+
+        it(
+          'should ignore empty disable', function () {
+            var t = new _tracky('body', options);
+            t.disable();
+
+            var edgeInstance = t._listeners.filter(function(l) {
+              return l.key === 'edge';
+            })[0].instance;
+
+            var scrollInstance = t._listeners.filter(function(l) {
+              return l.key === 'scroll';
+            })[0].instance;
+
+            expect(edgeInstance._enabled).toEqual(true);
+            expect(scrollInstance._enabled).toEqual(true);
+
+          }
+        );
+
+      }
+    );
+
+
+    describe(
+      'tracky.js - enable', function () {
+
+        var options = {
+          events : {
+            scroll : {
+              enable: true
+            },
+            edge : {
+              enable: true
+            }
+          }
+        };
+
+        it(
+          'should enable scroll a listener by string', function () {
+            var t = new _tracky('body', options);
+            t.enable('scroll');
+
+            var scrollInstance = t._listeners.filter(function(l) {
+              return l.key === 'scroll';
+            })[0].instance;
+
+            expect(scrollInstance._enabled).toEqual(true);
+          }
+        );
+
+        it(
+          'should enable scroll a listener by array', function () {
+            var t = new _tracky('body', options);
+            t.enable(['scroll']);
+
+            var scrollInstance = t._listeners.filter(function(l) {
+              return l.key === 'scroll';
+            })[0].instance;
+
+            expect(scrollInstance._enabled).toEqual(true);
+          }
+        );
+
+        it(
+          'should enable edge a listener by string', function () {
+            var t = new _tracky('body', options);
+            t.enable('edge');
+
+            var edgeInstance = t._listeners.filter(function(l) {
+              return l.key === 'edge';
+            })[0].instance;
+
+            expect(edgeInstance._enabled).toEqual(true);
+          }
+        );
+
+        it(
+          'should enable edge a listener by array', function () {
+            var t = new _tracky('body', options);
+            t.enable(['edge']);
+
+            var edgeInstance = t._listeners.filter(function(l) {
+              return l.key === 'edge';
+            })[0].instance;
+
+            expect(edgeInstance._enabled).toEqual(true);
+          }
+        );
+
+        it(
+          'should ignore empty enable', function () {
+            var t = new _tracky('body', options);
+            t.disable(['edge','scroll']);
+            t.enable();
+
+            var edgeInstance = t._listeners.filter(function(l) {
+              return l.key === 'edge';
+            })[0].instance;
+
+            var scrollInstance = t._listeners.filter(function(l) {
+              return l.key === 'scroll';
+            })[0].instance;
+
+            expect(edgeInstance._enabled).toEqual(false);
+            expect(scrollInstance._enabled).toEqual(false);
+
+          }
+        );
+
+      }
+    );
+
+
   }
+
+
 );
 
 

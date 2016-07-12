@@ -8,77 +8,97 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-    .overflow-styling,
-    p {
-      width: 100px;
-      height: 100px;
-      overflow: auto;
+
+    body {
+      transition: all;
+      border: 15px solid #3a33d1;
+      height: 850px;
     }
 
     .super-element {
       display: block;
-      width: 100%;
+      width: 50%;
       height: 250px;
-      background-color: indianred;
+      background-color: olivedrab;
       overflow: auto;
+      transition: all 0.4s;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+
+      transform: translate(-50%, -50%);
+
     }
 
-    .super-element.mega-element-active {
-      background-color: ghostwhite;
+    .super-element.edge-tracker-top {
+      background-color: green;
     }
 
-    .mega-element {
-      display: block;
-      height: 150px;
-      background-color: coral;
+    .super-element.edge-tracker-right {
+      background-color: red;
     }
+
+    .super-element.edge-tracker-bottom {
+      background-color: cadetblue;
+    }
+
+    .super-element.edge-tracker-left {
+      background-color: yellow;
+    }
+
+    .super-element.edge-tracker-top-right {
+      background-color: pink;
+    }
+
+    .super-element.edge-tracker-top-left {
+      background-color: brown;
+    }
+
+    .super-element.edge-tracker-bottom-right {
+      background-color: teal;
+    }
+
+    .super-element.edge-tracker-bottom-left {
+      background-color: crimson;
+    }
+
+    body.edge-tracker-top {
+      border-top: 15px solid darkgreen;
+    }
+
+    body.edge-tracker-right {
+      border-right: 15px solid orange;
+    }
+
+    body.edge-tracker-bottom {
+      border-bottom: 15px solid orangered;
+    }
+
+    body.edge-tracker-left {
+      border-left: 15px solid purple;
+    }
+
+    body.edge-tracker-top-right {
+      border-top-right-radius: 75px;
+    }
+
+    body.edge-tracker-top-left {
+      border-top-left-radius: 75px;
+    }
+
+    body.edge-tracker-bottom-right {
+      border-bottom-right-radius: 75px;
+    }
+
+    body.edge-tracker-bottom-left {
+      border-bottom-left-radius: 75px;
+    }
+
 
   </style>
 
 </head>
 <body class="this is a sample body class concatination thing">
-
-<p class="overflow-styling take-me-in">I'm a take-me-in -> P - A lot of Lorem ipsum dolor sit amet,I'm a take-me-in -> P
-  - A lot of Lorem ipsum dolor sit amet,I'm a take-me-in -> P - A lot of Lorem ipsum dolor sit amet,I'm a take-me-in ->
-  P - A lot of Lorem ipsum dolor sit amet,I'm a take-me-in -> P - A lot of Lorem ipsum dolor sit amet,</p>
-<p class="awesome-class-keep-me  overflow-styling  meee-too   i-m-in-here">I'm a lonely P - A lot of Lorem ipsum dolor
-  sit amet,
-  consectetur adipisicing
-  elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.</p>
-
-<div id="custom-element" style="border: 3px solid purple;" class="overflow-styling">one.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione.A lot of Lorem
-  ipsum dolor sit amet, consectetur adipisicing elit. Hic, quam, vel? Accusamus amet earum eos eum
-  explicabo ipsa ipsam, libero minima mollitia nemo nobis nostrum odit officia omnis placeat ratione
-</div>
 
 <div class="super-element">
   .A lot of Lorem
@@ -228,114 +248,123 @@
 
   (function ini() {
 
+    var goodInput = 50;
+    var goodInput2 = [18, 55, 66];
+    var goodInput3 = '30%';
+    var goodInput4 = [44, {percent: true}];
+    var goodInput5 = { value : ['15%', 66, 99]};
+    var goodInput6 = { alpha: 44, beta: 88, gamma: '66%', };
+    var goodInput7 = { value: { alpha: 13, gamma: 88, }, };
+    var malformed1 = null;
+    var malformed2 = false;
+    var malformed3 = {nonodename: 'haha'};
+    var malformed4 = NaN;
+    var malformed5 = 'burumm';
+    var malformed6 = true;
+
     var t = new Tracky(
-      ['p', 'body', '#gugus', '.super-element'], {
+      ['.super-element', 'body'], {
         events: {
-          scroll: {
+          orientation: {
             breakpoints: [
-              0, 50, 200, 500, 2000, {
-                css: 'this-is-my-special-class-at-350',
-                value: 350
-              }, {
-                value: '99%'
-              }, {
-                css: 'this-is-between-400-and-500',
-                min: 400,
-                max: 500
-              }, {
-                css: 'mega-element-active',
-                min: '40%',
-                max: '60%'
-              }, {
-                min: 60,
-                max: '40%'
-              },
-              '100%'
-              , {
+              50, [18, 55, 66], '30%', {
                 css: {
-                  lt: 'extra-class-for-lower-than',
-                  gt: 'extra-class-for-greater-than',
-                  eq: 'extra-class-for-equal-to',
-                  bt: 'extra-class-for-between'
+                  alpha: 'edge-tracker-alpha',
+                  beta: 'edge-tracker-beta',
+                  gamma: 'edge-tracker-gamma',
+                  alphaLeft: 'edge-tracker-alpha-left',
+                  alphaRight: 'edge-tracker-alpha-right',
+                  betaDown: 'edge-tracker-beta-down',
+                  betaUp: 'edge-tracker-beta-up',
+                  gammaRight: 'edge-tracker-gamma-right',
+                  gammaLeft: 'edge-tracker-gamma-left',
                 },
-                applyLt: false,
-                applyGt: false,
-                applyEq: false,
-                applyBt: false,
-                value: [77, {percent: false}],
-                min: [44, {percent: true}],
-                max: [66, {percent: true}]
+                value: ['15%', 66, 99],
+                onMatch: function () {
+                  console.log('cb: match');
+                },
+                onUnmatch: function () {
+                  console.log('cb: mismatch');
+                },
+                onMatchAlpha: function () {
+                  console.log('cb: match-alpha');
+                },
+                onMatchBeta: function () {
+                  console.log('cb: match-beta');
+                },
+                onMatchGamma: function () {
+                  console.log('cb: match-gamma');
+                },
+                onUnmatchAlpha: function () {
+                  console.log('cb: unmatch-alpha');
+                },
+                onUnmatchBeta: function () {
+                  console.log('cb: un-match-beta');
+                },
+                onUnmatchGamma: function () {
+                  console.log('cb: un-match-gamma');
+                },
+                onMatchAlphaLeft: function () {
+                  console.log('cb: match-alpha-left');
+                },
+                onMatchAlphaRight: function () {
+                  console.log('cb: match-alpha-right');
+                },
+                onMatchBetaUp: function () {
+                  console.log('cb: match-beta-up');
+                },
+                onMatchBetaDown: function () {
+                  console.log('cb: match-beta-down');
+                },
+                onMatchGammaLeft: function () {
+                  console.log('cb: match-gamma-left');
+                },
+                onMatchGammaRight: function () {
+                  console.log('cb: match-gamma-right');
+                },
+                onUnmatchAlphaLeft: function () {
+                  console.log('cb: un-match-alpha-left');
+                },
+                onUnmatchAlphaRight: function () {
+                  console.log('cb: un-match-alpha-right');
+                },
+                onUnmatchBetaUp: function () {
+                  console.log('cb: un-match-beta-up');
+                },
+                onUnmatchBetaDown: function () {
+                  console.log('cb: un-match-beta-down');
+                },
+                onUnmatchGammaLeft: function () {
+                  console.log('cb: un-match-gamma-left');
+                },
+                onUnmatchGammaRight: function () {
+                  console.log('cb: un-match-gamma-right');
+                }
+              }, {
+                value: [
+                  '15%',
+                  '88%',
+                  45
+                ]
+              }, {
+                value: {
+                  alpha: 44,
+                  beta: 88,
+                  gamma: '66%',
+                }
+              }, {
+                css: 'hit-any-orientation',
+                value: 40,
+              }, {
+                value: {
+                  alpha: 13,
+                  gamma: 88,
+                }
               }
             ]
           }
         }
       }
-    );
-
-    window.setTimeout(
-      function () {
-        console.log('Add custom element #gugus');
-        var el = document.createElement('p');
-        el.className = 'overflow-styling';
-        el.setAttribute('id', 'gugus');
-        el.innerText = 'Interdum et malesuada fames ac ante ipsum primis in faucibus. Suspendisse aliquet interdum sem, ut consequat ex auctor sit amet. Nullam in justo scelerisque, dapibus mi vitae, dignissim tellus. Sed malesuada eleifend orci, sit amet rhoncus massa. Nunc eleifend libero ac tempus lacinia. Mauris in tortor lacus. Nulla id turpis velit. Nulla non tempor nulla. Pellentesque in leo aliquam lorem fringilla tempor. Praesent maximus bibendum elit ut suscipit. Morbi blandit, ipsum a pharetra convallis, mi dolor tincidunt odio, in elementum augue orci non urna. Aliquam in lorem vitae nulla tempor tempor. Quisque aliquam lorem ac nulla vulputate fermentum. Vestibulum fringilla risus vel nibh dictum, eu imperdiet elit vulputate.';
-        document.body.appendChild(el);
-      }, 5000
-    );
-
-
-    window.setTimeout(
-      function () {
-        console.log('Add three selectors - .take-me-in and #custom-element and .not-yet-known-element');
-        t.addSelector(['#custom-element', '.take-me-in', '.not-yet-known-element'])
-      }, 3000
-    );
-
-    window.setTimeout(
-      function () {
-        console.log('Disable - features (all).');
-        t.disable();
-      }, 4000
-    );
-
-
-    window.setTimeout(
-      function () {
-        console.log('Re-Enable-Features - only scroll');
-        t.enable('scroll');
-      }, 15000
-    );
-
-    window.setTimeout(
-      function () {
-        console.log(' remove selector -> p');
-        t.removeSelector('p')
-      }, 7000
-    );
-
-    window.setTimeout(
-      function () {
-        console.log(' remove child -> #gugus');
-        var gugus = document.getElementById('gugus');
-        gugus.parentNode.removeChild(gugus);
-      }, 9000
-    );
-
-    window.setTimeout(
-      function () {
-        console.log('Create the not-yet-known-element');
-        var el = document.createElement('div');
-        el.className = 'not-yet-known-element overflow-styling';
-        el.innerText = 'NOT YET KNOWN. Interdum et malesuada fames ac ante ipsum primis in faucibus. Suspendisse aliquet interdum sem, ut consequat ex auctor sit amet. Nullam in justo scelerisque, dapibus mi vitae, dignissim tellus. Sed malesuada eleifend orci, sit amet rhoncus massa. Nunc eleifend libero ac tempus lacinia. Mauris in tortor lacus. Nulla id turpis velit. Nulla non tempor nulla. Pellentesque in leo aliquam lorem fringilla tempor. Praesent maximus bibendum elit ut suscipit. Morbi blandit, ipsum a pharetra convallis, mi dolor tincidunt odio, in elementum augue orci non urna. Aliquam in lorem vitae nulla tempor tempor. Quisque aliquam lorem ac nulla vulputate fermentum. Vestibulum fringilla risus vel nibh dictum, eu imperdiet elit vulputate.';
-        document.body.appendChild(el);
-      }, 14000
-    );
-
-    window.setTimeout(
-      function () {
-        console.log(' remove selector -> body');
-        t.removeSelector('body')
-      }, 19000
     );
 
 
