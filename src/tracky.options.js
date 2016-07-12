@@ -13,6 +13,10 @@ export default {
     edge: {
       enable: true,
       breakpoints: []
+    },
+    orientation: {
+      enable: true,
+      breakpoints: []
     }
   }
 };
