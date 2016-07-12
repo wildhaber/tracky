@@ -10,6 +10,7 @@ var eventKey = 'orientation';
 var eventOptions = {
   events: {
     orientation: {
+      enable: true,
       breakpoints: [
         50, [18, 55, 66], '30%', {
           css: {

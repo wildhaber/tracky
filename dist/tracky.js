@@ -1,6 +1,6 @@
 /**
  * tracky.js - a helper module streamlining user interaction into css-classes
- * @version 1.0.0
+ * @version 0.1.0
  * @author Copyright (c) Raphael Wildhaber < https://github.com/wildhaber >
  * @url https://github.com/wildhaber/tracky#readme
  * @license MIT
@@ -506,15 +506,15 @@
 	  classBtPrefix: 'bt-',
 	  events: {
 	    scroll: {
-	      enable: true,
+	      enable: false,
 	      breakpoints: []
 	    },
 	    edge: {
-	      enable: true,
+	      enable: false,
 	      breakpoints: []
 	    },
 	    orientation: {
-	      enable: true,
+	      enable: false,
 	      breakpoints: []
 	    }
 	  }
