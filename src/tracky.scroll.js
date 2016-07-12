@@ -455,31 +455,6 @@ class TrackyScroll extends TrackyEvent {
   }
 
   /**
-   * _applyCallbacks
-   * @param domNode
-   * @param bps
-   * @param keyword
-   * @private
-   */
-  _applyCallbacks(domNode, bps, keyword = null) {
-
-    /* istanbul ignore if */
-    if (
-      typeof keyword === 'string' &&
-      bps instanceof Array &&
-      bps.length > 0
-    ) {
-      bps.forEach(
-        (bp) => {
-          if (typeof bp.callbacks[keyword] === 'function') {
-            bp.callbacks[keyword].call(domNode, bp);
-          }
-        }
-      );
-    }
-  }
-
-  /**
    * callbackHandler
    * @param domNode
    * @param added
