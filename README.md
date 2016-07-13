@@ -534,6 +534,13 @@ tracky-edge-bottom-left-10-90 // when touches bottom left
 
 > Tracks device orientation on x/y/z axis. Defined by the angle of alpha/beta/gamma. Values are in degree or percent. 
 
+![orientation tracker demo](/docs/img/orientation-tracker-demo.gif?raw=true "orientation tracker in action")
+
+---
+
+![orientation tracker demo console](/docs/img/orientation-tracker-demo-console.gif?raw=true "orientation tracker in action console")
+_(Notice: console recording and demo above are not synced)_
+
 **Default classNames**
 
 If no custom css class-name is defined. Tracky creates a unique name by the given values by default. Note that the %-digit will be replaced by 'pc' (percent).
