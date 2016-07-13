@@ -1,4 +1,4 @@
-# tracky.js v0.0.1
+# tracky.js
 [![CircleCI](https://circleci.com/gh/wildhaber/tracky/tree/master.svg?style=svg&circle-token=98f9cc03cf867906c42e92903c8afd2072651d91)](https://circleci.com/gh/wildhaber/tracky/tree/master)
 
 tracky.js is a helper streamlining user interaction into css-classes. This means tracky handles user interaction like scrolling, device orientation changes or cursor movements on defined breakpoints into css classes.
@@ -533,6 +533,13 @@ tracky-edge-bottom-left-10-90 // when touches bottom left
 #### orientation
 
 > Tracks device orientation on x/y/z axis. Defined by the angle of alpha/beta/gamma. Values are in degree or percent. 
+
+![orientation tracker demo](/docs/img/orientation-tracker-demo.gif?raw=true "orientation tracker in action")
+
+---
+
+![orientation tracker demo console](/docs/img/orientation-tracker-console.gif?raw=true "orientation tracker in action console")
+_(Notice: console recording and demo above are not synced)_
 
 **Default classNames**
 
