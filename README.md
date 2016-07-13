@@ -219,6 +219,13 @@ t.enable('orientation');
 
 > Tracks horizontal and vertical scroll.
 
+![scroll tracker demo](/docs/img/scroll-tracker-demo.gif?raw=true "scroll tracker in action")
+
+---
+
+![scroll tracker demo console](/docs/img/scroll-tracker-demo-console.gif?raw=true "scroll tracker in action console")
+_(Notice: console recording and demo above are not synced)_
+
 **Default classNames**
 
 If no custom css class-name is defined. Tracky creates a unique name by the given values by default. Note that the %-digit will be replaced by 'pc' (percent).
