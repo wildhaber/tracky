@@ -333,10 +333,14 @@ tracky-scroll-bt-5pc-200 // when between 5% and 200 pixel
 
 #### edge
 
-![edge tracker demo](/docs/img/edge-tracking-demo.gif?raw=true "edge tracker in action")
-![edge tracker demo console](/docs/img/edge-tracking-demo-console.gif?raw=true "edge tracker in action console")
-
 > Tracks mousemove on a certain area of an elements edge.
+
+![edge tracker demo](/docs/img/edge-tracking-demo.gif?raw=true "edge tracker in action")
+
+---
+
+![edge tracker demo console](/docs/img/edge-tracking-demo-console.gif?raw=true "edge tracker in action console")
+_(Notice: console recording and demo above are not synced)_
 
 **Default classNames**
 
