@@ -1,5 +1,8 @@
 # tracky.js
 [![CircleCI](https://circleci.com/gh/wildhaber/tracky.svg?style=svg)](https://circleci.com/gh/wildhaber/tracky)
+[![Code Climate](https://codeclimate.com/github/wildhaber/tracky/badges/gpa.svg)](https://codeclimate.com/github/wildhaber/tracky)
+[![Test Coverage](https://codeclimate.com/github/wildhaber/tracky/badges/coverage.svg)](https://codeclimate.com/github/wildhaber/tracky/coverage)
+[![Issue Count](https://codeclimate.com/github/wildhaber/tracky/badges/issue_count.svg)](https://codeclimate.com/github/wildhaber/tracky)
 
 tracky.js is a helper streamlining user interaction into css-classes. This means tracky transforms user interaction like scrolling, device orientation changes or cursor movements on defined breakpoints into css classes.
 
