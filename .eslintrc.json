@@ -9,15 +9,15 @@
     },
     "rules": {
         "indent": [
-            "error",
+            2,
             2
         ],
         "quotes": [
-            "error",
+            2,
             "single"
         ],
         "semi": [
-            "error",
+            2,
             "always"
         ]
     }
