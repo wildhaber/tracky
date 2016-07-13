@@ -538,7 +538,7 @@ tracky-edge-bottom-left-10-90 // when touches bottom left
 
 ---
 
-![orientation tracker demo console](/docs/img/orientation-tracker-demo-console.gif?raw=true "orientation tracker in action console")
+![orientation tracker demo console](/docs/img/orientation-tracker-console.gif?raw=true "orientation tracker in action console")
 _(Notice: console recording and demo above are not synced)_
 
 **Default classNames**
