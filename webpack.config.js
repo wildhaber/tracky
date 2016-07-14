@@ -18,10 +18,10 @@ const preamble = '/**\n' +
 /* CONFIG */
 
 var wpConfig = {
-  entry: "./src/tracky.es5.js",
+  entry: './src/tracky.es5.js',
   output: {
     path: __dirname + '/dist',
-    filename: "tracky.js"
+    filename: 'tracky.js',
   },
   devtool: 'source-map',
   module: {
@@ -31,23 +31,23 @@ var wpConfig = {
         exclude: /(node_modules|bower_components)/,
         loader: 'babel', // 'babel-loader' is also a legal name to reference
         query: {
-          presets: ['es2015']
-        }
-      }
-    ]
+          presets: ['es2015'],
+        },
+      },
+    ],
   },
   plugins: [
     new webpack.ProvidePlugin(
       {
-        'window.Tracky': './tracky'
+        'window.Tracky': './tracky',
       }
     ),
     new webpack.BannerPlugin(
       preamble, {
-        raw: true
+        raw: true,
       }
-    )
-  ]
+    ),
+  ],
 };
 
 
