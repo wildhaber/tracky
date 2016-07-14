@@ -34,7 +34,7 @@ class TrackyEdge extends TrackyEvent {
         this._bindListener, 25, {
           leading: true,
           maxWait: 40,
-          trailing: false
+          trailing: false,
         }
       )
     );
@@ -194,7 +194,7 @@ class TrackyEdge extends TrackyEvent {
         top: null,
         right: null,
         bottom: null,
-        left: null
+        left: null,
       };
 
       if (value instanceof Array) {
@@ -298,7 +298,7 @@ class TrackyEdge extends TrackyEvent {
         let prep = (
           typeof p === 'number' || typeof p === 'string' || p instanceof Array
         ) ? {
-          value: p
+          value: p,
         } : p;
 
         let hasValue = (typeof prep.value !== 'undefined' && prep.value);
@@ -429,7 +429,7 @@ class TrackyEdge extends TrackyEvent {
             unmatchBottomRight: (typeof prep.onUnmatchBottomRight === 'function') ? prep.onUnmatchBottomRight : null,
             unmatchBottomLeft: (typeof prep.onUnmatchBottomLeft === 'function') ? prep.onUnmatchBottomLeft : null,
           },
-          value: (hasValue) ? prep.value : null
+          value: (hasValue) ? prep.value : null,
         };
 
       }
@@ -448,8 +448,8 @@ class TrackyEdge extends TrackyEvent {
    */
   classify(
     domNode, value = {
-      absolute: {top: 0, right: 0, bottom: 0, left: 0,},
-      percent: {top: 0, right: 0, bottom: 0, left: 0,}
+      absolute: {top: 0, right: 0, bottom: 0, left: 0},
+      percent: {top: 0, right: 0, bottom: 0, left: 0},
     }
   ) {
 

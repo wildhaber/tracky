@@ -39,7 +39,7 @@ class TrackyOrientation extends TrackyEvent {
           this._bindListener, 100, {
             leading: true,
             maxWait: 200,
-            trailing: true
+            trailing: true,
           }
         )
       );
@@ -88,7 +88,7 @@ class TrackyOrientation extends TrackyEvent {
     return {
       absolute: absolute,
       percent: percent,
-      direction: direction
+      direction: direction,
     };
   }
 
@@ -285,7 +285,7 @@ class TrackyOrientation extends TrackyEvent {
             )
           )
         ) ? {
-          value: p
+          value: p,
         } : p;
 
         let hasValue = (typeof prep.value !== 'undefined' && prep.value);
@@ -393,7 +393,7 @@ class TrackyOrientation extends TrackyEvent {
             unmatchGammaLeft: (typeof prep.onUnmatchGammaLeft === 'function') ? prep.onUnmatchGammaLeft : null,
             unmatchGammaRight: (typeof prep.onUnmatchGammaRight === 'function') ? prep.onUnmatchGammaRight : null,
           },
-          value: (hasValue) ? prep.value : null
+          value: (hasValue) ? prep.value : null,
         };
 
       }
@@ -411,9 +411,9 @@ class TrackyOrientation extends TrackyEvent {
    */
   classify(
     value = {
-      absolute: {alpha: 0, beta: 0, gamma: 0,},
-      percent: {alpha: 0, beta: 0, gamma: 0,},
-      direction: {alpha: 'stay', beta: 'stay', gamma: 'stay',}
+      absolute: {alpha: 0, beta: 0, gamma: 0},
+      percent: {alpha: 0, beta: 0, gamma: 0},
+      direction: {alpha: 'stay', beta: 'stay', gamma: 'stay'},
     }
   ) {
 
