@@ -246,7 +246,7 @@ class Tracky {
     return {
       added: newlyAdded,
       removed: removed,
-      changes: (newlyAdded.length + removed.length)
+      changes: (newlyAdded.length + removed.length),
     };
   }
 
@@ -314,7 +314,7 @@ class Tracky {
     // Notify me of everything!
     /* istanbul ignore next */
     var observerConfig = {
-      childList: true
+      childList: true,
     };
 
     /* istanbul ignore next */

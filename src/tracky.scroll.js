@@ -59,7 +59,7 @@ class TrackyScroll extends TrackyEvent {
           left: this._percentRound(
             (!!doc.scrollLeft || !!b.scrollLeft) ? (doc.scrollLeft || b.scrollLeft / ((doc.scrollWidth || b.scrollWidth) - doc.clientWidth)) : 0
           ),
-        }
+        },
       };
 
     } else {
@@ -73,7 +73,7 @@ class TrackyScroll extends TrackyEvent {
           left: this._percentRound(
             (domNode.scrollLeft) ? ((domNode.scrollLeft) / (domNode.scrollWidth - domNode.offsetWidth)) : 0
           ),
-        }
+        },
       };
     }
   }
@@ -299,7 +299,7 @@ class TrackyScroll extends TrackyEvent {
         let prep = (
           typeof p === 'number' || typeof p === 'string'
         ) ? {
-          value: p
+          value: p,
         } : p;
 
         let hasBetween = (
@@ -314,7 +314,7 @@ class TrackyScroll extends TrackyEvent {
         if (hasCustomCss && typeof prep.css === 'string') {
           prep.css = {
             eq: prep.css,
-            bt: prep.css
+            bt: prep.css,
           };
         }
 
@@ -380,7 +380,7 @@ class TrackyScroll extends TrackyEvent {
    * @param domNode
    * @param value
    */
-  classify(domNode, value = {absolute: {top: 0, left: 0,}, percent: {top: 0, left: 0,}}) {
+  classify(domNode, value = {absolute: {top: 0, left: 0}, percent: {top: 0, left: 0}}) {
 
     let bp = this._options.breakpoints;
     let classes = [];

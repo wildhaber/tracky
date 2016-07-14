@@ -8,15 +8,15 @@ export default {
   events: {
     scroll: {
       enable: false,
-      breakpoints: []
+      breakpoints: [],
     },
     edge: {
       enable: false,
-      breakpoints: []
+      breakpoints: [],
     },
     orientation: {
       enable: false,
-      breakpoints: []
-    }
-  }
+      breakpoints: [],
+    },
+  },
 };

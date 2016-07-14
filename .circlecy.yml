@@ -1,0 +1,10 @@
+dependencies:
+  pre:
+    - npm install -g codeclimate-test-reporter
+
+test:
+  override:
+    - npm test
+    - npm run test:istanbul
+  post:
+    - codeclimate-test-reporter < coverage/lcov.info
