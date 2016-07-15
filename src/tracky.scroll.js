@@ -9,11 +9,10 @@ class TrackyScroll extends TrackyEvent {
    */
   _listener(domNode) {
 
-    /* istanbul ignore next */
-    let position = this._getScrollPosition(domNode);
-
-    /* istanbul ignore next */
-    this.classify(domNode, position);
+    if (typeof domNode !== 'undefined') {
+      let position = this._getScrollPosition(domNode);
+      this.classify(domNode, position);
+    }
 
   }
 
@@ -21,16 +20,21 @@ class TrackyScroll extends TrackyEvent {
    * bindEvent
    * @param domNode
    */
-  bindEvent(domNode) {
+  bindEvent(domNode = null) {
 
-    /* istanbul ignore next */
-    domNode.addEventListener(
-      'scroll',
-      this._bindListener
-    );
+    if (
+      domNode &&
+      typeof domNode.addEventListener !== 'undefined'
+    ) {
 
-    /* istanbul ignore next */
-    this._listener(domNode);
+      domNode.addEventListener(
+        'scroll',
+        this._bindListener
+      );
+
+      this._listener(domNode);
+
+    }
 
   }
 
@@ -40,39 +44,57 @@ class TrackyScroll extends TrackyEvent {
    * @returns {*}
    * @private
    */
-  _getScrollPosition(domNode) {
+  _getScrollPosition(domNode = null) {
 
     if (this._isBody(domNode)) {
 
-      let doc = document.documentElement;
-      let b = document.body;
+      let doc = (typeof document !== 'undefined') ? document.documentElement : null;
+      let b = (typeof document !== 'undefined') ? document.body : null;
 
-      return {
+      return (doc && b) ? {
         absolute: {
           top: doc.scrollTop || b.scrollTop,
           left: doc.scrollLeft || b.scrollLeft,
         },
         percent: {
           top: this._percentRound(
-            doc.scrollTop || b.scrollTop / ((doc.scrollHeight || b.scrollHeight) - doc.clientHeight)
+            doc.scrollTop || b.scrollTop / ((doc.scrollHeight || b.scrollHeight) - doc.clientHeight) * 100
           ),
           left: this._percentRound(
-            (!!doc.scrollLeft || !!b.scrollLeft) ? (doc.scrollLeft || b.scrollLeft / ((doc.scrollWidth || b.scrollWidth) - doc.clientWidth)) : 0
+            (!!doc.scrollLeft || !!b.scrollLeft) ? (doc.scrollLeft || b.scrollLeft / ((doc.scrollWidth || b.scrollWidth) - doc.clientWidth) * 100) : 0
           ),
+        },
+      } : {
+        absolute: {
+          top: 0,
+          left: 0,
+        },
+        percent: {
+          top: 0,
+          left: 0,
         },
       };
 
     } else {
-      return {
+      return (domNode) ? {
         absolute: {
           top: domNode.scrollTop,
           left: domNode.scrollLeft,
         },
         percent: {
-          top: this._percentRound(((domNode.scrollTop) / (domNode.scrollHeight - domNode.offsetHeight))),
+          top: this._percentRound(((domNode.scrollTop) / (domNode.scrollHeight - domNode.offsetHeight)) * 100),
           left: this._percentRound(
-            (domNode.scrollLeft) ? ((domNode.scrollLeft) / (domNode.scrollWidth - domNode.offsetWidth)) : 0
+            (domNode.scrollLeft) ? ((domNode.scrollLeft) / (domNode.scrollWidth - domNode.offsetWidth) * 100) : 0
           ),
+        },
+      } : {
+        absolute: {
+          top: 0,
+          left: 0,
+        },
+        percent: {
+          top: 0,
+          left: 0,
         },
       };
     }
@@ -83,13 +105,17 @@ class TrackyScroll extends TrackyEvent {
    */
   bindBodyEvent() {
 
-    /* istanbul ignore next */
-    window.addEventListener(
-      'scroll', this._bindBodyListener
-    );
+    if (typeof window !== 'undefined') {
 
-    /* istanbul ignore next */
-    this._listener(document.body);
+      /* istanbul ignore next */
+      window.addEventListener(
+        'scroll', this._bindBodyListener
+      );
+
+      /* istanbul ignore next */
+      this._listener(document.body);
+
+    }
 
   }
 
@@ -98,11 +124,15 @@ class TrackyScroll extends TrackyEvent {
    */
   unbindBodyEvent() {
 
-    /* istanbul ignore next */
-    window.removeEventListener(
-      'scroll',
-      this._bindBodyListener
-    );
+    if (typeof window !== 'undefined') {
+
+      /* istanbul ignore next */
+      window.removeEventListener(
+        'scroll',
+        this._bindBodyListener
+      );
+
+    }
 
   }
 
@@ -110,12 +140,16 @@ class TrackyScroll extends TrackyEvent {
    * unbindEvent
    * @param domNode
    */
-  unbindEvent(domNode) {
+  unbindEvent(domNode = null) {
 
-    /* istanbul ignore next */
-    domNode.removeEventListener(
-      'scroll', this._bindListener
-    );
+    if (
+      domNode &&
+      typeof domNode.removeEventListener !== 'undefined'
+    ) {
+      domNode.removeEventListener(
+        'scroll', this._bindListener
+      );
+    }
 
   }
 
@@ -137,7 +171,6 @@ class TrackyScroll extends TrackyEvent {
    */
   bindEvents() {
 
-    /* istanbul ignore next */
     this.getNodes().forEach(
       (n) => {
         if (n) {
@@ -160,7 +193,6 @@ class TrackyScroll extends TrackyEvent {
    */
   unbindEvents() {
 
-    /* istanbul ignore next */
     this.getNodes().forEach(
       (n) => {
         if (n) {
@@ -168,7 +200,14 @@ class TrackyScroll extends TrackyEvent {
             (_n) => {
               if (this._isBody(_n)) {
                 this.unbindBodyEvent();
-                this.cleanupClasses(document.body);
+
+                /* istanbul ignore if */
+                if (
+                  typeof document !== 'undefined'
+                ) {
+                  this.cleanupClasses(document.body);
+                }
+
               } else {
                 this.unbindEvent(_n);
                 this.cleanupClasses(_n);
@@ -187,7 +226,6 @@ class TrackyScroll extends TrackyEvent {
   onStart() {
 
     // Ugly but necessary to keep this-context combined with eventListener add/remove
-    /* istanbul ignore next */
     this._bindListener = (e) => {
       this._listener(e.target);
     };
@@ -223,7 +261,6 @@ class TrackyScroll extends TrackyEvent {
    * onStop
    */
   onStop() {
-    /* istanbul ignore next */
     this.unbindEvents();
   }
 
@@ -231,35 +268,42 @@ class TrackyScroll extends TrackyEvent {
    * onAdd
    * @param nodes
    */
-  onAdd(nodes) {
-    /* istanbul ignore next */
-    nodes.forEach(
-      (_n) => {
-        if (this._isBody(_n)) {
-          this.bindBodyEvent();
-        } else {
-          this.bindEvent(_n);
+  onAdd(nodes = null) {
+    if (
+      nodes &&
+      nodes instanceof Array
+    ) {
+      nodes.forEach(
+        (_n) => {
+          if (this._isBody(_n)) {
+            this.bindBodyEvent();
+          } else {
+            this.bindEvent(_n);
+          }
         }
-      }
-    );
+      );
+    }
   }
 
   /**
    * onRemove
    * @param nodes
    */
-  onRemove(nodes) {
-
-    /* istanbul ignore next */
-    nodes.forEach(
-      (_n) => {
-        if (this._isBody(_n)) {
-          this.unbindBodyEvent();
-        } else {
-          this.unbindEvent(_n);
+  onRemove(nodes = null) {
+    if (
+      nodes &&
+      nodes instanceof Array
+    ) {
+      nodes.forEach(
+        (_n) => {
+          if (this._isBody(_n)) {
+            this.unbindBodyEvent();
+          } else {
+            this.unbindEvent(_n);
+          }
         }
-      }
-    );
+      );
+    }
   }
 
   /**
@@ -385,7 +429,6 @@ class TrackyScroll extends TrackyEvent {
     let bp = this._options.breakpoints;
     let classes = [];
 
-    /* istanbul ignore if */
     if (bp.length > 0) {
       for (let l = bp.length; l; l--) {
         let _bp = bp[(l - 1)];
@@ -462,7 +505,6 @@ class TrackyScroll extends TrackyEvent {
    */
   callbackHandler(domNode, added, removed) {
 
-    /* istanbul ignore if */
     if (
       added instanceof Array &&
       added.length > 0
@@ -472,7 +514,6 @@ class TrackyScroll extends TrackyEvent {
       this._applyCallbacks(domNode, this._getBpsByClassNames(added, ['gt']), 'greater');
     }
 
-    /* istanbul ignore if */
     if (
       removed instanceof Array &&
       removed.length > 0
