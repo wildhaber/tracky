@@ -125,10 +125,14 @@ var TrackyEvent = function () {
     value: function attachClasses(domNode, classNames) {
       var _this = this;
 
+      if (typeof domNode === 'undefined' || typeof classNames === 'undefined' || !classNames instanceof Array) {
+        return;
+      }
+
       var available = this._classNames;
       var current = domNode.className;
 
-      if (domNode.classList) {
+      if (typeof domNode.classList !== 'undefined') {
         (function () {
 
           var applied = current.replace(/\s+/g, ' ').split(' ').filter(function (c) {
@@ -155,7 +159,7 @@ var TrackyEvent = function () {
             }
           }
 
-          if (toRemove.length > 0 || toApply.length > 0) {
+          if ((toRemove.length > 0 || toApply.length > 0) && typeof _this.callbackHandler === 'function') {
             _this.callbackHandler(domNode, toApply, toRemove);
           }
         })();
