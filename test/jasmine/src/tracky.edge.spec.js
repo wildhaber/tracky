@@ -111,8 +111,59 @@ var eventOptionsDisabled = {
   }
 };
 
+var mockedDomNode = {
+  nodeName: 'BODY',
+  scrollTop: 25,
+  scrollLeft: 88,
+  scrollHeight: 100,
+  scrollWidth: 888,
+  offsetWidth: 0,
+  offsetHeight: 0,
+  addEventListener : function() {},
+  removeEventListener : function() {},
+  getBoundingClientRect: function() {
+    return {
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      width: 1000,
+      height: 1000,
+    }
+  },
+};
+
+var mockedDomNodeNotBody = {
+  nodeName: 'SOMETHINGELSE',
+  scrollTop: 25,
+  scrollLeft: 88,
+  scrollHeight: 100,
+  scrollWidth: 888,
+  offsetWidth: 0,
+  offsetHeight: 0,
+  addEventListener : function() {},
+  removeEventListener : function() {},
+  getBoundingClientRect: function() {
+    return {
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      width: 1000,
+      height: 1000,
+    }
+  },
+};
+
+var mockedEvent = {
+  target : mockedDomNodeNotBody,
+  clientY: 44,
+  clientX: 88,
+};
 
 var trackyDefault = new _tracky('body', eventOptions);
+trackyDefault._nodes = [[mockedDomNode,mockedDomNode],[mockedDomNodeNotBody,mockedDomNode]];
+
 var trackyDefaultNoEdge = new _tracky('body', eventOptionsDisabled);
 var trackyEdge = trackyDefault._listeners.filter(
   function (l) {
@@ -401,6 +452,348 @@ describe(
   }
 );
 
+
+describe(
+  'tracky.edge.js - _listener', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyEdge._listener).toBeDefined();
+        expect(trackyEdge._listener).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        expect(trackyEdge._listener()).toEqual(undefined);
+        expect(trackyEdge._listener(mockedEvent)).toEqual(undefined);
+      }
+    );
+
+  }
+);
+
+
+describe(
+  'tracky.edge.js - bindEvent', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyEdge.bindEvent).toBeDefined();
+        expect(trackyEdge.bindEvent).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        var mockedDomNode = {};
+        var mockedDomNodeEventListener = {
+          addEventListener: function () {
+          }
+        };
+        expect(trackyEdge.bindEvent()).toEqual(undefined);
+        expect(trackyEdge.bindEvent(mockedDomNode)).toEqual(undefined);
+        expect(trackyEdge.bindEvent(mockedDomNodeEventListener)).toEqual(undefined);
+      }
+    );
+
+  }
+);
+
+
+describe(
+  'tracky.edge.js - _getMousePosition', function () {
+
+    var mockedDomNode = {
+      nodeName: 'NOTBODY',
+      scrollTop: 25,
+      scrollLeft: 88,
+      scrollHeight: 100,
+      scrollWidth: 888,
+      offsetWidth: 0,
+      offsetHeight: 0,
+      getBoundingClientRect: function() {
+        return {
+          left: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          width: 1000,
+          height: 1000,
+        }
+      },
+    };
+
+    var mockedDomNodeBody = {
+      nodeName: 'BODY',
+      scrollTop: 25,
+      scrollLeft: 88,
+      scrollHeight: 100,
+      scrollWidth: 888,
+      offsetWidth: 0,
+      offsetHeight: 0,
+      getBoundingClientRect: function() {
+        return {
+          left: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          width: 1000,
+          height: 1000,
+        }
+      },
+    };
+
+    it(
+      'method should be defined', function () {
+        expect(trackyEdge._getMousePosition).toBeDefined();
+        expect(trackyEdge._getMousePosition).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should return an object', function () {
+        expect(trackyEdge._getMousePosition()).toEqual(null);
+      }
+    );
+
+    it(
+      'method should return an object.absolute', function () {
+        expect(trackyEdge._getMousePosition(mockedDomNode, mockedEvent).absolute).toBeDefined();
+        expect(trackyEdge._getMousePosition(mockedDomNode, mockedEvent).absolute).toEqual(jasmine.any(Object));
+      }
+    );
+
+    it(
+      'method should return an object.absolute.top', function () {
+        expect(trackyEdge._getMousePosition(mockedDomNode, mockedEvent).absolute.top).toBeDefined();
+        expect(trackyEdge._getMousePosition(mockedDomNode, mockedEvent).absolute.top).toEqual(jasmine.any(Number));
+      }
+    );
+
+    it(
+      'method should return an object.absolute.left', function () {
+        expect(trackyEdge._getMousePosition(mockedDomNode, mockedEvent).absolute.left).toBeDefined();
+        expect(trackyEdge._getMousePosition(mockedDomNode, mockedEvent).absolute.left).toEqual(jasmine.any(Number));
+      }
+    );
+
+    it(
+      'method should return an object.percent', function () {
+        expect(trackyEdge._getMousePosition(mockedDomNode, mockedEvent).percent).toBeDefined();
+        expect(trackyEdge._getMousePosition(mockedDomNode, mockedEvent).percent).toEqual(jasmine.any(Object));
+      }
+    );
+
+    it(
+      'method should return an object.percent.top', function () {
+        expect(trackyEdge._getMousePosition(mockedDomNode, mockedEvent).percent.top).toBeDefined();
+        expect(trackyEdge._getMousePosition(mockedDomNode, mockedEvent).percent.top).toEqual(jasmine.any(Number));
+      }
+    );
+
+    it(
+      'method should return an object.percent.left', function () {
+        expect(trackyEdge._getMousePosition(mockedDomNode, mockedEvent).percent.left).toBeDefined();
+        expect(trackyEdge._getMousePosition(mockedDomNode, mockedEvent).percent.left).toEqual(jasmine.any(Number));
+      }
+    );
+
+    it(
+      'method should return current mouse position', function () {
+
+        var sp = trackyEdge._getMousePosition(mockedDomNode, mockedEvent);
+
+        expect(sp.absolute.top).toEqual(44);
+        expect(sp.absolute.left).toEqual(88);
+        expect(sp.percent.top).toEqual(4);
+        expect(sp.percent.left).toEqual(9);
+      }
+    );
+
+
+  }
+);
+
+describe(
+  'tracky.edge.js - bindEvent', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyEdge.bindEvent).toBeDefined();
+        expect(trackyEdge.bindEvent).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        expect(trackyEdge.bindEvent()).toEqual(undefined);
+        expect(trackyEdge.bindEvent()).toEqual(undefined);
+      }
+    );
+
+  }
+);
+
+describe(
+  'tracky.edge.js - unbindEvent', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyEdge.unbindEvent).toBeDefined();
+        expect(trackyEdge.unbindEvent).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+
+        expect(trackyEdge.unbindEvent()).toEqual(undefined);
+        expect(trackyEdge.unbindEvent({})).toEqual(undefined);
+        expect(trackyEdge.unbindEvent(mockedDomNodeNotBody)).toEqual(undefined);
+      }
+    );
+
+  }
+);
+
+
+describe(
+  'tracky.edge.js - bindEvents', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyEdge.bindEvents).toBeDefined();
+        expect(trackyEdge.bindEvents).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        expect(trackyEdge.bindEvents()).toEqual(undefined);
+        expect(trackyEdge.bindEvents()).toEqual(undefined);
+      }
+    );
+
+  }
+);
+
+describe(
+  'tracky.edge.js - unbindEvents', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyEdge.unbindEvents).toBeDefined();
+        expect(trackyEdge.unbindEvents).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        expect(trackyEdge.unbindEvents()).toEqual(undefined);
+        expect(trackyEdge.unbindEvents()).toEqual(undefined);
+      }
+    );
+
+  }
+);
+
+
+describe(
+  'tracky.edge.js - onStart', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyEdge.onStart).toBeDefined();
+        expect(trackyEdge.onStart).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        expect(trackyEdge.onStart()).toEqual(undefined);
+        expect(trackyEdge.onStart()).toEqual(undefined);
+      }
+    );
+
+    it(
+      'should assign a _bindListener', function () {
+
+        trackyEdge.onStart();
+
+        expect(trackyEdge._bindListener).toBeDefined();
+        expect(function() { trackyEdge._bindListener(mockedEvent); }).not.toThrowError();
+      }
+    );
+
+  }
+);
+
+describe(
+  'tracky.edge.js - onAdd', function () {
+
+    it(
+      'should be defined', function () {
+        expect(trackyEdge.onAdd).toBeDefined();
+        expect(trackyEdge.onAdd).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should be callable as function', function () {
+        expect(trackyEdge.onAdd()).toEqual(undefined);
+        expect(trackyEdge.onAdd()).toEqual(undefined);
+        expect(trackyEdge.onAdd([mockedDomNodeNotBody,mockedDomNode])).toEqual(undefined);
+      }
+    );
+
+
+  }
+);
+
+describe(
+  'tracky.edge.js - onRemove', function () {
+
+    it(
+      'should be defined', function () {
+        expect(trackyEdge.onRemove).toBeDefined();
+        expect(trackyEdge.onRemove).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should be callable as function', function () {
+        expect(trackyEdge.onRemove()).toEqual(undefined);
+        expect(trackyEdge.onRemove()).toEqual(undefined);
+        expect(trackyEdge.onRemove([mockedDomNodeNotBody,mockedDomNode])).toEqual(undefined);
+      }
+    );
+
+
+  }
+);
+
+describe(
+  'tracky.edge.js - callbackHandler', function () {
+
+    it(
+      'should be defined', function () {
+        expect(trackyEdge.callbackHandler).toBeDefined();
+        expect(trackyEdge.callbackHandler).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should be callable as function', function () {
+        expect(trackyEdge.callbackHandler()).toEqual(undefined);
+        expect(trackyEdge.callbackHandler()).toEqual(undefined);
+        expect(trackyEdge.callbackHandler(mockedDomNodeNotBody,['added-class','another-one'],['removed-class'])).toEqual(undefined);
+      }
+    );
+
+
+  }
+);
 
 describe(
   'tracky.edge.js - getNodes', function () {
