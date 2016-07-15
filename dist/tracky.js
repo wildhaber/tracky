@@ -1388,7 +1388,7 @@ var TrackyOrientation = function (_TrackyEvent) {
     value: function bindEvent() {
 
       if (typeof window !== 'undefined' && typeof window.DeviceOrientationEvent !== 'undefined') {
-
+        /* istanbul ignore next */
         window.addEventListener('deviceorientation', (0, _lodash2.default)(this._bindListener, 100, {
           leading: true,
           maxWait: 200,
@@ -1405,7 +1405,13 @@ var TrackyOrientation = function (_TrackyEvent) {
 
   }, {
     key: '_getOrientation',
-    value: function _getOrientation(e) {
+    value: function _getOrientation() {
+      var e = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+
+
+      if (!e) {
+        return null;
+      }
 
       var alpha = typeof e.alpha !== 'undefined' ? Math.round(e.alpha) : 0;
       var beta = typeof e.beta !== 'undefined' ? Math.round(e.beta) : 0;
@@ -1451,7 +1457,10 @@ var TrackyOrientation = function (_TrackyEvent) {
   }, {
     key: 'unbindEvent',
     value: function unbindEvent() {
-      window.removeEventListener('deviceorientation', this._bindListener);
+      if (typeof window !== 'undefined') {
+        /* istanbul ignore next */
+        window.removeEventListener('deviceorientation', this._bindListener);
+      }
     }
 
     /**
@@ -1528,12 +1537,16 @@ var TrackyOrientation = function (_TrackyEvent) {
 
   }, {
     key: 'onRemove',
-    value: function onRemove(nodes) {
+    value: function onRemove() {
       var _this4 = this;
 
-      nodes.forEach(function (_n) {
-        _this4.unbindEvent(_n);
-      });
+      var nodes = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+
+      if (nodes && nodes instanceof Array) {
+        nodes.forEach(function (_n) {
+          _this4.unbindEvent(_n);
+        });
+      }
     }
 
     /**
