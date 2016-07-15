@@ -22,14 +22,20 @@ import Tracky from 'tracky';
 let bodyTracker = new Tracky('body', { options: 'example' });
 ```
 
+Example **common.js**:
+```javascript
+let Tracky = require('tracky');
+
+let bodyTracker = new Tracky('body', { options: 'example' });
+```
+
 Example **ES5**:
 ```html
 <script src='../your-path-to-the-file/tracky/dist/tracky.min.js'>
 ```
 ```javascript
 <script>
-  var _Tracky = Tracky.default;
-  var bodyTracker = new _Tracky('body', { options: 'example' });
+  var bodyTracker = new Tracky('body', { options: 'example' });
 </script>
 ```
 

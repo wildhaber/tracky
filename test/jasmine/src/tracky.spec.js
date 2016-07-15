@@ -2,13 +2,10 @@
 
 // Describe
 
-require('../../../dist/tracky');
-var _tracky = Tracky.default;
+var _tracky = require('../../../index');
 
 describe(
   'tracky.js general', function () {
-
-    var _tracky = Tracky.default;
 
     it(
       'empty constructor constructs without exception', function () {

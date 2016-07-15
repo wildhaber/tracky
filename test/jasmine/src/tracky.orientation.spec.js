@@ -2,8 +2,7 @@
 
 // Describe
 
-require('../../../dist/tracky');
-var _tracky = Tracky.default;
+var _tracky = require('../../../index');
 
 var eventKey = 'orientation';
 
