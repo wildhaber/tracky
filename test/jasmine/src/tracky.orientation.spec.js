@@ -119,7 +119,74 @@ var eventOptionsDisabled = {
 };
 
 
+var mockedDomNode = {
+  nodeName: 'BODY',
+  scrollTop: 25,
+  scrollLeft: 88,
+  scrollHeight: 100,
+  scrollWidth: 888,
+  offsetWidth: 0,
+  offsetHeight: 0,
+  addEventListener : function() {},
+  removeEventListener : function() {},
+  getBoundingClientRect: function() {
+    return {
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      width: 1000,
+      height: 1000,
+    }
+  },
+};
+
+var mockedDomNodeNotBody = {
+  nodeName: 'SOMETHINGELSE',
+  scrollTop: 25,
+  scrollLeft: 88,
+  scrollHeight: 100,
+  scrollWidth: 888,
+  offsetWidth: 0,
+  offsetHeight: 0,
+  addEventListener : function() {},
+  removeEventListener : function() {},
+  getBoundingClientRect: function() {
+    return {
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      width: 1000,
+      height: 1000,
+    }
+  },
+};
+
+var mockedEvent = {
+  target : mockedDomNodeNotBody,
+  alpha: 44,
+  beta: 66,
+  gamma: 88,
+};
+
+var mockedEventNegative = {
+  target : mockedDomNodeNotBody,
+  alpha: -44,
+  beta: -66,
+  gamma: -88,
+};
+
+var mockedEventStay = {
+  target : mockedDomNodeNotBody,
+  alpha: 0,
+  beta: 0,
+  gamma: 0,
+};
+
 var trackyDefault = new _tracky('body', eventOptions);
+trackyDefault._nodes = [[mockedDomNode,mockedDomNode],[mockedDomNodeNotBody,mockedDomNode]];
+
 var trackyDefaultNoOrientation = new _tracky('body', eventOptionsDisabled);
 var trackyOrientation = trackyDefault._listeners.filter(
   function (l) {
@@ -443,6 +510,366 @@ describe(
   }
 );
 
+
+describe(
+  'tracky.orientation.js - _listener', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyOrientation._listener).toBeDefined();
+        expect(trackyOrientation._listener).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        expect(trackyOrientation._listener()).toEqual(undefined);
+        expect(trackyOrientation._listener(mockedEvent)).toEqual(undefined);
+      }
+    );
+
+  }
+);
+
+
+describe(
+  'tracky.orientation.js - bindEvent', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyOrientation.bindEvent).toBeDefined();
+        expect(trackyOrientation.bindEvent).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        var mockedDomNode = {};
+        var mockedDomNodeEventListener = {
+          addEventListener: function () {
+          }
+        };
+        expect(trackyOrientation.bindEvent()).toEqual(undefined);
+        expect(trackyOrientation.bindEvent(mockedDomNode)).toEqual(undefined);
+        expect(trackyOrientation.bindEvent(mockedDomNodeEventListener)).toEqual(undefined);
+      }
+    );
+
+  }
+);
+
+describe(
+  'tracky.orientation.js - _getOrientation', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyOrientation._getOrientation).toBeDefined();
+        expect(trackyOrientation._getOrientation).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should return an object', function () {
+        expect(trackyOrientation._getOrientation()).toEqual(null);
+      }
+    );
+
+    it(
+      'method should return an object.absolute', function () {
+        expect(trackyOrientation._getOrientation(mockedEvent).absolute).toBeDefined();
+        expect(trackyOrientation._getOrientation(mockedEvent).absolute).toEqual(jasmine.any(Object));
+      }
+    );
+
+    it(
+      'method should return an object.absolute.alpha', function () {
+        expect(trackyOrientation._getOrientation(mockedEvent).absolute.alpha).toBeDefined();
+        expect(trackyOrientation._getOrientation(mockedEvent).absolute.alpha).toEqual(jasmine.any(Number));
+      }
+    );
+
+    it(
+      'method should return an object.absolute.beta', function () {
+        expect(trackyOrientation._getOrientation(mockedEvent).absolute.beta).toBeDefined();
+        expect(trackyOrientation._getOrientation(mockedEvent).absolute.beta).toEqual(jasmine.any(Number));
+      }
+    );
+
+    it(
+      'method should return an object.absolute.gamma', function () {
+        expect(trackyOrientation._getOrientation(mockedEvent).absolute.gamma).toBeDefined();
+        expect(trackyOrientation._getOrientation(mockedEvent).absolute.gamma).toEqual(jasmine.any(Number));
+      }
+    );
+
+    it(
+      'method should return an object.percent', function () {
+        expect(trackyOrientation._getOrientation(mockedEvent).percent).toBeDefined();
+        expect(trackyOrientation._getOrientation(mockedEvent).percent).toEqual(jasmine.any(Object));
+      }
+    );
+
+    it(
+      'method should return an object.percent.alpha', function () {
+        expect(trackyOrientation._getOrientation(mockedEvent).percent.alpha).toBeDefined();
+        expect(trackyOrientation._getOrientation(mockedEvent).percent.alpha).toEqual(jasmine.any(Number));
+      }
+    );
+
+    it(
+      'method should return an object.percent.beta', function () {
+        expect(trackyOrientation._getOrientation(mockedEvent).percent.beta).toBeDefined();
+        expect(trackyOrientation._getOrientation(mockedEvent).percent.beta).toEqual(jasmine.any(Number));
+      }
+    );
+
+    it(
+      'method should return an object.percent.gamma', function () {
+        expect(trackyOrientation._getOrientation(mockedEvent).percent.gamma).toBeDefined();
+        expect(trackyOrientation._getOrientation(mockedEvent).percent.gamma).toEqual(jasmine.any(Number));
+      }
+    );
+
+    it(
+      'method should return an object.direction', function () {
+        expect(trackyOrientation._getOrientation(mockedEvent).direction).toBeDefined();
+        expect(trackyOrientation._getOrientation(mockedEvent).direction).toEqual(jasmine.any(Object));
+      }
+    );
+
+    it(
+      'method should return an object.direction.alpha', function () {
+        expect(trackyOrientation._getOrientation(mockedEvent).direction.alpha).toBeDefined();
+        expect(['stay','left','right'].indexOf(trackyOrientation._getOrientation(mockedEvent).direction.alpha)).toBeGreaterThan(-1);
+      }
+    );
+
+    it(
+      'method should return an object.direction.beta', function () {
+        expect(trackyOrientation._getOrientation(mockedEvent).direction.beta).toBeDefined();
+        expect(['stay','up','down'].indexOf(trackyOrientation._getOrientation(mockedEvent).direction.beta)).toBeGreaterThan(-1);
+      }
+    );
+
+    it(
+      'method should return an object.direction.gamma', function () {
+        expect(trackyOrientation._getOrientation(mockedEvent).direction.gamma).toBeDefined();
+        expect(['stay','left','right'].indexOf(trackyOrientation._getOrientation(mockedEvent).direction.gamma)).toBeGreaterThan(-1);
+      }
+    );
+
+    it(
+      'method should return current orientation', function () {
+
+        var sp = trackyOrientation._getOrientation(mockedEvent);
+        var spNegative = trackyOrientation._getOrientation(mockedEventNegative);
+        var spStay = trackyOrientation._getOrientation(mockedEventStay);
+
+        expect(sp.absolute.alpha).toEqual(44);
+        expect(sp.absolute.beta).toEqual(66);
+        expect(sp.absolute.gamma).toEqual(88);
+        expect(sp.percent.alpha).toEqual(12);
+        expect(sp.percent.beta).toEqual(37);
+        expect(sp.percent.gamma).toEqual(98);
+        expect(sp.direction.alpha).toEqual('left');
+        expect(sp.direction.beta).toEqual('down');
+        expect(sp.direction.gamma).toEqual('right');
+
+
+        expect(spNegative.absolute.alpha).toEqual(44);
+        expect(spNegative.absolute.beta).toEqual(66);
+        expect(spNegative.absolute.gamma).toEqual(88);
+        expect(spNegative.percent.alpha).toEqual(12);
+        expect(spNegative.percent.beta).toEqual(37);
+        expect(spNegative.percent.gamma).toEqual(98);
+        expect(spNegative.direction.alpha).toEqual('right');
+        expect(spNegative.direction.beta).toEqual('up');
+        expect(spNegative.direction.gamma).toEqual('left');
+
+
+        expect(spStay.absolute.alpha).toEqual(0);
+        expect(spStay.absolute.beta).toEqual(0);
+        expect(spStay.absolute.gamma).toEqual(0);
+        expect(spStay.percent.alpha).toEqual(0);
+        expect(spStay.percent.beta).toEqual(0);
+        expect(spStay.percent.gamma).toEqual(0);
+        expect(spStay.direction.alpha).toEqual('stay');
+        expect(spStay.direction.beta).toEqual('stay');
+        expect(spStay.direction.gamma).toEqual('stay');
+      }
+    );
+
+
+  }
+);
+
+
+describe(
+  'tracky.orientation.js - bindEvents', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyOrientation.bindEvents).toBeDefined();
+        expect(trackyOrientation.bindEvents).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        expect(trackyOrientation.bindEvents()).toEqual(undefined);
+        expect(trackyOrientation.bindEvents()).toEqual(undefined);
+      }
+    );
+
+  }
+);
+
+describe(
+  'tracky.orientation.js - unbindEvents', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyOrientation.unbindEvents).toBeDefined();
+        expect(trackyOrientation.unbindEvents).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        expect(trackyOrientation.unbindEvents()).toEqual(undefined);
+        expect(trackyOrientation.unbindEvents()).toEqual(undefined);
+      }
+    );
+
+  }
+);
+
+
+describe(
+  'tracky.orientation.js - onStart', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyOrientation.onStart).toBeDefined();
+        expect(trackyOrientation.onStart).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        expect(trackyOrientation.onStart()).toEqual(undefined);
+        expect(trackyOrientation.onStart()).toEqual(undefined);
+      }
+    );
+
+    it(
+      'should assign a _bindListener', function () {
+
+        trackyOrientation.onStart();
+
+        expect(trackyOrientation._bindListener).toBeDefined();
+        expect(function() { trackyOrientation._bindListener(mockedEvent); }).not.toThrowError();
+      }
+    );
+
+  }
+);
+
+describe(
+  'tracky.orientation.js - onStop', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyOrientation.onStop).toBeDefined();
+        expect(trackyOrientation.onStop).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        expect(trackyOrientation.onStop()).toEqual(undefined);
+        expect(trackyOrientation.onStop()).toEqual(undefined);
+      }
+    );
+
+    it(
+      'should assign a _bindListener', function () {
+
+        trackyOrientation.onStart();
+
+        expect(trackyOrientation._bindListener).toBeDefined();
+        expect(function() { trackyOrientation._bindListener(mockedEvent); }).not.toThrowError();
+      }
+    );
+
+  }
+);
+
+describe(
+  'tracky.orientation.js - onAdd', function () {
+
+    it(
+      'should be defined', function () {
+        expect(trackyOrientation.onAdd).toBeDefined();
+        expect(trackyOrientation.onAdd).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should be callable as function', function () {
+        expect(trackyOrientation.onAdd()).toEqual(undefined);
+        expect(trackyOrientation.onAdd()).toEqual(undefined);
+        expect(trackyOrientation.onAdd([mockedDomNodeNotBody,mockedDomNode])).toEqual(undefined);
+      }
+    );
+
+
+  }
+);
+
+describe(
+  'tracky.orientation.js - onRemove', function () {
+
+    it(
+      'should be defined', function () {
+        expect(trackyOrientation.onRemove).toBeDefined();
+        expect(trackyOrientation.onRemove).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should be callable as function', function () {
+        expect(trackyOrientation.onRemove()).toEqual(undefined);
+        expect(trackyOrientation.onRemove()).toEqual(undefined);
+        expect(trackyOrientation.onRemove([mockedDomNodeNotBody,mockedDomNode])).toEqual(undefined);
+      }
+    );
+
+
+  }
+);
+
+describe(
+  'tracky.orientation.js - callbackHandler', function () {
+
+    it(
+      'should be defined', function () {
+        expect(trackyOrientation.callbackHandler).toBeDefined();
+        expect(trackyOrientation.callbackHandler).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should be callable as function', function () {
+        expect(trackyOrientation.callbackHandler()).toEqual(undefined);
+        expect(trackyOrientation.callbackHandler()).toEqual(undefined);
+        expect(trackyOrientation.callbackHandler(mockedDomNodeNotBody,['added-class','another-one'],['removed-class'])).toEqual(undefined);
+      }
+    );
+
+
+  }
+);
 
 describe(
   'tracky.orientation.js - getNodes', function () {
