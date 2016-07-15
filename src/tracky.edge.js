@@ -26,25 +26,33 @@ class TrackyEdge extends TrackyEvent {
    * bindEvent
    * @param domNode
    */
-  bindEvent(domNode) {
+  bindEvent(domNode = null) {
 
-    domNode.addEventListener(
-      'mousemove',
-      debounce(
-        this._bindListener, 25, {
-          leading: true,
-          maxWait: 40,
-          trailing: false,
+    if (
+      domNode &&
+      typeof domNode.addEventListener === 'function'
+    ) {
+
+      domNode.addEventListener(
+        'mousemove',
+        debounce(
+          this._bindListener, 25, {
+            leading: true,
+            maxWait: 40,
+            trailing: false,
+          }
+        )
+      );
+
+      domNode.addEventListener(
+        'mouseleave',
+        (e) => {
+          this.cleanupClasses(e.target);
         }
-      )
-    );
+      );
 
-    domNode.addEventListener(
-      'mouseleave',
-      (e) => {
-        this.cleanupClasses(e.target);
-      }
-    );
+    }
+
 
   }
 
@@ -90,10 +98,15 @@ class TrackyEdge extends TrackyEvent {
    * unbindEvent
    * @param domNode
    */
-  unbindEvent(domNode) {
-    domNode.removeEventListener(
-      'mousemove', this._bindListener
-    );
+  unbindEvent(domNode = null) {
+    if (
+      domNode &&
+      typeof domNode.removeEventListener === 'function'
+    ) {
+      domNode.removeEventListener(
+        'mousemove', this._bindListener
+      );
+    }
   }
 
   /**
@@ -159,25 +172,34 @@ class TrackyEdge extends TrackyEvent {
    * onAdd
    * @param nodes
    */
-  onAdd(nodes) {
-    nodes.forEach(
-      (_n) => {
-        this.bindEvent(_n);
-      }
-    );
+  onAdd(nodes = null) {
+    if (
+      nodes &&
+      nodes instanceof Array
+    ) {
+      nodes.forEach(
+        (_n) => {
+          this.bindEvent(_n);
+        }
+      );
+    }
   }
 
   /**
    * onRemove
    * @param nodes
    */
-  onRemove(nodes) {
-
-    nodes.forEach(
-      (_n) => {
-        this.unbindEvent(_n);
-      }
-    );
+  onRemove(nodes = null) {
+    if (
+      nodes &&
+      nodes instanceof Array
+    ) {
+      nodes.forEach(
+        (_n) => {
+          this.unbindEvent(_n);
+        }
+      );
+    }
   }
 
 

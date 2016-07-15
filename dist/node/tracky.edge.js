@@ -59,18 +59,24 @@ var TrackyEdge = function (_TrackyEvent) {
 
   }, {
     key: 'bindEvent',
-    value: function bindEvent(domNode) {
+    value: function bindEvent() {
       var _this2 = this;
 
-      domNode.addEventListener('mousemove', (0, _lodash2.default)(this._bindListener, 25, {
-        leading: true,
-        maxWait: 40,
-        trailing: false
-      }));
+      var domNode = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
-      domNode.addEventListener('mouseleave', function (e) {
-        _this2.cleanupClasses(e.target);
-      });
+
+      if (domNode && typeof domNode.addEventListener === 'function') {
+
+        domNode.addEventListener('mousemove', (0, _lodash2.default)(this._bindListener, 25, {
+          leading: true,
+          maxWait: 40,
+          trailing: false
+        }));
+
+        domNode.addEventListener('mouseleave', function (e) {
+          _this2.cleanupClasses(e.target);
+        });
+      }
     }
 
     /**
@@ -120,8 +126,12 @@ var TrackyEdge = function (_TrackyEvent) {
 
   }, {
     key: 'unbindEvent',
-    value: function unbindEvent(domNode) {
-      domNode.removeEventListener('mousemove', this._bindListener);
+    value: function unbindEvent() {
+      var domNode = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+
+      if (domNode && typeof domNode.removeEventListener === 'function') {
+        domNode.removeEventListener('mousemove', this._bindListener);
+      }
     }
 
     /**
@@ -195,12 +205,16 @@ var TrackyEdge = function (_TrackyEvent) {
 
   }, {
     key: 'onAdd',
-    value: function onAdd(nodes) {
+    value: function onAdd() {
       var _this6 = this;
 
-      nodes.forEach(function (_n) {
-        _this6.bindEvent(_n);
-      });
+      var nodes = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+
+      if (nodes && nodes instanceof Array) {
+        nodes.forEach(function (_n) {
+          _this6.bindEvent(_n);
+        });
+      }
     }
 
     /**
@@ -210,12 +224,16 @@ var TrackyEdge = function (_TrackyEvent) {
 
   }, {
     key: 'onRemove',
-    value: function onRemove(nodes) {
+    value: function onRemove() {
       var _this7 = this;
 
-      nodes.forEach(function (_n) {
-        _this7.unbindEvent(_n);
-      });
+      var nodes = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+
+      if (nodes && nodes instanceof Array) {
+        nodes.forEach(function (_n) {
+          _this7.unbindEvent(_n);
+        });
+      }
     }
 
     /**

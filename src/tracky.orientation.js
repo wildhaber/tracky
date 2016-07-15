@@ -32,7 +32,7 @@ class TrackyOrientation extends TrackyEvent {
       typeof window !== 'undefined' &&
       typeof window.DeviceOrientationEvent !== 'undefined'
     ) {
-
+      /* istanbul ignore next */
       window.addEventListener(
         'deviceorientation',
         debounce(
@@ -53,7 +53,11 @@ class TrackyOrientation extends TrackyEvent {
    * @returns {Object | null}
    * @private
    */
-  _getOrientation(e) {
+  _getOrientation(e = null) {
+
+    if(!e) {
+      return null;
+    }
 
     let alpha = (typeof e.alpha !== 'undefined') ? Math.round(e.alpha) : 0;
     let beta = (typeof e.beta !== 'undefined') ? Math.round(e.beta) : 0;
@@ -97,9 +101,12 @@ class TrackyOrientation extends TrackyEvent {
    * unbindEvent
    */
   unbindEvent() {
-    window.removeEventListener(
-      'deviceorientation', this._bindListener
-    );
+    if(typeof window !== 'undefined') {
+      /* istanbul ignore next */
+      window.removeEventListener(
+        'deviceorientation', this._bindListener
+      );
+    }
   }
 
   /**
@@ -162,13 +169,17 @@ class TrackyOrientation extends TrackyEvent {
    * onRemove
    * @param nodes
    */
-  onRemove(nodes) {
-
-    nodes.forEach(
-      (_n) => {
-        this.unbindEvent(_n);
-      }
-    );
+  onRemove(nodes = null) {
+    if(
+      nodes &&
+      nodes instanceof Array
+    ) {
+      nodes.forEach(
+        (_n) => {
+          this.unbindEvent(_n);
+        }
+      );
+    }
   }
 
 

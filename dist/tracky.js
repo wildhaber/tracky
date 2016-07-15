@@ -60,18 +60,24 @@ var TrackyEdge = function (_TrackyEvent) {
 
   }, {
     key: 'bindEvent',
-    value: function bindEvent(domNode) {
+    value: function bindEvent() {
       var _this2 = this;
 
-      domNode.addEventListener('mousemove', (0, _lodash2.default)(this._bindListener, 25, {
-        leading: true,
-        maxWait: 40,
-        trailing: false
-      }));
+      var domNode = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
-      domNode.addEventListener('mouseleave', function (e) {
-        _this2.cleanupClasses(e.target);
-      });
+
+      if (domNode && typeof domNode.addEventListener === 'function') {
+
+        domNode.addEventListener('mousemove', (0, _lodash2.default)(this._bindListener, 25, {
+          leading: true,
+          maxWait: 40,
+          trailing: false
+        }));
+
+        domNode.addEventListener('mouseleave', function (e) {
+          _this2.cleanupClasses(e.target);
+        });
+      }
     }
 
     /**
@@ -121,8 +127,12 @@ var TrackyEdge = function (_TrackyEvent) {
 
   }, {
     key: 'unbindEvent',
-    value: function unbindEvent(domNode) {
-      domNode.removeEventListener('mousemove', this._bindListener);
+    value: function unbindEvent() {
+      var domNode = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+
+      if (domNode && typeof domNode.removeEventListener === 'function') {
+        domNode.removeEventListener('mousemove', this._bindListener);
+      }
     }
 
     /**
@@ -196,12 +206,16 @@ var TrackyEdge = function (_TrackyEvent) {
 
   }, {
     key: 'onAdd',
-    value: function onAdd(nodes) {
+    value: function onAdd() {
       var _this6 = this;
 
-      nodes.forEach(function (_n) {
-        _this6.bindEvent(_n);
-      });
+      var nodes = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+
+      if (nodes && nodes instanceof Array) {
+        nodes.forEach(function (_n) {
+          _this6.bindEvent(_n);
+        });
+      }
     }
 
     /**
@@ -211,12 +225,16 @@ var TrackyEdge = function (_TrackyEvent) {
 
   }, {
     key: 'onRemove',
-    value: function onRemove(nodes) {
+    value: function onRemove() {
       var _this7 = this;
 
-      nodes.forEach(function (_n) {
-        _this7.unbindEvent(_n);
-      });
+      var nodes = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+
+      if (nodes && nodes instanceof Array) {
+        nodes.forEach(function (_n) {
+          _this7.unbindEvent(_n);
+        });
+      }
     }
 
     /**
@@ -1370,7 +1388,7 @@ var TrackyOrientation = function (_TrackyEvent) {
     value: function bindEvent() {
 
       if (typeof window !== 'undefined' && typeof window.DeviceOrientationEvent !== 'undefined') {
-
+        /* istanbul ignore next */
         window.addEventListener('deviceorientation', (0, _lodash2.default)(this._bindListener, 100, {
           leading: true,
           maxWait: 200,
@@ -1387,7 +1405,13 @@ var TrackyOrientation = function (_TrackyEvent) {
 
   }, {
     key: '_getOrientation',
-    value: function _getOrientation(e) {
+    value: function _getOrientation() {
+      var e = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+
+
+      if (!e) {
+        return null;
+      }
 
       var alpha = typeof e.alpha !== 'undefined' ? Math.round(e.alpha) : 0;
       var beta = typeof e.beta !== 'undefined' ? Math.round(e.beta) : 0;
@@ -1433,7 +1457,10 @@ var TrackyOrientation = function (_TrackyEvent) {
   }, {
     key: 'unbindEvent',
     value: function unbindEvent() {
-      window.removeEventListener('deviceorientation', this._bindListener);
+      if (typeof window !== 'undefined') {
+        /* istanbul ignore next */
+        window.removeEventListener('deviceorientation', this._bindListener);
+      }
     }
 
     /**
@@ -1510,12 +1537,16 @@ var TrackyOrientation = function (_TrackyEvent) {
 
   }, {
     key: 'onRemove',
-    value: function onRemove(nodes) {
+    value: function onRemove() {
       var _this4 = this;
 
-      nodes.forEach(function (_n) {
-        _this4.unbindEvent(_n);
-      });
+      var nodes = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+
+      if (nodes && nodes instanceof Array) {
+        nodes.forEach(function (_n) {
+          _this4.unbindEvent(_n);
+        });
+      }
     }
 
     /**
@@ -1819,11 +1850,10 @@ var TrackyScroll = function (_TrackyEvent) {
      */
     value: function _listener(domNode) {
 
-      /* istanbul ignore next */
-      var position = this._getScrollPosition(domNode);
-
-      /* istanbul ignore next */
-      this.classify(domNode, position);
+      if (typeof domNode !== 'undefined') {
+        var position = this._getScrollPosition(domNode);
+        this.classify(domNode, position);
+      }
     }
 
     /**
@@ -1833,13 +1863,16 @@ var TrackyScroll = function (_TrackyEvent) {
 
   }, {
     key: 'bindEvent',
-    value: function bindEvent(domNode) {
+    value: function bindEvent() {
+      var domNode = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
-      /* istanbul ignore next */
-      domNode.addEventListener('scroll', this._bindListener);
 
-      /* istanbul ignore next */
-      this._listener(domNode);
+      if (domNode && typeof domNode.addEventListener !== 'undefined') {
+
+        domNode.addEventListener('scroll', this._bindListener);
+
+        this._listener(domNode);
+      }
     }
 
     /**
@@ -1851,32 +1884,52 @@ var TrackyScroll = function (_TrackyEvent) {
 
   }, {
     key: '_getScrollPosition',
-    value: function _getScrollPosition(domNode) {
+    value: function _getScrollPosition() {
+      var domNode = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+
 
       if (this._isBody(domNode)) {
 
-        var doc = document.documentElement;
-        var b = document.body;
+        var doc = typeof document !== 'undefined' ? document.documentElement : null;
+        var b = typeof document !== 'undefined' ? document.body : null;
 
-        return {
+        return doc && b ? {
           absolute: {
             top: doc.scrollTop || b.scrollTop,
             left: doc.scrollLeft || b.scrollLeft
           },
           percent: {
-            top: this._percentRound(doc.scrollTop || b.scrollTop / ((doc.scrollHeight || b.scrollHeight) - doc.clientHeight)),
-            left: this._percentRound(!!doc.scrollLeft || !!b.scrollLeft ? doc.scrollLeft || b.scrollLeft / ((doc.scrollWidth || b.scrollWidth) - doc.clientWidth) : 0)
+            top: this._percentRound(doc.scrollTop || b.scrollTop / ((doc.scrollHeight || b.scrollHeight) - doc.clientHeight) * 100),
+            left: this._percentRound(!!doc.scrollLeft || !!b.scrollLeft ? doc.scrollLeft || b.scrollLeft / ((doc.scrollWidth || b.scrollWidth) - doc.clientWidth) * 100 : 0)
+          }
+        } : {
+          absolute: {
+            top: 0,
+            left: 0
+          },
+          percent: {
+            top: 0,
+            left: 0
           }
         };
       } else {
-        return {
+        return domNode ? {
           absolute: {
             top: domNode.scrollTop,
             left: domNode.scrollLeft
           },
           percent: {
-            top: this._percentRound(domNode.scrollTop / (domNode.scrollHeight - domNode.offsetHeight)),
-            left: this._percentRound(domNode.scrollLeft ? domNode.scrollLeft / (domNode.scrollWidth - domNode.offsetWidth) : 0)
+            top: this._percentRound(domNode.scrollTop / (domNode.scrollHeight - domNode.offsetHeight) * 100),
+            left: this._percentRound(domNode.scrollLeft ? domNode.scrollLeft / (domNode.scrollWidth - domNode.offsetWidth) * 100 : 0)
+          }
+        } : {
+          absolute: {
+            top: 0,
+            left: 0
+          },
+          percent: {
+            top: 0,
+            left: 0
           }
         };
       }
@@ -1890,11 +1943,14 @@ var TrackyScroll = function (_TrackyEvent) {
     key: 'bindBodyEvent',
     value: function bindBodyEvent() {
 
-      /* istanbul ignore next */
-      window.addEventListener('scroll', this._bindBodyListener);
+      if (typeof window !== 'undefined') {
 
-      /* istanbul ignore next */
-      this._listener(document.body);
+        /* istanbul ignore next */
+        window.addEventListener('scroll', this._bindBodyListener);
+
+        /* istanbul ignore next */
+        this._listener(document.body);
+      }
     }
 
     /**
@@ -1905,8 +1961,11 @@ var TrackyScroll = function (_TrackyEvent) {
     key: 'unbindBodyEvent',
     value: function unbindBodyEvent() {
 
-      /* istanbul ignore next */
-      window.removeEventListener('scroll', this._bindBodyListener);
+      if (typeof window !== 'undefined') {
+
+        /* istanbul ignore next */
+        window.removeEventListener('scroll', this._bindBodyListener);
+      }
     }
 
     /**
@@ -1916,10 +1975,13 @@ var TrackyScroll = function (_TrackyEvent) {
 
   }, {
     key: 'unbindEvent',
-    value: function unbindEvent(domNode) {
+    value: function unbindEvent() {
+      var domNode = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
 
-      /* istanbul ignore next */
-      domNode.removeEventListener('scroll', this._bindListener);
+
+      if (domNode && typeof domNode.removeEventListener !== 'undefined') {
+        domNode.removeEventListener('scroll', this._bindListener);
+      }
     }
 
     /**
@@ -1944,7 +2006,6 @@ var TrackyScroll = function (_TrackyEvent) {
     value: function bindEvents() {
       var _this2 = this;
 
-      /* istanbul ignore next */
       this.getNodes().forEach(function (n) {
         if (n) {
           n.forEach(function (_n) {
@@ -1967,13 +2028,16 @@ var TrackyScroll = function (_TrackyEvent) {
     value: function unbindEvents() {
       var _this3 = this;
 
-      /* istanbul ignore next */
       this.getNodes().forEach(function (n) {
         if (n) {
           n.forEach(function (_n) {
             if (_this3._isBody(_n)) {
               _this3.unbindBodyEvent();
-              _this3.cleanupClasses(document.body);
+
+              /* istanbul ignore if */
+              if (typeof document !== 'undefined') {
+                _this3.cleanupClasses(document.body);
+              }
             } else {
               _this3.unbindEvent(_n);
               _this3.cleanupClasses(_n);
@@ -1993,7 +2057,6 @@ var TrackyScroll = function (_TrackyEvent) {
       var _this4 = this;
 
       // Ugly but necessary to keep this-context combined with eventListener add/remove
-      /* istanbul ignore next */
       this._bindListener = function (e) {
         _this4._listener(e.target);
       };
@@ -2028,7 +2091,6 @@ var TrackyScroll = function (_TrackyEvent) {
   }, {
     key: 'onStop',
     value: function onStop() {
-      /* istanbul ignore next */
       this.unbindEvents();
     }
 
@@ -2039,17 +2101,20 @@ var TrackyScroll = function (_TrackyEvent) {
 
   }, {
     key: 'onAdd',
-    value: function onAdd(nodes) {
+    value: function onAdd() {
       var _this5 = this;
 
-      /* istanbul ignore next */
-      nodes.forEach(function (_n) {
-        if (_this5._isBody(_n)) {
-          _this5.bindBodyEvent();
-        } else {
-          _this5.bindEvent(_n);
-        }
-      });
+      var nodes = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+
+      if (nodes && nodes instanceof Array) {
+        nodes.forEach(function (_n) {
+          if (_this5._isBody(_n)) {
+            _this5.bindBodyEvent();
+          } else {
+            _this5.bindEvent(_n);
+          }
+        });
+      }
     }
 
     /**
@@ -2059,17 +2124,20 @@ var TrackyScroll = function (_TrackyEvent) {
 
   }, {
     key: 'onRemove',
-    value: function onRemove(nodes) {
+    value: function onRemove() {
       var _this6 = this;
 
-      /* istanbul ignore next */
-      nodes.forEach(function (_n) {
-        if (_this6._isBody(_n)) {
-          _this6.unbindBodyEvent();
-        } else {
-          _this6.unbindEvent(_n);
-        }
-      });
+      var nodes = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+
+      if (nodes && nodes instanceof Array) {
+        nodes.forEach(function (_n) {
+          if (_this6._isBody(_n)) {
+            _this6.unbindBodyEvent();
+          } else {
+            _this6.unbindEvent(_n);
+          }
+        });
+      }
     }
 
     /**
@@ -2162,7 +2230,6 @@ var TrackyScroll = function (_TrackyEvent) {
       var bp = this._options.breakpoints;
       var classes = [];
 
-      /* istanbul ignore if */
       if (bp.length > 0) {
         for (var l = bp.length; l; l--) {
           var _bp = bp[l - 1];
@@ -2210,14 +2277,12 @@ var TrackyScroll = function (_TrackyEvent) {
     key: 'callbackHandler',
     value: function callbackHandler(domNode, added, removed) {
 
-      /* istanbul ignore if */
       if (added instanceof Array && added.length > 0) {
         this._applyCallbacks(domNode, this._getBpsByClassNames(added, ['eq', 'bt']), 'match');
         this._applyCallbacks(domNode, this._getBpsByClassNames(added, ['lt']), 'lower');
         this._applyCallbacks(domNode, this._getBpsByClassNames(added, ['gt']), 'greater');
       }
 
-      /* istanbul ignore if */
       if (removed instanceof Array && removed.length > 0) {
         this._applyCallbacks(domNode, this._getBpsByClassNames(removed, ['eq', 'bt']), 'unmatch');
       }

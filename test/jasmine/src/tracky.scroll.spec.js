@@ -26,10 +26,10 @@ var scrollEventOptions = {
           onUnmatch: function () {
             return 'unmatch';
           },
-          onGreater: function() {
+          onGreater: function () {
             return 'greater';
           },
-          onLower: function() {
+          onLower: function () {
             return 'lower';
           }
         }, {
@@ -82,6 +82,37 @@ var scrollEventOptionsDisabled = {
 
 
 var trackyDefault = new _tracky('body', scrollEventOptions);
+
+var mockedDomNode = {
+  nodeName: 'BODY',
+  scrollTop: 25,
+  scrollLeft: 88,
+  scrollHeight: 100,
+  scrollWidth: 888,
+  offsetWidth: 0,
+  offsetHeight: 0,
+  addEventListener : function() {},
+  removeEventListener : function() {},
+};
+
+var mockedDomNodeNotBody = {
+  nodeName: 'SOMETHINGELSE',
+  scrollTop: 25,
+  scrollLeft: 88,
+  scrollHeight: 100,
+  scrollWidth: 888,
+  offsetWidth: 0,
+  offsetHeight: 0,
+  addEventListener : function() {},
+  removeEventListener : function() {},
+};
+
+var mockedEvent = {
+  target : mockedDomNodeNotBody,
+};
+
+trackyDefault._nodes = [[mockedDomNode,mockedDomNode],[mockedDomNodeNotBody,mockedDomNode]];
+
 var trackyDefaultNoScroll = new _tracky('body', scrollEventOptionsDisabled);
 var trackyScroll = trackyDefault._listeners.filter(
   function (l) {
@@ -219,7 +250,11 @@ describe(
     it(
       'should define a public onStart method', function () {
         expect(trackyScroll.onStart).toBeDefined();
-        expect(function() { trackyScroll.onStart() }).not.toThrowError();
+        expect(
+          function () {
+            trackyScroll.onStart()
+          }
+        ).not.toThrowError();
         expect(trackyScroll.onStart).toEqual(jasmine.any(Function));
       }
     );
@@ -227,7 +262,13 @@ describe(
     it(
       'should define a public onStop method', function () {
         expect(trackyScroll.onStop).toBeDefined();
-        expect(function() { trackyScroll.onStop() }).not.toThrowError();
+
+        expect(
+          function () {
+            trackyScroll.onStop()
+          }
+        ).not.toThrowError();
+
         expect(trackyScroll.onStop).toEqual(jasmine.any(Function));
       }
     );
@@ -265,7 +306,11 @@ describe(
     it(
       'should define a public enable method', function () {
         expect(trackyScroll.enable).toBeDefined();
-        expect(function() { trackyScroll.enable() }).not.toThrowError();
+        expect(
+          function () {
+            trackyScroll.enable()
+          }
+        ).not.toThrowError();
         expect(trackyScroll.enable).toEqual(jasmine.any(Function));
       }
     );
@@ -407,6 +452,343 @@ describe(
         expect(trackyScroll.callbackHandler).toEqual(jasmine.any(Function));
       }
     );
+
+  }
+);
+
+
+describe(
+  'tracky.scroll.js - _listener', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyScroll._listener).toBeDefined();
+        expect(trackyScroll._listener).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        var mockedDomNode = {};
+        expect(trackyScroll._listener()).toEqual(undefined);
+        expect(trackyScroll._listener(mockedDomNode)).toEqual(undefined);
+      }
+    );
+
+  }
+);
+
+describe(
+  'tracky.scroll.js - bindEvent', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyScroll.bindEvent).toBeDefined();
+        expect(trackyScroll.bindEvent).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        var mockedDomNode = {};
+        var mockedDomNodeEventListener = {
+          addEventListener: function () {
+          }
+        };
+        expect(trackyScroll.bindEvent()).toEqual(undefined);
+        expect(trackyScroll.bindEvent(mockedDomNode)).toEqual(undefined);
+        expect(trackyScroll.bindEvent(mockedDomNodeEventListener)).toEqual(undefined);
+      }
+    );
+
+  }
+);
+
+describe(
+  'tracky.scroll.js - _getScrollPosition', function () {
+
+    var mockedDomNode = {
+      nodeName: 'NOTBODY',
+      scrollTop: 25,
+      scrollLeft: 88,
+      scrollHeight: 100,
+      scrollWidth: 888,
+      offsetWidth: 0,
+      offsetHeight: 0,
+    };
+
+    var mockedDomNodeBody = {
+      nodeName: 'BODY',
+      scrollTop: 25,
+      scrollLeft: 88,
+      scrollHeight: 100,
+      scrollWidth: 888,
+      offsetWidth: 0,
+      offsetHeight: 0,
+    };
+
+    it(
+      'method should be defined', function () {
+        expect(trackyScroll._getScrollPosition).toBeDefined();
+        expect(trackyScroll._getScrollPosition).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should return an object', function () {
+        expect(trackyScroll._getScrollPosition()).toEqual(jasmine.any(Object));
+      }
+    );
+
+    it(
+      'method should return an object.absolute', function () {
+        expect(trackyScroll._getScrollPosition().absolute).toBeDefined();
+        expect(trackyScroll._getScrollPosition().absolute).toEqual(jasmine.any(Object));
+      }
+    );
+
+    it(
+      'method should return an object.absolute.top', function () {
+        expect(trackyScroll._getScrollPosition().absolute.top).toBeDefined();
+        expect(trackyScroll._getScrollPosition().absolute.top).toEqual(jasmine.any(Number));
+      }
+    );
+
+    it(
+      'method should return an object.absolute.left', function () {
+        expect(trackyScroll._getScrollPosition().absolute.left).toBeDefined();
+        expect(trackyScroll._getScrollPosition().absolute.left).toEqual(jasmine.any(Number));
+      }
+    );
+
+    it(
+      'method should return an object.percent', function () {
+        expect(trackyScroll._getScrollPosition().percent).toBeDefined();
+        expect(trackyScroll._getScrollPosition().percent).toEqual(jasmine.any(Object));
+      }
+    );
+
+    it(
+      'method should return an object.percent.top', function () {
+        expect(trackyScroll._getScrollPosition().percent.top).toBeDefined();
+        expect(trackyScroll._getScrollPosition().percent.top).toEqual(jasmine.any(Number));
+      }
+    );
+
+    it(
+      'method should return an object.percent.left', function () {
+        expect(trackyScroll._getScrollPosition().percent.left).toBeDefined();
+        expect(trackyScroll._getScrollPosition().percent.left).toEqual(jasmine.any(Number));
+      }
+    );
+
+    it(
+      'method should return current scroll position', function () {
+
+        var sp = trackyScroll._getScrollPosition(mockedDomNode);
+
+        expect(sp.absolute.top).toEqual(25);
+        expect(sp.absolute.left).toEqual(88);
+        expect(sp.percent.top).toEqual(25);
+        expect(sp.percent.left).toEqual(10);
+      }
+    );
+
+    it(
+      'method should return current scroll position on body', function () {
+
+        var sp = trackyScroll._getScrollPosition(mockedDomNodeBody);
+
+        expect(sp.absolute.top).toEqual(0);
+        expect(sp.absolute.left).toEqual(0);
+        expect(sp.percent.top).toEqual(0);
+        expect(sp.percent.left).toEqual(0);
+      }
+    );
+
+  }
+);
+
+
+describe(
+  'tracky.scroll.js - bindBodyEvent', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyScroll.bindBodyEvent).toBeDefined();
+        expect(trackyScroll.bindBodyEvent).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        expect(trackyScroll.bindBodyEvent()).toEqual(undefined);
+        expect(trackyScroll.bindBodyEvent()).toEqual(undefined);
+      }
+    );
+
+  }
+);
+
+describe(
+  'tracky.scroll.js - unbindBodyEvent', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyScroll.unbindBodyEvent).toBeDefined();
+        expect(trackyScroll.unbindBodyEvent).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        expect(trackyScroll.unbindBodyEvent()).toEqual(undefined);
+        expect(trackyScroll.unbindBodyEvent()).toEqual(undefined);
+      }
+    );
+
+  }
+);
+
+describe(
+  'tracky.scroll.js - unbindEvent', function () {
+
+    var mockedDomNode = {
+      removeEventListener  : function() {},
+    };
+
+    it(
+      'method should be defined', function () {
+        expect(trackyScroll.unbindEvent).toBeDefined();
+        expect(trackyScroll.unbindEvent).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        expect(trackyScroll.unbindEvent()).toEqual(undefined);
+        expect(trackyScroll.unbindEvent()).toEqual(undefined);
+        expect(trackyScroll.unbindEvent({})).toEqual(undefined);
+        expect(trackyScroll.unbindEvent(mockedDomNode)).toEqual(undefined);
+      }
+    );
+
+
+  }
+);
+
+describe(
+  'tracky.scroll.js - bindEvents', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyScroll.bindEvents).toBeDefined();
+        expect(trackyScroll.bindEvents).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        expect(trackyScroll.bindEvents()).toEqual(undefined);
+        expect(trackyScroll.bindEvents()).toEqual(undefined);
+      }
+    );
+
+  }
+);
+
+describe(
+  'tracky.scroll.js - onStart', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyScroll.onStart).toBeDefined();
+        expect(trackyScroll.onStart).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        expect(trackyScroll.onStart()).toEqual(undefined);
+        expect(trackyScroll.onStart()).toEqual(undefined);
+      }
+    );
+
+    it(
+      'should assign a _bindListener', function () {
+
+        trackyScroll.onStart();
+
+        expect(trackyScroll._bindListener).toBeDefined();
+        expect(function() { trackyScroll._bindListener(mockedEvent); }).not.toThrowError();
+      }
+    );
+
+  }
+);
+
+describe(
+  'tracky.scroll.js - onAdd', function () {
+
+    it(
+      'should be defined', function () {
+        expect(trackyScroll.onAdd).toBeDefined();
+        expect(trackyScroll.onAdd).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should be callable as function', function () {
+        expect(trackyScroll.onAdd()).toEqual(undefined);
+        expect(trackyScroll.onAdd()).toEqual(undefined);
+        expect(trackyScroll.onAdd([mockedDomNodeNotBody,mockedDomNode])).toEqual(undefined);
+      }
+    );
+
+
+  }
+);
+
+describe(
+  'tracky.scroll.js - onRemove', function () {
+
+    it(
+      'should be defined', function () {
+        expect(trackyScroll.onRemove).toBeDefined();
+        expect(trackyScroll.onRemove).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should be callable as function', function () {
+        expect(trackyScroll.onRemove()).toEqual(undefined);
+        expect(trackyScroll.onRemove()).toEqual(undefined);
+        expect(trackyScroll.onRemove([mockedDomNodeNotBody,mockedDomNode])).toEqual(undefined);
+      }
+    );
+
+
+  }
+);
+
+describe(
+  'tracky.scroll.js - callbackHandler', function () {
+
+    it(
+      'should be defined', function () {
+        expect(trackyScroll.callbackHandler).toBeDefined();
+        expect(trackyScroll.callbackHandler).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'should be callable as function', function () {
+        expect(trackyScroll.callbackHandler()).toEqual(undefined);
+        expect(trackyScroll.callbackHandler()).toEqual(undefined);
+        expect(trackyScroll.callbackHandler(mockedDomNodeNotBody,['added-class','another-one'],['removed-class'])).toEqual(undefined);
+      }
+    );
+
 
   }
 );
@@ -705,7 +1087,7 @@ describe(
               expect(bp.axis).toBeDefined();
               expect(bp.axis).toEqual(jasmine.any(String));
               expect(bp.axis.length).toEqual(1);
-              expect(['x','y'].indexOf(bp.axis)).toBeGreaterThan(-1);
+              expect(['x', 'y'].indexOf(bp.axis)).toBeGreaterThan(-1);
             }
           );
       }
@@ -838,15 +1220,15 @@ describe(
         expect(trackyScroll._getBpsByClassNames(false)).toEqual(null);
         expect(trackyScroll._getBpsByClassNames({})).toEqual(null);
         expect(trackyScroll._getBpsByClassNames(NaN)).toEqual(null);
-        expect(trackyScroll._getBpsByClassNames(exampleArray, ['eq','bt'])).toEqual(jasmine.any(Array));
-        expect(trackyScroll._getBpsByClassNames(exampleArray, ['eq','bt']).length).toEqual(2);
+        expect(trackyScroll._getBpsByClassNames(exampleArray, ['eq', 'bt'])).toEqual(jasmine.any(Array));
+        expect(trackyScroll._getBpsByClassNames(exampleArray, ['eq', 'bt']).length).toEqual(2);
       }
     );
 
     it(
       'should return an array with objects', function () {
         trackyScroll
-          ._getBpsByClassNames(exampleArray,['eq','bt'])
+          ._getBpsByClassNames(exampleArray, ['eq', 'bt'])
           .forEach(
             function (bp) {
               expect(bp).toEqual(jasmine.any(Object));
