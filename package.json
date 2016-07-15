@@ -55,7 +55,8 @@
     "jasmine": "^2.4.1",
     "jasmine-core": "^2.4.1",
     "jasmine-spec-reporter": "^2.5.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "uglify-js": "^2.7.0"
   },
   "dependencies": {
     "deep-assign": "^2.0.0",
