@@ -1,0 +1,34 @@
+{
+  "name": "tracky",
+  "main": "dist/tracky.js",
+  "version": "0.1.3",
+  "homepage": "https://tracky.click",
+  "authors": [
+    "Raphael Wildhaber <wildhaber@godesign.ch>"
+  ],
+  "description": "a helper module streamlining user interaction into css-classes",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "tracky.js",
+    "tracky",
+    "tracker",
+    "scroll",
+    "device",
+    "motions",
+    "interactions",
+    "ux",
+    "ui",
+    "css",
+    "classes"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
