@@ -91,10 +91,20 @@ class TrackyEvent {
    */
   attachClasses(domNode, classNames) {
 
+    if (
+      typeof domNode === 'undefined' ||
+      typeof classNames === 'undefined' ||
+      !classNames instanceof Array
+    ) {
+      return;
+    }
+
     let available = this._classNames;
     let current = domNode.className;
 
-    if (domNode.classList) {
+    if (
+      typeof domNode.classList !== 'undefined'
+    ) {
 
       let applied = current.replace(/\s+/g, ' ').split(' ').filter(
         (c) => {
@@ -127,8 +137,11 @@ class TrackyEvent {
       }
 
       if (
-        toRemove.length > 0 ||
-        toApply.length > 0
+        (
+          toRemove.length > 0 ||
+          toApply.length > 0
+        ) &&
+        typeof this.callbackHandler === 'function'
       ) {
         this.callbackHandler(domNode, toApply, toRemove);
       }
