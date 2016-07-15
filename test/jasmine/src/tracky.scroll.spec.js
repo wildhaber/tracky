@@ -326,6 +326,7 @@ describe(
     it(
       'should define a public attachClasses method', function () {
         expect(trackyScroll.attachClasses).toBeDefined();
+        //expect(function() { trackyScroll.attachClasses() }).not.toThrowError();
         expect(trackyScroll.attachClasses).toEqual(jasmine.any(Function));
       }
     );
@@ -333,6 +334,7 @@ describe(
     it(
       'should define a public cleanupClasses method', function () {
         expect(trackyScroll.cleanupClasses).toBeDefined();
+        //expect(function() { trackyScroll.cleanupClasses() }).not.toThrowError();
         expect(trackyScroll.cleanupClasses).toEqual(jasmine.any(Function));
       }
     );
@@ -340,6 +342,7 @@ describe(
     it(
       'should define a private _listener method', function () {
         expect(trackyScroll._listener).toBeDefined();
+        //expect(function() { trackyScroll._listener() }).not.toThrowError();
         expect(trackyScroll._listener).toEqual(jasmine.any(Function));
       }
     );
@@ -347,6 +350,7 @@ describe(
     it(
       'should define a public bindEvent method', function () {
         expect(trackyScroll.bindEvent).toBeDefined();
+        //expect(trackyScroll.bindEvent()).not.toThrowError();
         expect(trackyScroll.bindEvent).toEqual(jasmine.any(Function));
       }
     );
@@ -354,6 +358,7 @@ describe(
     it(
       'should define a private _percentRound method', function () {
         expect(trackyScroll._percentRound).toBeDefined();
+        //expect(trackyScroll._percentRound()).not.toThrowError();
         expect(trackyScroll._percentRound).toEqual(jasmine.any(Function));
       }
     );
@@ -361,6 +366,7 @@ describe(
     it(
       'should define a private _getScrollPosition method', function () {
         expect(trackyScroll._getScrollPosition).toBeDefined();
+        //expect(trackyScroll._getScrollPosition()).not.toThrowError();
         expect(trackyScroll._getScrollPosition).toEqual(jasmine.any(Function));
       }
     );
@@ -368,6 +374,7 @@ describe(
     it(
       'should define a public bindBodyEvent method', function () {
         expect(trackyScroll.bindBodyEvent).toBeDefined();
+        //expect(trackyScroll.bindBodyEvent()).not.toThrowError();
         expect(trackyScroll.bindBodyEvent).toEqual(jasmine.any(Function));
       }
     );
@@ -375,6 +382,7 @@ describe(
     it(
       'should define a public unbindBodyEvent method', function () {
         expect(trackyScroll.unbindBodyEvent).toBeDefined();
+        //expect(trackyScroll.unbindBodyEvent()).not.toThrowError();
         expect(trackyScroll.unbindBodyEvent).toEqual(jasmine.any(Function));
       }
     );
@@ -382,6 +390,7 @@ describe(
     it(
       'should define a private _isBody method', function () {
         expect(trackyScroll._isBody).toBeDefined();
+        //expect(trackyScroll._isBody()).not.toThrowError();
         expect(trackyScroll._isBody).toEqual(jasmine.any(Function));
       }
     );
@@ -389,6 +398,7 @@ describe(
     it(
       'should define a public bindEvents method', function () {
         expect(trackyScroll.bindEvents).toBeDefined();
+        //expect(trackyScroll.bindEvents()).not.toThrowError();
         expect(trackyScroll.bindEvents).toEqual(jasmine.any(Function));
       }
     );
@@ -396,6 +406,7 @@ describe(
     it(
       'should define a public unbindEvents method', function () {
         expect(trackyScroll.unbindEvents).toBeDefined();
+        //expect(trackyScroll.unbindEvents()).not.toThrowError();
         expect(trackyScroll.unbindEvents).toEqual(jasmine.any(Function));
       }
     );
@@ -403,6 +414,7 @@ describe(
     it(
       'should define a private _buildClassName method', function () {
         expect(trackyScroll._buildClassName).toBeDefined();
+        //expect(trackyScroll._buildClassName()).not.toThrowError();
         expect(trackyScroll._buildClassName).toEqual(jasmine.any(Function));
       }
     );
@@ -410,6 +422,7 @@ describe(
     it(
       'should define a private _extractClasses method', function () {
         expect(trackyScroll._extractClasses).toBeDefined();
+        //expect(trackyScroll._extractClasses()).not.toThrowError();
         expect(trackyScroll._extractClasses).toEqual(jasmine.any(Function));
       }
     );
@@ -417,6 +430,7 @@ describe(
     it(
       'should define a public classify method', function () {
         expect(trackyScroll.classify).toBeDefined();
+        //expect(trackyScroll.classify()).not.toThrowError();
         expect(trackyScroll.classify).toEqual(jasmine.any(Function));
       }
     );
@@ -425,6 +439,7 @@ describe(
     it(
       'should define a private _applyCallbacks method', function () {
         expect(trackyScroll._applyCallbacks).toBeDefined();
+        //expect(trackyScroll._applyCallbacks()).not.toThrowError();
         expect(trackyScroll._applyCallbacks).toEqual(jasmine.any(Function));
       }
     );
@@ -433,6 +448,7 @@ describe(
     it(
       'should define a public callbackHandler method', function () {
         expect(trackyScroll.callbackHandler).toBeDefined();
+        //expect(trackyScroll.callbackHandler()).not.toThrowError();
         expect(trackyScroll.callbackHandler).toEqual(jasmine.any(Function));
       }
     );
