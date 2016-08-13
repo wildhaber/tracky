@@ -45,10 +45,10 @@ var TrackyEdge = function (_TrackyEvent) {
      * @private
      */
     value: function _listener(e) {
-      if (typeof e !== 'undefined' && e && typeof e.target !== 'undefined') {
-        var position = this._getMousePosition(e.target, e);
+      if (typeof e !== 'undefined' && e && typeof e.currentTarget !== 'undefined') {
+        var position = this._getMousePosition(e.currentTarget, e);
         if (position) {
-          this.classify(e.target, position);
+          this.classify(e.currentTarget, position);
         }
       }
     }
@@ -68,7 +68,7 @@ var TrackyEdge = function (_TrackyEvent) {
 
       if (domNode && typeof domNode.addEventListener === 'function') {
 
-        domNode.addEventListener('mousemove', (0, _lodash2.default)(this._bindListener, 25, {
+        domNode.addEventListener('mousemove', (0, _lodash2.default)(this._bindListener, 80, {
           leading: true,
           maxWait: 40,
           trailing: false
