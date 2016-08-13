@@ -43,7 +43,7 @@
   },
   "homepage": "https://github.com/wildhaber/tracky#readme",
   "engines": {
-    "node": ">= 0.9"
+    "node": ">= 4.0"
   },
   "babel": {},
   "devDependencies": {
