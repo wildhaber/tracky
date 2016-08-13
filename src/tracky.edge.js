@@ -47,7 +47,7 @@ class TrackyEdge extends TrackyEvent {
       domNode.addEventListener(
         'mouseleave',
         (e) => {
-          this.cleanupClasses(e.target);
+          this.cleanupClasses(e.currentTarget);
         }
       );
 
