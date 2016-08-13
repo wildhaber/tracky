@@ -1,6 +1,6 @@
 {
   "name": "tracky",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "a helper module streamlining user interaction into css-classes",
   "main": "index.js",
   "scripts": {
