@@ -148,14 +148,34 @@ var TrackyEvent = function () {
           });
 
           if (toRemove.length) {
+            var _loop = function _loop(l) {
+              if (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
+                window.requestAnimationFrame(function () {
+                  domNode.classList.remove(toRemove[l - 1]);
+                });
+              } else {
+                domNode.classList.remove(toRemove[l - 1]);
+              }
+            };
+
             for (var l = toRemove.length; l; l--) {
-              domNode.classList.remove(toRemove[l - 1]);
+              _loop(l);
             }
           }
 
           if (toApply.length) {
+            var _loop2 = function _loop2(_l) {
+              if (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
+                window.requestAnimationFrame(function () {
+                  domNode.classList.add(toApply[_l - 1]);
+                });
+              } else {
+                domNode.classList.add(toApply[_l - 1]);
+              }
+            };
+
             for (var _l = toApply.length; _l; _l--) {
-              domNode.classList.add(toApply[_l - 1]);
+              _loop2(_l);
             }
           }
 
@@ -307,7 +327,7 @@ var TrackyEvent = function () {
       var findIn = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
 
       if (classNames instanceof Array && classNames.length > 0 && findIn && findIn instanceof Array && findIn.length) {
-        var _ret2 = function () {
+        var _ret4 = function () {
           var bps = [];
           classNames.forEach(function (cn) {
             var bp = _this2._getBpsByClassName(cn, findIn);
@@ -320,7 +340,7 @@ var TrackyEvent = function () {
           };
         }();
 
-        if ((typeof _ret2 === 'undefined' ? 'undefined' : _typeof(_ret2)) === "object") return _ret2.v;
+        if ((typeof _ret4 === 'undefined' ? 'undefined' : _typeof(_ret4)) === "object") return _ret4.v;
       } else {
         return null;
       }
