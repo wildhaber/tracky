@@ -126,13 +126,35 @@ class TrackyEvent {
 
       if (toRemove.length) {
         for (let l = toRemove.length; l; l--) {
-          domNode.classList.remove(toRemove[l - 1]);
+          if (
+            typeof window !== 'undefined' &&
+            typeof window.requestAnimationFrame === 'function'
+          ) {
+            window.requestAnimationFrame(
+              () => {
+                domNode.classList.remove(toRemove[l - 1]);
+              }
+            );
+          } else {
+            domNode.classList.remove(toRemove[l - 1]);
+          }
         }
       }
 
       if (toApply.length) {
         for (let l = toApply.length; l; l--) {
-          domNode.classList.add(toApply[l - 1]);
+          if (
+            typeof window !== 'undefined' &&
+            typeof window.requestAnimationFrame === 'function'
+          ) {
+            window.requestAnimationFrame(
+              () => {
+                domNode.classList.add(toApply[l - 1]);
+              }
+            );
+          } else {
+            domNode.classList.add(toApply[l - 1]);
+          }
         }
       }
 
