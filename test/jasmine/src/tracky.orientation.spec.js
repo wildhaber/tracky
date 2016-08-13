@@ -10,6 +10,7 @@ var eventOptions = {
   events: {
     orientation: {
       enable: true,
+      face: 'display-up',
       breakpoints: [
         50, [18, 55, 66], '30%', {
           css: {
@@ -127,9 +128,11 @@ var mockedDomNode = {
   scrollWidth: 888,
   offsetWidth: 0,
   offsetHeight: 0,
-  addEventListener : function() {},
-  removeEventListener : function() {},
-  getBoundingClientRect: function() {
+  addEventListener: function () {
+  },
+  removeEventListener: function () {
+  },
+  getBoundingClientRect: function () {
     return {
       left: 0,
       top: 0,
@@ -149,9 +152,11 @@ var mockedDomNodeNotBody = {
   scrollWidth: 888,
   offsetWidth: 0,
   offsetHeight: 0,
-  addEventListener : function() {},
-  removeEventListener : function() {},
-  getBoundingClientRect: function() {
+  addEventListener: function () {
+  },
+  removeEventListener: function () {
+  },
+  getBoundingClientRect: function () {
     return {
       left: 0,
       top: 0,
@@ -164,28 +169,28 @@ var mockedDomNodeNotBody = {
 };
 
 var mockedEvent = {
-  target : mockedDomNodeNotBody,
+  target: mockedDomNodeNotBody,
   alpha: 44,
   beta: 66,
   gamma: 88,
 };
 
 var mockedEventNegative = {
-  target : mockedDomNodeNotBody,
+  target: mockedDomNodeNotBody,
   alpha: -44,
   beta: -66,
   gamma: -88,
 };
 
 var mockedEventStay = {
-  target : mockedDomNodeNotBody,
+  target: mockedDomNodeNotBody,
   alpha: 0,
   beta: 0,
   gamma: 0,
 };
 
 var trackyDefault = new _tracky('body', eventOptions);
-trackyDefault._nodes = [[mockedDomNode,mockedDomNode],[mockedDomNodeNotBody,mockedDomNode]];
+trackyDefault._nodes = [[mockedDomNode, mockedDomNode], [mockedDomNodeNotBody, mockedDomNode]];
 
 var trackyDefaultNoOrientation = new _tracky('body', eventOptionsDisabled);
 var trackyOrientation = trackyDefault._listeners.filter(
@@ -640,26 +645,32 @@ describe(
     it(
       'method should return an object.direction.alpha', function () {
         expect(trackyOrientation._getOrientation(mockedEvent).direction.alpha).toBeDefined();
-        expect(['stay','left','right'].indexOf(trackyOrientation._getOrientation(mockedEvent).direction.alpha)).toBeGreaterThan(-1);
+        expect(
+          ['stay', 'left', 'right'].indexOf(trackyOrientation._getOrientation(mockedEvent).direction.alpha)
+        ).toBeGreaterThan(-1);
       }
     );
 
     it(
       'method should return an object.direction.beta', function () {
         expect(trackyOrientation._getOrientation(mockedEvent).direction.beta).toBeDefined();
-        expect(['stay','up','down'].indexOf(trackyOrientation._getOrientation(mockedEvent).direction.beta)).toBeGreaterThan(-1);
+        expect(
+          ['stay', 'up', 'down'].indexOf(trackyOrientation._getOrientation(mockedEvent).direction.beta)
+        ).toBeGreaterThan(-1);
       }
     );
 
     it(
       'method should return an object.direction.gamma', function () {
         expect(trackyOrientation._getOrientation(mockedEvent).direction.gamma).toBeDefined();
-        expect(['stay','left','right'].indexOf(trackyOrientation._getOrientation(mockedEvent).direction.gamma)).toBeGreaterThan(-1);
+        expect(
+          ['stay', 'left', 'right'].indexOf(trackyOrientation._getOrientation(mockedEvent).direction.gamma)
+        ).toBeGreaterThan(-1);
       }
     );
 
     it(
-      'method should return current orientation', function () {
+      'method should return current orientation - default display-up', function () {
 
         var sp = trackyOrientation._getOrientation(mockedEvent);
         var spNegative = trackyOrientation._getOrientation(mockedEventNegative);
@@ -675,7 +686,6 @@ describe(
         expect(sp.direction.beta).toEqual('down');
         expect(sp.direction.gamma).toEqual('right');
 
-
         expect(spNegative.absolute.alpha).toEqual(44);
         expect(spNegative.absolute.beta).toEqual(66);
         expect(spNegative.absolute.gamma).toEqual(88);
@@ -685,7 +695,6 @@ describe(
         expect(spNegative.direction.alpha).toEqual('right');
         expect(spNegative.direction.beta).toEqual('up');
         expect(spNegative.direction.gamma).toEqual('left');
-
 
         expect(spStay.absolute.alpha).toEqual(0);
         expect(spStay.absolute.beta).toEqual(0);
@@ -699,10 +708,461 @@ describe(
       }
     );
 
+    it(
+      'method should return current orientation - default display-down', function () {
+
+        var toFaced = trackyOrientation.setFace('display-down');
+        var sp = toFaced._getOrientation(mockedEvent);
+        var spNegative = toFaced._getOrientation(mockedEventNegative);
+        var spStay = toFaced._getOrientation(mockedEventStay);
+
+        expect(sp.absolute.alpha).toEqual(44);
+        expect(sp.absolute.beta).toEqual(114);
+        expect(sp.absolute.gamma).toEqual(88);
+        expect(sp.percent.alpha).toEqual(12);
+        expect(sp.percent.beta).toEqual(63);
+        expect(sp.percent.gamma).toEqual(98);
+        expect(sp.direction.alpha).toEqual('left');
+        expect(sp.direction.beta).toEqual('up');
+        expect(sp.direction.gamma).toEqual('right');
+
+        expect(spNegative.absolute.alpha).toEqual(44);
+        expect(spNegative.absolute.beta).toEqual(246);
+        expect(spNegative.absolute.gamma).toEqual(88);
+        expect(spNegative.percent.alpha).toEqual(12);
+        expect(spNegative.percent.beta).toEqual(137);
+        expect(spNegative.percent.gamma).toEqual(98);
+        expect(spNegative.direction.alpha).toEqual('right');
+        expect(spNegative.direction.beta).toEqual('up');
+        expect(spNegative.direction.gamma).toEqual('left');
+
+        expect(spStay.absolute.alpha).toEqual(0);
+        expect(spStay.absolute.beta).toEqual(180);
+        expect(spStay.absolute.gamma).toEqual(0);
+        expect(spStay.percent.alpha).toEqual(0);
+        expect(spStay.percent.beta).toEqual(100);
+        expect(spStay.percent.gamma).toEqual(0);
+        expect(spStay.direction.alpha).toEqual('stay');
+        expect(spStay.direction.beta).toEqual('up');
+        expect(spStay.direction.gamma).toEqual('stay');
+      }
+    );
+
+    it(
+      'method should return current orientation - portrait', function () {
+
+        var toFaced = trackyOrientation.setFace('portrait');
+        var sp = toFaced._getOrientation(mockedEvent);
+        var spNegative = toFaced._getOrientation(mockedEventNegative);
+        var spStay = toFaced._getOrientation(mockedEventStay);
+
+        expect(sp.absolute.alpha).toEqual(44);
+        expect(sp.absolute.beta).toEqual(24);
+        expect(sp.absolute.gamma).toEqual(88);
+        expect(sp.percent.alpha).toEqual(12);
+        expect(sp.percent.beta).toEqual(13);
+        expect(sp.percent.gamma).toEqual(98);
+        expect(sp.direction.alpha).toEqual('left');
+        expect(sp.direction.beta).toEqual('up');
+        expect(sp.direction.gamma).toEqual('right');
+
+        expect(spNegative.absolute.alpha).toEqual(44);
+        expect(spNegative.absolute.beta).toEqual(156);
+        expect(spNegative.absolute.gamma).toEqual(88);
+        expect(spNegative.percent.alpha).toEqual(12);
+        expect(spNegative.percent.beta).toEqual(87);
+        expect(spNegative.percent.gamma).toEqual(98);
+        expect(spNegative.direction.alpha).toEqual('right');
+        expect(spNegative.direction.beta).toEqual('up');
+        expect(spNegative.direction.gamma).toEqual('left');
+
+        expect(spStay.absolute.alpha).toEqual(0);
+        expect(spStay.absolute.beta).toEqual(90);
+        expect(spStay.absolute.gamma).toEqual(0);
+        expect(spStay.percent.alpha).toEqual(0);
+        expect(spStay.percent.beta).toEqual(50);
+        expect(spStay.percent.gamma).toEqual(0);
+        expect(spStay.direction.alpha).toEqual('stay');
+        expect(spStay.direction.beta).toEqual('up');
+        expect(spStay.direction.gamma).toEqual('stay');
+      }
+    );
+
+    it(
+      'method should return current orientation - portrait-upside-down', function () {
+
+        var toFaced = trackyOrientation.setFace('portrait-upside-down');
+        var sp = toFaced._getOrientation(mockedEvent);
+        var spNegative = toFaced._getOrientation(mockedEventNegative);
+        var spStay = toFaced._getOrientation(mockedEventStay);
+
+        expect(sp.absolute.alpha).toEqual(136);
+        expect(sp.absolute.beta).toEqual(156);
+        expect(sp.absolute.gamma).toEqual(88);
+        expect(sp.percent.alpha).toEqual(38);
+        expect(sp.percent.beta).toEqual(87);
+        expect(sp.percent.gamma).toEqual(98);
+        expect(sp.direction.alpha).toEqual('right');
+        expect(sp.direction.beta).toEqual('down');
+        expect(sp.direction.gamma).toEqual('right');
+
+        expect(spNegative.absolute.alpha).toEqual(224);
+        expect(spNegative.absolute.beta).toEqual(24);
+        expect(spNegative.absolute.gamma).toEqual(88);
+        expect(spNegative.percent.alpha).toEqual(62);
+        expect(spNegative.percent.beta).toEqual(13);
+        expect(spNegative.percent.gamma).toEqual(98);
+        expect(spNegative.direction.alpha).toEqual('right');
+        expect(spNegative.direction.beta).toEqual('down');
+        expect(spNegative.direction.gamma).toEqual('left');
+
+        expect(spStay.absolute.alpha).toEqual(180);
+        expect(spStay.absolute.beta).toEqual(90);
+        expect(spStay.absolute.gamma).toEqual(0);
+        expect(spStay.percent.alpha).toEqual(50);
+        expect(spStay.percent.beta).toEqual(50);
+        expect(spStay.percent.gamma).toEqual(0);
+        expect(spStay.direction.alpha).toEqual('right');
+        expect(spStay.direction.beta).toEqual('down');
+        expect(spStay.direction.gamma).toEqual('stay');
+      }
+    );
+
+    it(
+      'method should return current orientation - landscape-left', function () {
+
+        var toFaced = trackyOrientation.setFace('landscape-left');
+        var sp = toFaced._getOrientation(mockedEvent);
+        var spNegative = toFaced._getOrientation(mockedEventNegative);
+        var spStay = toFaced._getOrientation(mockedEventStay);
+
+        expect(sp.absolute.alpha).toEqual(44);
+        expect(sp.absolute.beta).toEqual(24);
+        expect(sp.absolute.gamma).toEqual(178);
+        expect(sp.percent.alpha).toEqual(12);
+        expect(sp.percent.beta).toEqual(13);
+        expect(sp.percent.gamma).toEqual(198);
+        expect(sp.direction.alpha).toEqual('left');
+        expect(sp.direction.beta).toEqual('up');
+        expect(sp.direction.gamma).toEqual('right');
+
+        expect(spNegative.absolute.alpha).toEqual(44);
+        expect(spNegative.absolute.beta).toEqual(156);
+        expect(spNegative.absolute.gamma).toEqual(2);
+        expect(spNegative.percent.alpha).toEqual(12);
+        expect(spNegative.percent.beta).toEqual(87);
+        expect(spNegative.percent.gamma).toEqual(2);
+        expect(spNegative.direction.alpha).toEqual('right');
+        expect(spNegative.direction.beta).toEqual('up');
+        expect(spNegative.direction.gamma).toEqual('right');
+
+        expect(spStay.absolute.alpha).toEqual(0);
+        expect(spStay.absolute.beta).toEqual(90);
+        expect(spStay.absolute.gamma).toEqual(90);
+        expect(spStay.percent.alpha).toEqual(0);
+        expect(spStay.percent.beta).toEqual(50);
+        expect(spStay.percent.gamma).toEqual(100);
+        expect(spStay.direction.alpha).toEqual('stay');
+        expect(spStay.direction.beta).toEqual('up');
+        expect(spStay.direction.gamma).toEqual('right');
+      }
+    );
+
+    it(
+      'method should return current orientation - landscape-right', function () {
+
+        var toFaced = trackyOrientation.setFace('landscape-right');
+        var sp = toFaced._getOrientation(mockedEvent);
+        var spNegative = toFaced._getOrientation(mockedEventNegative);
+        var spStay = toFaced._getOrientation(mockedEventStay);
+
+        expect(sp.absolute.alpha).toEqual(44);
+        expect(sp.absolute.beta).toEqual(24);
+        expect(sp.absolute.gamma).toEqual(2);
+        expect(sp.percent.alpha).toEqual(12);
+        expect(sp.percent.beta).toEqual(13);
+        expect(sp.percent.gamma).toEqual(2);
+        expect(sp.direction.alpha).toEqual('left');
+        expect(sp.direction.beta).toEqual('up');
+        expect(sp.direction.gamma).toEqual('left');
+
+        expect(spNegative.absolute.alpha).toEqual(44);
+        expect(spNegative.absolute.beta).toEqual(156);
+        expect(spNegative.absolute.gamma).toEqual(178);
+        expect(spNegative.percent.alpha).toEqual(12);
+        expect(spNegative.percent.beta).toEqual(87);
+        expect(spNegative.percent.gamma).toEqual(198);
+        expect(spNegative.direction.alpha).toEqual('right');
+        expect(spNegative.direction.beta).toEqual('up');
+        expect(spNegative.direction.gamma).toEqual('left');
+
+        expect(spStay.absolute.alpha).toEqual(0);
+        expect(spStay.absolute.beta).toEqual(90);
+        expect(spStay.absolute.gamma).toEqual(90);
+        expect(spStay.percent.alpha).toEqual(0);
+        expect(spStay.percent.beta).toEqual(50);
+        expect(spStay.percent.gamma).toEqual(100);
+        expect(spStay.direction.alpha).toEqual('stay');
+        expect(spStay.direction.beta).toEqual('up');
+        expect(spStay.direction.gamma).toEqual('left');
+      }
+    );
 
   }
 );
 
+
+describe(
+  'tracky.orientation.js - _faceCorrection', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyOrientation._faceCorrection).toBeDefined();
+        expect(trackyOrientation._faceCorrection).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        expect(trackyOrientation._faceCorrection()).toEqual(null);
+      }
+    );
+
+    it(
+      'method should return corrected values for portrait', function () {
+
+        var toFaced = trackyOrientation.setFace('portrait');
+
+        var orientation = {
+          alpha : 0,
+          beta : 90,
+          gamma : 0,
+        };
+
+        var fcObj = toFaced._faceCorrection(orientation);
+
+        expect(fcObj.alpha).toEqual(0);
+        expect(fcObj.beta).toEqual(0);
+        expect(fcObj.gamma).toEqual(0);
+
+      }
+    );
+
+    it(
+      'method should return corrected values for display-up', function () {
+
+        var toFaced = trackyOrientation.setFace('display-up');
+
+        var orientation = {
+          alpha : 0,
+          beta : 0,
+          gamma : 0,
+        };
+
+        var fcObj = toFaced._faceCorrection(orientation);
+
+        expect(fcObj.alpha).toEqual(0);
+        expect(fcObj.beta).toEqual(0);
+        expect(fcObj.gamma).toEqual(0);
+
+      }
+    );
+
+    it(
+      'method should return corrected values for portrait-upside-down', function () {
+
+        var toFaced = trackyOrientation.setFace('portrait-upside-down');
+
+        var orientation = {
+          alpha : 180,
+          beta : -90,
+          gamma : 0,
+        };
+
+        var fcObj = toFaced._faceCorrection(orientation);
+
+        expect(fcObj.alpha).toEqual(0);
+        expect(fcObj.beta).toEqual(0);
+        expect(fcObj.gamma).toEqual(0);
+
+      }
+    );
+
+    it(
+      'method should return corrected values for landscape-left', function () {
+
+        var toFaced = trackyOrientation.setFace('landscape-left');
+
+        var orientation = {
+          alpha : 0,
+          beta : 90,
+          gamma : -90,
+        };
+
+        var fcObj = toFaced._faceCorrection(orientation);
+
+        expect(fcObj.alpha).toEqual(0);
+        expect(fcObj.beta).toEqual(0);
+        expect(fcObj.gamma).toEqual(0);
+
+      }
+    );
+
+    it(
+      'method should return corrected values for landscape-right', function () {
+
+        var toFaced = trackyOrientation.setFace('landscape-right');
+
+        var orientation = {
+          alpha : 0,
+          beta : 90,
+          gamma : 90,
+        };
+
+        var fcObj = toFaced._faceCorrection(orientation);
+
+        expect(fcObj.alpha).toEqual(0);
+        expect(fcObj.beta).toEqual(0);
+        expect(fcObj.gamma).toEqual(0);
+
+      }
+    );
+
+    it(
+      'method should return corrected values for display-down', function () {
+
+        var toFaced = trackyOrientation.setFace('display-down');
+
+        var orientation = {
+          alpha : 0,
+          beta : 180,
+          gamma : 0,
+        };
+
+        var fcObj = toFaced._faceCorrection(orientation);
+
+        expect(fcObj.alpha).toEqual(0);
+        expect(fcObj.beta).toEqual(0);
+        expect(fcObj.gamma).toEqual(0);
+
+      }
+    );
+
+  }
+);
+
+describe(
+  'tracky.orientation.js - getFace', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyOrientation.getFace).toBeDefined();
+        expect(trackyOrientation.getFace).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        expect(trackyOrientation.getFace()).toEqual('display-down');
+      }
+    );
+
+    it(
+      'method should return set face-direction', function () {
+        expect(trackyOrientation.setFace('portrait').getFace()).toEqual('portrait');
+        expect(trackyOrientation.setFace('portrait-upside-down').getFace()).toEqual('portrait-upside-down');
+        expect(trackyOrientation.setFace('landscape-left').getFace()).toEqual('landscape-left');
+        expect(trackyOrientation.setFace('landscape-right').getFace()).toEqual('landscape-right');
+        expect(trackyOrientation.setFace('display-up').getFace()).toEqual('display-up');
+        expect(trackyOrientation.setFace('display-down').getFace()).toEqual('display-down');
+        expect(trackyOrientation.setFace('somethingweird').getFace()).toEqual(trackyOrientation.getFaces().default);
+      }
+    );
+
+  }
+);
+
+describe(
+  'tracky.orientation.js - getFaces', function () {
+
+    it(
+      'method should be defined', function () {
+        expect(trackyOrientation.getFaces).toBeDefined();
+        expect(trackyOrientation.getFaces).toEqual(jasmine.any(Function));
+      }
+    );
+
+    it(
+      'method should be callable as function', function () {
+        expect(function() { trackyOrientation.getFaces(); }).not.toThrowError();
+      }
+    );
+
+    it(
+      'should return an object', function () {
+        var facesType = typeof trackyOrientation.getFaces();
+        expect(facesType).toEqual('object');
+      }
+    );
+
+    it(
+      'should return an object with property list', function () {
+        var faces = trackyOrientation.getFaces();
+        expect(faces.list).toBeDefined();
+      }
+    );
+
+    it(
+      'should return an object with property list that contains portrait', function () {
+        var faces = trackyOrientation.getFaces();
+        expect(faces.list).toContain('portrait');
+      }
+    );
+
+    it(
+      'should return an object with property list that contains portrait-upside-down', function () {
+        var faces = trackyOrientation.getFaces();
+        expect(faces.list).toContain('portrait-upside-down');
+      }
+    );
+
+    it(
+      'should return an object with property list that contains landscape-left', function () {
+        var faces = trackyOrientation.getFaces();
+        expect(faces.list).toContain('landscape-left');
+      }
+    );
+
+    it(
+      'should return an object with property list that contains landscape-right', function () {
+        var faces = trackyOrientation.getFaces();
+        expect(faces.list).toContain('landscape-right');
+      }
+    );
+
+    it(
+      'should return an object with property list that contains display-up', function () {
+        var faces = trackyOrientation.getFaces();
+        expect(faces.list).toContain('display-up');
+      }
+    );
+
+    it(
+      'should return an object with property list that contains display-down', function () {
+        var faces = trackyOrientation.getFaces();
+        expect(faces.list).toContain('display-down');
+      }
+    );
+
+    it(
+      'should return an object with property default', function () {
+        var faces = trackyOrientation.getFaces();
+        expect(faces.default).toBeDefined();
+      }
+    );
+
+  }
+);
 
 describe(
   'tracky.orientation.js - bindEvents', function () {
@@ -768,7 +1228,11 @@ describe(
         trackyOrientation.onStart();
 
         expect(trackyOrientation._bindListener).toBeDefined();
-        expect(function() { trackyOrientation._bindListener(mockedEvent); }).not.toThrowError();
+        expect(
+          function () {
+            trackyOrientation._bindListener(mockedEvent);
+          }
+        ).not.toThrowError();
       }
     );
 
@@ -798,7 +1262,11 @@ describe(
         trackyOrientation.onStart();
 
         expect(trackyOrientation._bindListener).toBeDefined();
-        expect(function() { trackyOrientation._bindListener(mockedEvent); }).not.toThrowError();
+        expect(
+          function () {
+            trackyOrientation._bindListener(mockedEvent);
+          }
+        ).not.toThrowError();
       }
     );
 
@@ -819,7 +1287,7 @@ describe(
       'should be callable as function', function () {
         expect(trackyOrientation.onAdd()).toEqual(undefined);
         expect(trackyOrientation.onAdd()).toEqual(undefined);
-        expect(trackyOrientation.onAdd([mockedDomNodeNotBody,mockedDomNode])).toEqual(undefined);
+        expect(trackyOrientation.onAdd([mockedDomNodeNotBody, mockedDomNode])).toEqual(undefined);
       }
     );
 
@@ -841,7 +1309,7 @@ describe(
       'should be callable as function', function () {
         expect(trackyOrientation.onRemove()).toEqual(undefined);
         expect(trackyOrientation.onRemove()).toEqual(undefined);
-        expect(trackyOrientation.onRemove([mockedDomNodeNotBody,mockedDomNode])).toEqual(undefined);
+        expect(trackyOrientation.onRemove([mockedDomNodeNotBody, mockedDomNode])).toEqual(undefined);
       }
     );
 
@@ -863,7 +1331,9 @@ describe(
       'should be callable as function', function () {
         expect(trackyOrientation.callbackHandler()).toEqual(undefined);
         expect(trackyOrientation.callbackHandler()).toEqual(undefined);
-        expect(trackyOrientation.callbackHandler(mockedDomNodeNotBody,['added-class','another-one'],['removed-class'])).toEqual(undefined);
+        expect(
+          trackyOrientation.callbackHandler(mockedDomNodeNotBody, ['added-class', 'another-one'], ['removed-class'])
+        ).toEqual(undefined);
       }
     );
 
@@ -1448,7 +1918,7 @@ describe(
 
     it(
       'should return an array with objects', function () {
-     trackyOrientation
+        trackyOrientation
           ._getBpsByClassNames(exampleArray, findIn)
           .forEach(
             function (bp) {
