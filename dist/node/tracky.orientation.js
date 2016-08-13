@@ -87,9 +87,11 @@ var TrackyOrientation = function (_TrackyEvent) {
         return null;
       }
 
-      var alpha = typeof e.alpha !== 'undefined' ? Math.round(e.alpha) : 0;
-      var beta = typeof e.beta !== 'undefined' ? Math.round(e.beta) : 0;
-      var gamma = typeof e.gamma !== 'undefined' ? Math.round(e.gamma) : 0;
+      var v = this._faceCorrection({
+        alpha: typeof e.alpha === 'number' ? Math.round(e.alpha) : 0,
+        beta: typeof e.beta === 'number' ? Math.round(e.beta) : 0,
+        gamma: typeof e.gamma === 'number' ? Math.round(e.gamma) : 0
+      });
 
       var directionKeys = {
         up: 'up',
@@ -100,21 +102,21 @@ var TrackyOrientation = function (_TrackyEvent) {
       };
 
       var absolute = {
-        alpha: Math.abs(alpha),
-        beta: Math.abs(beta),
-        gamma: Math.abs(gamma)
+        alpha: Math.abs(v.alpha),
+        beta: Math.abs(v.beta),
+        gamma: Math.abs(v.gamma)
       };
 
       var percent = {
-        alpha: alpha ? this._percentRound(Math.abs(alpha) / 360 * 100) : 0,
-        beta: beta ? this._percentRound(Math.abs(beta) / 180 * 100) : 0,
-        gamma: gamma ? this._percentRound(Math.abs(gamma) / 90 * 100) : 0
+        alpha: v.alpha ? this._percentRound(Math.abs(v.alpha) / 360 * 100) : 0,
+        beta: v.beta ? this._percentRound(Math.abs(v.beta) / 180 * 100) : 0,
+        gamma: v.gamma ? this._percentRound(Math.abs(v.gamma) / 90 * 100) : 0
       };
 
       var direction = {
-        alpha: alpha > 0 ? directionKeys.left : alpha < 0 ? directionKeys.right : directionKeys.stay,
-        beta: beta > 0 ? directionKeys.down : beta < 0 ? directionKeys.up : directionKeys.stay,
-        gamma: gamma > 0 ? directionKeys.right : gamma < 0 ? directionKeys.left : directionKeys.stay
+        alpha: v.alpha > 0 ? directionKeys.left : v.alpha < 0 ? directionKeys.right : directionKeys.stay,
+        beta: v.beta > 0 ? directionKeys.down : v.beta < 0 ? directionKeys.up : directionKeys.stay,
+        gamma: v.gamma > 0 ? directionKeys.right : v.gamma < 0 ? directionKeys.left : directionKeys.stay
       };
 
       return {
@@ -122,6 +124,110 @@ var TrackyOrientation = function (_TrackyEvent) {
         percent: percent,
         direction: direction
       };
+    }
+
+    /**
+     * _faceCorrection
+     * @param {object} orientation
+     * @returns {object}
+     * @private
+     */
+
+  }, {
+    key: '_faceCorrection',
+    value: function _faceCorrection() {
+      var orientation = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+
+
+      if (orientation && (typeof orientation === 'undefined' ? 'undefined' : _typeof(orientation)) === 'object' && typeof orientation.alpha === 'number' && typeof orientation.beta === 'number' && typeof orientation.gamma === 'number') {
+
+        var face = this.getFace();
+
+        /**
+         * correction preset
+         * @type {{alpha: number, beta: number, gamma: number}}
+         */
+        var corrections = {
+          alpha: 0,
+          beta: 0,
+          gamma: 0
+        };
+
+        /**
+         * define corrections
+         */
+        switch (face) {
+          case 'portrait':
+            corrections.beta = -90;
+            break;
+          case 'portrait-upside-down':
+            corrections.alpha = -180;
+            corrections.beta = 90;
+            break;
+          case 'landscape-left':
+            corrections.beta = -90;
+            corrections.gamma = 90;
+            break;
+          case 'landscape-right':
+            corrections.beta = -90;
+            corrections.gamma = -90;
+            break;
+          case 'display-up':
+            break;
+          case 'display-down':
+            corrections.beta = -180;
+            break;
+          default:
+            break;
+        }
+
+        return {
+          alpha: orientation.alpha + corrections.alpha,
+          beta: orientation.beta + corrections.beta,
+          gamma: orientation.gamma + corrections.gamma
+        };
+      } else {
+        return orientation;
+      }
+    }
+
+    /**
+     * getFace
+     * @returns {string}
+     */
+
+  }, {
+    key: 'getFace',
+    value: function getFace() {
+      return _typeof(this._options) === 'object' && typeof this._options.face === 'string' && ~this.getFaces().list.indexOf(this._options.face.toLowerCase()) ? this._options.face.toLowerCase() : this.getFaces().default;
+    }
+
+    /**
+     * getFaces
+     * @returns {object}
+     */
+
+  }, {
+    key: 'getFaces',
+    value: function getFaces() {
+      return {
+        list: ['portrait', 'portrait-upside-down', 'landscape-left', 'landscape-right', 'display-up', 'display-down'],
+        default: 'portrait'
+      };
+    }
+
+    /**
+     * setFace
+     * @param face
+     */
+
+  }, {
+    key: 'setFace',
+    value: function setFace() {
+      var face = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+
+      this._options.face = face;
+      return this;
     }
 
     /**

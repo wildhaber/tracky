@@ -16,6 +16,7 @@ export default {
     },
     orientation: {
       enable: false,
+      face: 'display-up', // 	portrait | portrait-upside-down | landscape-left | landscape-right | display-up | display-down
       breakpoints: [],
     },
   },
