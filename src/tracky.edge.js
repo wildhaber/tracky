@@ -13,11 +13,11 @@ class TrackyEdge extends TrackyEvent {
     if (
       typeof e !== 'undefined' &&
       e &&
-      typeof e.target !== 'undefined'
+      typeof e.currentTarget !== 'undefined'
     ) {
-      let position = this._getMousePosition(e.target, e);
+      let position = this._getMousePosition(e.currentTarget, e);
       if (position) {
-        this.classify(e.target, position);
+        this.classify(e.currentTarget, position);
       }
     }
   }
@@ -36,7 +36,7 @@ class TrackyEdge extends TrackyEvent {
       domNode.addEventListener(
         'mousemove',
         debounce(
-          this._bindListener, 25, {
+          this._bindListener, 80, {
             leading: true,
             maxWait: 40,
             trailing: false,
